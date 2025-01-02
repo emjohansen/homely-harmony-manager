@@ -31,6 +31,8 @@ export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }
       if (!session) throw new Error("No session");
       if (!currentHouseholdId) throw new Error("No household selected");
 
+      console.log("Submitting recipe with household:", currentHouseholdId);
+
       const recipeData = {
         title: formData.title,
         description: formData.description,
@@ -49,7 +51,12 @@ export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }
           .select()
           .single();
 
-        if (recipeError) throw recipeError;
+        if (recipeError) {
+          console.error('Error creating recipe:', recipeError);
+          throw recipeError;
+        }
+
+        console.log("Recipe created:", recipe);
 
         // Insert related data
         await Promise.all([
@@ -87,13 +94,16 @@ export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }
         });
         navigate("/recipes");
       } else {
-        // Update recipe logic
+        // Update recipe
         const { error: recipeError } = await supabase
           .from("recipes")
           .update(recipeData)
           .eq('id', recipeId);
 
-        if (recipeError) throw recipeError;
+        if (recipeError) {
+          console.error('Error updating recipe:', recipeError);
+          throw recipeError;
+        }
 
         // Update related data
         await Promise.all([
