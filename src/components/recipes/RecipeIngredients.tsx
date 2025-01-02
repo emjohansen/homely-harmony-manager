@@ -30,7 +30,9 @@ export const RecipeIngredients = ({
     if (!amount || !originalServings || !currentServings) return amount;
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount)) return amount;
-    return ((numericAmount * currentServings) / originalServings).toFixed(2);
+    const adjustedAmount = (numericAmount * currentServings) / originalServings;
+    // Round to 2 decimal places only if the number has decimals
+    return adjustedAmount % 1 === 0 ? adjustedAmount.toString() : adjustedAmount.toFixed(1);
   };
 
   return (

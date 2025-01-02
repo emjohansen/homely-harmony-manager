@@ -20,7 +20,8 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
 
   const calculateAdjustedAmount = (amount: number | null) => {
     if (!amount || !recipe.servings) return amount;
-    return ((amount * currentServings) / recipe.servings).toFixed(2);
+    const adjustedAmount = (amount * currentServings) / recipe.servings;
+    return adjustedAmount % 1 === 0 ? adjustedAmount.toString() : adjustedAmount.toFixed(1);
   };
 
   return (
