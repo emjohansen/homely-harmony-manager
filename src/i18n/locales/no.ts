@@ -17,7 +17,7 @@ export default {
     },
     navigation: {
       recipes: 'Oppskrifter',
-      shopping: 'Handling',
+      shopping: 'Handleliste',
       reminders: 'Påminnelser',
       chores: 'Gjøremål',
       storage: 'Lagring',

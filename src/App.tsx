@@ -6,6 +6,8 @@ import EditRecipe from "@/pages/EditRecipe";
 import Shopping from "@/pages/Shopping";
 import Reminders from "@/pages/Reminders";
 import Chores from "@/pages/Chores";
+import Storage from "@/pages/Storage";
+import Settings from "@/pages/Settings";
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
         <Route path="/shopping" element={<Shopping />} />
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/chores" element={<Chores />} />
+        <Route path="/storage" element={<Storage />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );
