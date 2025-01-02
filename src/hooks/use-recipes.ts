@@ -13,9 +13,9 @@ export const useRecipes = (householdId: string | null) => {
     try {
       console.log("Fetching recipes for household:", householdId);
       
-      // Fetch private (household) recipes
+      // Fetch household recipes (both private and public)
       if (householdId) {
-        const { data: privateRecipesData, error: privateError } = await supabase
+        const { data: householdRecipes, error: privateError } = await supabase
           .from('recipes')
           .select(`
             *,
@@ -27,11 +27,11 @@ export const useRecipes = (householdId: string | null) => {
           .order('created_at', { ascending: false });
 
         if (privateError) {
-          console.error('Error fetching private recipes:', privateError);
+          console.error('Error fetching household recipes:', privateError);
           throw privateError;
         }
-        console.log("Private recipes fetched:", privateRecipesData);
-        setPrivateRecipes(privateRecipesData || []);
+        console.log("Household recipes fetched:", householdRecipes);
+        setPrivateRecipes(householdRecipes || []);
       }
 
       // Fetch public recipes
