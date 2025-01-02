@@ -23,7 +23,6 @@ const Recipes = () => {
       if (!session) {
         navigate("/");
       } else {
-        // Get user's current household
         const { data: householdMember } = await supabase
           .from('household_members')
           .select('household_id')
@@ -43,8 +42,8 @@ const Recipes = () => {
   const getRandomRecipe = (recipes: Recipe[]) => {
     if (recipes.length === 0) {
       toast({
-        title: "No recipes",
-        description: "No recipes available in this category!",
+        title: "Ingen oppskrifter",
+        description: "Ingen oppskrifter tilgjengelig i denne kategorien!",
       });
       return;
     }
@@ -56,22 +55,22 @@ const Recipes = () => {
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Recipes</h1>
+          <h1 className="text-2xl font-bold">Oppskrifter</h1>
           <div className="flex gap-2">
             <Button onClick={() => navigate("/recipes/new")}>
               <Plus className="h-4 w-4 mr-2" />
-              New Recipe
+              Ny oppskrift
             </Button>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-8">Loading recipes...</div>
+          <div className="text-center py-8">Laster oppskrifter...</div>
         ) : (
           <Tabs defaultValue="private" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="private">My Dishes</TabsTrigger>
-              <TabsTrigger value="public">All Dishes</TabsTrigger>
+              <TabsTrigger value="private">Mine oppskrifter</TabsTrigger>
+              <TabsTrigger value="public">Alle oppskrifter</TabsTrigger>
             </TabsList>
             <TabsContent value="private">
               <div className="flex justify-end mb-4">
@@ -79,19 +78,19 @@ const Recipes = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => getRandomRecipe(privateRecipes)}
-                  title="Random Recipe"
+                  title="Tilfeldig oppskrift"
                 >
                   <Shuffle className="h-4 w-4 mr-2" />
-                  Random
+                  Tilfeldig
                 </Button>
               </div>
               {!currentHouseholdId ? (
                 <div className="text-center py-8 text-gray-500">
-                  Join a household to start adding your own recipes!
+                  Bli med i en husholdning for å begynne å legge til dine egne oppskrifter!
                 </div>
               ) : privateRecipes.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No recipes yet. Add your first recipe!
+                  Ingen oppskrifter enda. Legg til din første oppskrift!
                 </div>
               ) : (
                 <RecipeList recipes={privateRecipes} />
@@ -103,15 +102,15 @@ const Recipes = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => getRandomRecipe(publicRecipes)}
-                  title="Random Recipe"
+                  title="Tilfeldig oppskrift"
                 >
                   <Shuffle className="h-4 w-4 mr-2" />
-                  Random
+                  Tilfeldig
                 </Button>
               </div>
               {publicRecipes.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  No public recipes available.
+                  Ingen offentlige oppskrifter tilgjengelig.
                 </div>
               ) : (
                 <RecipeList recipes={publicRecipes} />

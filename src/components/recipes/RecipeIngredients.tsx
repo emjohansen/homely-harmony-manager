@@ -21,24 +21,24 @@ export const RecipeIngredients = ({ ingredients, setIngredients }: RecipeIngredi
 
   return (
     <div className="space-y-2">
-      <Label>Ingredients</Label>
+      <Label>Ingredienser</Label>
       {ingredients.map((ingredient, index) => (
         <div key={index} className="grid grid-cols-6 gap-2">
           <Input
             className="col-span-3"
-            placeholder="Ingredient"
+            placeholder="Ingrediens"
             value={ingredient.ingredient}
             onChange={(e) => handleIngredientChange(index, "ingredient", e.target.value)}
           />
           <Input
             className="col-span-2"
-            placeholder="Amount"
+            placeholder="Mengde"
             value={ingredient.amount}
             onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
           />
           <Input
             className="col-span-1"
-            placeholder="Unit"
+            placeholder="Enhet"
             value={ingredient.unit}
             onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
           />
@@ -52,7 +52,7 @@ export const RecipeIngredients = ({ ingredients, setIngredients }: RecipeIngredi
         className="w-full"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Add Ingredient
+        Legg til ingrediens
       </Button>
     </div>
   );

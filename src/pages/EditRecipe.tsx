@@ -33,8 +33,8 @@ const EditRecipe = () => {
       } catch (error) {
         console.error('Error fetching recipe:', error);
         toast({
-          title: "Error",
-          description: "Failed to load recipe",
+          title: "Feil",
+          description: "Kunne ikke laste oppskriften",
           variant: "destructive",
         });
       } finally {
@@ -49,7 +49,7 @@ const EditRecipe = () => {
     return (
       <div className="min-h-screen bg-gray-50 pb-16">
         <div className="max-w-lg mx-auto px-4 py-8">
-          <div className="text-center">Loading recipe...</div>
+          <div className="text-center">Laster oppskrift...</div>
         </div>
         <Navigation />
       </div>
@@ -66,9 +66,9 @@ const EditRecipe = () => {
             className="flex items-center"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Tilbake
           </Button>
-          <h1 className="text-2xl font-bold">Edit Recipe</h1>
+          <h1 className="text-2xl font-bold">Rediger oppskrift</h1>
         </div>
 
         <RecipeForm 

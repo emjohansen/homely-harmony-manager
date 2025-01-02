@@ -1,67 +1,84 @@
-import Navigation from "@/components/Navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import InviteMember from "@/components/household/InviteMember";
-import InvitationsList from "@/components/household/InvitationsList";
+import { Button } from "@/components/ui/button";
+import Navigation from "@/components/Navigation";
+import { useNavigate } from "react-router-dom";
+import { CreateHousehold } from "@/components/household/CreateHousehold";
+import { InviteMember } from "@/components/household/InviteMember";
+import { InvitationsList } from "@/components/household/InvitationsList";
 
 const Settings = () => {
-  const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentHousehold, setCurrentHousehold] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchHousehold = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          navigate("/");
+          return;
+        }
 
-      const { data: householdMember } = await supabase
-        .from('household_members')
-        .select('household_id, households (name)')
-        .eq('user_id', user.id)
-        .single();
+        const { data: householdMember } = await supabase
+          .from('household_members')
+          .select('household_id')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
 
-      if (householdMember) {
-        setCurrentHousehold(householdMember.households);
+        if (householdMember) {
+          const { data: household } = await supabase
+            .from('households')
+            .select('*')
+            .eq('id', householdMember.household_id)
+            .single();
+
+          setCurrentHousehold(household);
+        }
+      } catch (error) {
+        console.error('Error fetching household:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchHousehold();
-  }, []);
+  }, [navigate]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="container max-w-2xl mx-auto p-4 space-y-6">
-        <InvitationsList />
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Husholdning</CardTitle>
-            <CardDescription>Administrer din husholdning</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {currentHousehold ? (
-              <>
-                <div>
-                  <h3 className="font-medium mb-2">Nåværende husholdning</h3>
-                  <p>{currentHousehold.name}</p>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Inviter medlem</h3>
-                  <InviteMember householdId={currentHousehold.id} />
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-gray-500 mb-4">Du er ikke medlem av en husholdning ennå</p>
-                <Button onClick={() => navigate("/household/create")}>
-                  Opprett husholdning
-                </Button>
+      <div className="max-w-lg mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6">Innstillinger</h1>
+
+        <div className="space-y-6">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h2 className="text-lg font-semibold mb-4">Husholdning</h2>
+            {loading ? (
+              <p>Laster...</p>
+            ) : currentHousehold ? (
+              <div className="space-y-4">
+                <p>Din husholdning: {currentHousehold.name}</p>
+                <InviteMember />
+                <InvitationsList />
               </div>
+            ) : (
+              <CreateHousehold onCreated={setCurrentHousehold} />
             )}
-          </CardContent>
-        </Card>
+          </div>
+
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h2 className="text-lg font-semibold mb-4">Konto</h2>
+            <Button variant="destructive" onClick={handleSignOut}>
+              Logg ut
+            </Button>
+          </div>
+        </div>
       </div>
       <Navigation />
     </div>

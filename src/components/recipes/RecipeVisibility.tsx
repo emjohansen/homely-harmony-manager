@@ -1,5 +1,5 @@
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 interface RecipeVisibilityProps {
   isPublic: boolean;
@@ -8,13 +8,15 @@ interface RecipeVisibilityProps {
 
 export const RecipeVisibility = ({ isPublic, setIsPublic }: RecipeVisibilityProps) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center justify-between">
+      <Label htmlFor="recipe-visibility" className="text-sm font-medium">
+        Offentlig oppskrift
+      </Label>
       <Switch
-        id="public"
+        id="recipe-visibility"
         checked={isPublic}
         onCheckedChange={setIsPublic}
       />
-      <Label htmlFor="public">Make this recipe public</Label>
     </div>
   );
 };

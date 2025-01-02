@@ -21,12 +21,12 @@ export const RecipeSteps = ({ steps, setSteps }: RecipeStepsProps) => {
 
   return (
     <div className="space-y-2">
-      <Label>Steps</Label>
+      <Label>Fremgangsmåte</Label>
       {steps.map((step, index) => (
         <div key={index} className="flex gap-2 items-start">
           <span className="mt-2 text-sm text-gray-500">{index + 1}.</span>
           <Textarea
-            placeholder={`Step ${index + 1}`}
+            placeholder={`Steg ${index + 1}`}
             value={step.description}
             onChange={(e) => handleStepChange(index, e.target.value)}
           />
@@ -40,7 +40,7 @@ export const RecipeSteps = ({ steps, setSteps }: RecipeStepsProps) => {
         className="w-full"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Add Step
+        Legg til steg
       </Button>
     </div>
   );

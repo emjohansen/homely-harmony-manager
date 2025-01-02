@@ -23,7 +23,7 @@ export const RecipeTags = ({
 
   return (
     <div className="space-y-2">
-      <Label>Tags</Label>
+      <Label>Tagger</Label>
       <div className="flex flex-wrap gap-2 mb-2">
         {tags.map((tag) => (
           <span
@@ -42,7 +42,7 @@ export const RecipeTags = ({
         ))}
       </div>
       <Input
-        placeholder="Type a tag and press Enter"
+        placeholder="Skriv en tagg og trykk Enter"
         value={newTag}
         onChange={(e) => setNewTag(e.target.value)}
         onKeyDown={handleAddTag}

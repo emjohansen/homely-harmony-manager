@@ -26,7 +26,7 @@ export const RecipeBasicInfo = ({
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
+        <Label htmlFor="title">Tittel</Label>
         <Input
           id="title"
           value={title}
@@ -36,7 +36,7 @@ export const RecipeBasicInfo = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">Beskrivelse</Label>
         <Textarea
           id="description"
           value={description}
@@ -46,7 +46,7 @@ export const RecipeBasicInfo = ({
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="servings">Servings</Label>
+          <Label htmlFor="servings">Porsjoner</Label>
           <Input
             id="servings"
             type="number"
@@ -57,7 +57,7 @@ export const RecipeBasicInfo = ({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="prepTime">Preparation Time (mins)</Label>
+          <Label htmlFor="prepTime">Tilberedningstid (minutter)</Label>
           <Input
             id="prepTime"
             type="number"
