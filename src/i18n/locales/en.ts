@@ -1,0 +1,45 @@
+export default {
+  translation: {
+    common: {
+      settings: 'Settings',
+      save: 'Save',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      edit: 'Edit',
+      create: 'Create',
+      invite: 'Invite',
+    },
+    auth: {
+      signIn: 'Sign In',
+      signOut: 'Sign Out',
+      signUp: 'Sign Up',
+    },
+    navigation: {
+      recipes: 'Recipes',
+      shopping: 'Shopping',
+      reminders: 'Reminders',
+      chores: 'Chores',
+      storage: 'Storage',
+    },
+    household: {
+      create: 'Create Household',
+      name: 'Household Name',
+      inviteMembers: 'Invite Members',
+      inviteEmail: 'Email Address',
+      sendInvite: 'Send Invite',
+      invitePending: 'Invitation Pending',
+      inviteAccepted: 'Invitation Accepted',
+      inviteDeclined: 'Invitation Declined',
+      noHousehold: 'You are not part of any household yet',
+      createPrompt: 'Would you like to create a new household?',
+      invitationReceived: 'You have been invited to join',
+      accept: 'Accept',
+      decline: 'Decline',
+    },
+    settings: {
+      language: 'Language',
+      english: 'English',
+      norwegian: 'Norwegian',
+    },
+  },
+};

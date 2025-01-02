@@ -1,9 +1,11 @@
 import { House, ShoppingCart, CalendarClock, ClipboardList, Refrigerator } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -18,7 +20,7 @@ const Navigation = () => {
             }`}
           >
             <House className="h-6 w-6" />
-            <span className="text-xs mt-1">Recipes</span>
+            <span className="text-xs mt-1">{t('navigation.recipes')}</span>
           </button>
           <button
             onClick={() => navigate("/shopping")}
@@ -27,7 +29,7 @@ const Navigation = () => {
             }`}
           >
             <ShoppingCart className="h-6 w-6" />
-            <span className="text-xs mt-1">Shopping</span>
+            <span className="text-xs mt-1">{t('navigation.shopping')}</span>
           </button>
           <button
             onClick={() => navigate("/reminders")}
@@ -36,7 +38,7 @@ const Navigation = () => {
             }`}
           >
             <CalendarClock className="h-6 w-6" />
-            <span className="text-xs mt-1">Reminders</span>
+            <span className="text-xs mt-1">{t('navigation.reminders')}</span>
           </button>
           <button
             onClick={() => navigate("/chores")}
@@ -45,7 +47,7 @@ const Navigation = () => {
             }`}
           >
             <ClipboardList className="h-6 w-6" />
-            <span className="text-xs mt-1">Chores</span>
+            <span className="text-xs mt-1">{t('navigation.chores')}</span>
           </button>
           <button
             onClick={() => navigate("/storage")}
@@ -54,7 +56,7 @@ const Navigation = () => {
             }`}
           >
             <Refrigerator className="h-6 w-6" />
-            <span className="text-xs mt-1">Storage</span>
+            <span className="text-xs mt-1">{t('navigation.storage')}</span>
           </button>
         </div>
       </div>

@@ -1,0 +1,45 @@
+export default {
+  translation: {
+    common: {
+      settings: 'Innstillinger',
+      save: 'Lagre',
+      cancel: 'Avbryt',
+      delete: 'Slett',
+      edit: 'Rediger',
+      create: 'Opprett',
+      invite: 'Inviter',
+    },
+    auth: {
+      signIn: 'Logg Inn',
+      signOut: 'Logg Ut',
+      signUp: 'Registrer Deg',
+    },
+    navigation: {
+      recipes: 'Oppskrifter',
+      shopping: 'Handling',
+      reminders: 'Påminnelser',
+      chores: 'Gjøremål',
+      storage: 'Lagring',
+    },
+    household: {
+      create: 'Opprett Husholdning',
+      name: 'Husholdningsnavn',
+      inviteMembers: 'Inviter Medlemmer',
+      inviteEmail: 'E-postadresse',
+      sendInvite: 'Send Invitasjon',
+      invitePending: 'Invitasjon Venter',
+      inviteAccepted: 'Invitasjon Akseptert',
+      inviteDeclined: 'Invitasjon Avslått',
+      noHousehold: 'Du er ikke med i noen husholdning ennå',
+      createPrompt: 'Vil du opprette en ny husholdning?',
+      invitationReceived: 'Du har blitt invitert til å bli med i',
+      accept: 'Godta',
+      decline: 'Avslå',
+    },
+    settings: {
+      language: 'Språk',
+      english: 'Engelsk',
+      norwegian: 'Norsk',
+    },
+  },
+};
