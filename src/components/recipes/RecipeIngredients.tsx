@@ -19,8 +19,8 @@ export const RecipeIngredients = ({
   const handleIngredientChange = (index: number, field: keyof typeof ingredients[0], value: string) => {
     const newIngredients = [...ingredients];
     if (field === 'amount') {
-      // Only allow numeric values for amount
-      if (value === '' || !isNaN(Number(value))) {
+      // Allow only numbers and decimal point
+      if (value === '' || /^\d*\.?\d*$/.test(value)) {
         newIngredients[index][field] = value;
       }
     } else {
@@ -54,9 +54,6 @@ export const RecipeIngredients = ({
           <Input
             className="col-span-2"
             placeholder="Mengde"
-            type="number"
-            step="0.01"
-            min="0"
             value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
             onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
           />

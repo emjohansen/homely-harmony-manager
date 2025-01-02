@@ -1,5 +1,8 @@
 import { Recipe } from "@/types/recipe";
 import { RecipeVisibility } from "./RecipeVisibility";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Minus, Plus } from "lucide-react";
 
 interface RecipeContentProps {
   recipe: Recipe;
@@ -8,6 +11,18 @@ interface RecipeContentProps {
 }
 
 export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeContentProps) => {
+  const [currentServings, setCurrentServings] = useState(recipe.servings);
+
+  const handleServingsChange = (delta: number) => {
+    const newServings = Math.max(1, currentServings + delta);
+    setCurrentServings(newServings);
+  };
+
+  const calculateAdjustedAmount = (amount: number | null) => {
+    if (!amount || !recipe.servings) return amount;
+    return ((amount * currentServings) / recipe.servings).toFixed(2);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
       {canEdit && (
@@ -33,12 +48,31 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
       <p className="text-gray-600 mb-4">{recipe.description}</p>
 
       <div className="flex gap-4 mb-4">
-        <div>
-          <span className="text-sm text-gray-500">Servings</span>
-          <p className="font-medium">{recipe.servings}</p>
+        <div className="space-y-2">
+          <span className="text-sm text-gray-500">Porsjoner</span>
+          <div className="flex items-center space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => handleServingsChange(-1)}
+              disabled={currentServings <= 1}
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <span className="w-12 text-center font-medium">{currentServings}</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => handleServingsChange(1)}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
         <div>
-          <span className="text-sm text-gray-500">Preparation Time</span>
+          <span className="text-sm text-gray-500">Tilberedningstid</span>
           <p className="font-medium">{recipe.preparation_time} mins</p>
         </div>
       </div>
@@ -61,12 +95,12 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
 
       {recipe.recipe_ingredients && recipe.recipe_ingredients.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Ingredients</h2>
+          <h2 className="text-lg font-semibold mb-2">Ingredienser</h2>
           <ul className="space-y-2">
             {recipe.recipe_ingredients.map((ingredient) => (
               <li key={ingredient.id} className="flex items-baseline">
                 <span className="font-medium mr-2">
-                  {ingredient.amount} {ingredient.unit}
+                  {calculateAdjustedAmount(ingredient.amount)} {ingredient.unit}
                 </span>
                 <span>{ingredient.ingredient}</span>
               </li>
@@ -77,7 +111,7 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
 
       {recipe.recipe_steps && recipe.recipe_steps.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold mb-2">Instructions</h2>
+          <h2 className="text-lg font-semibold mb-2">Fremgangsmåte</h2>
           <ol className="space-y-4">
             {recipe.recipe_steps
               .sort((a, b) => a.step_number - b.step_number)
