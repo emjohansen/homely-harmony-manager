@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 interface RecipeFormSubmitProps {
   mode: 'create' | 'edit';
@@ -22,12 +23,17 @@ interface RecipeFormSubmitProps {
 export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }: RecipeFormSubmitProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (isSubmitting) return;
+    
     try {
+      setIsSubmitting(true);
       const { data: { session } } = await supabase.auth.getSession();
+      
       if (!session) {
         toast({
           title: "Feil",
@@ -74,34 +80,45 @@ export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }
         console.log("Recipe created:", recipe);
 
         // Insert related data
-        await Promise.all([
-          // Insert tags
-          formData.tags.length > 0 && supabase
-            .from("recipe_tags")
-            .insert(formData.tags.map(tag => ({
-              recipe_id: recipe.id,
-              tag
-            }))),
+        const promises = [];
 
-          // Insert ingredients
-          formData.ingredients.filter(i => i.ingredient.trim()).length > 0 && supabase
-            .from("recipe_ingredients")
-            .insert(formData.ingredients.filter(i => i.ingredient.trim()).map(i => ({
-              recipe_id: recipe.id,
-              ingredient: i.ingredient,
-              amount: i.amount ? parseFloat(i.amount) : null,
-              unit: i.unit || null
-            }))),
+        if (formData.tags.length > 0) {
+          promises.push(
+            supabase
+              .from("recipe_tags")
+              .insert(formData.tags.map(tag => ({
+                recipe_id: recipe.id,
+                tag
+              })))
+          );
+        }
 
-          // Insert steps
-          formData.steps.filter(s => s.description.trim()).length > 0 && supabase
-            .from("recipe_steps")
-            .insert(formData.steps.filter(s => s.description.trim()).map((s, index) => ({
-              recipe_id: recipe.id,
-              step_number: index + 1,
-              description: s.description
-            })))
-        ]);
+        if (formData.ingredients.filter(i => i.ingredient.trim()).length > 0) {
+          promises.push(
+            supabase
+              .from("recipe_ingredients")
+              .insert(formData.ingredients.filter(i => i.ingredient.trim()).map(i => ({
+                recipe_id: recipe.id,
+                ingredient: i.ingredient,
+                amount: i.amount ? parseFloat(i.amount) : null,
+                unit: i.unit || null
+              })))
+          );
+        }
+
+        if (formData.steps.filter(s => s.description.trim()).length > 0) {
+          promises.push(
+            supabase
+              .from("recipe_steps")
+              .insert(formData.steps.filter(s => s.description.trim()).map((s, index) => ({
+                recipe_id: recipe.id,
+                step_number: index + 1,
+                description: s.description
+              })))
+          );
+        }
+
+        await Promise.all(promises);
 
         toast({
           title: "Suksess",
@@ -166,8 +183,10 @@ export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }
         description: error instanceof Error ? error.message : "Kunne ikke lagre oppskriften",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return { handleSubmit };
+  return { handleSubmit, isSubmitting };
 };

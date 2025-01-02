@@ -7,6 +7,7 @@ import { RecipeSteps } from "./RecipeSteps";
 import { RecipeVisibility } from "./RecipeVisibility";
 import { RecipeImageUpload } from "./RecipeImageUpload";
 import { useRecipeSubmit } from "./RecipeFormSubmit";
+import { Loader2 } from "lucide-react";
 
 interface RecipeFormProps {
   mode: 'create' | 'edit';
@@ -15,7 +16,6 @@ interface RecipeFormProps {
 }
 
 export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => {
-  const [loading, setLoading] = useState(false);
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
 
   // Form state
@@ -46,7 +46,7 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
     steps
   };
 
-  const { handleSubmit } = useRecipeSubmit({ 
+  const { handleSubmit, isSubmitting } = useRecipeSubmit({ 
     mode, 
     recipeId, 
     formData, 
@@ -102,8 +102,15 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
         setSteps={setSteps}
       />
 
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? (mode === 'create' ? "Oppretter..." : "Oppdaterer...") : (mode === 'create' ? "Opprett oppskrift" : "Oppdater oppskrift")}
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {mode === 'create' ? "Oppretter..." : "Oppdaterer..."}
+          </>
+        ) : (
+          mode === 'create' ? "Opprett oppskrift" : "Oppdater oppskrift"
+        )}
       </Button>
     </form>
   );
