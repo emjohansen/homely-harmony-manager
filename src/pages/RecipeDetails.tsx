@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Recipe } from "@/types/recipe";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
+import { RecipeHeader } from "@/components/recipes/RecipeHeader";
+import { RecipeContent } from "@/components/recipes/RecipeContent";
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -94,6 +94,32 @@ const RecipeDetails = () => {
     }
   };
 
+  const handleVisibilityChange = async (isPublic: boolean) => {
+    if (!recipe) return;
+
+    try {
+      const { error } = await supabase
+        .from('recipes')
+        .update({ is_public: isPublic })
+        .eq('id', recipe.id);
+
+      if (error) throw error;
+
+      setRecipe({ ...recipe, is_public: isPublic });
+      toast({
+        title: "Success",
+        description: `Recipe is now ${isPublic ? 'public' : 'private'}`,
+      });
+    } catch (error) {
+      console.error('Error updating recipe visibility:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update recipe visibility",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 pb-16">
@@ -119,104 +145,16 @@ const RecipeDetails = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/recipes")}
-            className="flex items-center"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          {canEdit && (
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => navigate(`/recipes/${id}/edit`)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button variant="destructive" onClick={handleDelete}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          {recipe.image_url && (
-            <div className="relative w-full h-64 mb-6">
-              <img
-                src={recipe.image_url}
-                alt={recipe.title}
-                className="absolute inset-0 w-full h-full object-cover rounded-md"
-              />
-            </div>
-          )}
-          <h1 className="text-2xl font-bold mb-2">{recipe.title}</h1>
-          <p className="text-gray-600 mb-4">{recipe.description}</p>
-
-          <div className="flex gap-4 mb-4">
-            <div>
-              <span className="text-sm text-gray-500">Servings</span>
-              <p className="font-medium">{recipe.servings}</p>
-            </div>
-            <div>
-              <span className="text-sm text-gray-500">Preparation Time</span>
-              <p className="font-medium">{recipe.preparation_time} mins</p>
-            </div>
-          </div>
-
-          {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-2">Tags</h2>
-              <div className="flex flex-wrap gap-2">
-                {recipe.recipe_tags.map(({ tag }) => (
-                  <span
-                    key={tag}
-                    className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {recipe.recipe_ingredients && recipe.recipe_ingredients.length > 0 && (
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-2">Ingredients</h2>
-              <ul className="space-y-2">
-                {recipe.recipe_ingredients.map((ingredient) => (
-                  <li key={ingredient.id} className="flex items-baseline">
-                    <span className="font-medium mr-2">
-                      {ingredient.amount} {ingredient.unit}
-                    </span>
-                    <span>{ingredient.ingredient}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {recipe.recipe_steps && recipe.recipe_steps.length > 0 && (
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Instructions</h2>
-              <ol className="space-y-4">
-                {recipe.recipe_steps
-                  .sort((a, b) => a.step_number - b.step_number)
-                  .map((step) => (
-                    <li key={step.id} className="flex">
-                      <span className="font-medium mr-4">{step.step_number}.</span>
-                      <span>{step.description}</span>
-                    </li>
-                  ))}
-              </ol>
-            </div>
-          )}
-        </div>
+        <RecipeHeader 
+          canEdit={canEdit} 
+          recipeId={recipe.id} 
+          handleDelete={handleDelete} 
+        />
+        <RecipeContent 
+          recipe={recipe} 
+          canEdit={canEdit}
+          onVisibilityChange={handleVisibilityChange}
+        />
       </div>
       <Navigation />
     </div>
