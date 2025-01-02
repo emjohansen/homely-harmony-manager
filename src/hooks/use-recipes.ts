@@ -13,7 +13,7 @@ export const useRecipes = (householdId: string | null) => {
     try {
       console.log("Fetching recipes for household:", householdId);
       
-      // Fetch household recipes (both private and public)
+      // Fetch all recipes for the household
       if (householdId) {
         const { data: householdRecipes, error: privateError } = await supabase
           .from('recipes')
