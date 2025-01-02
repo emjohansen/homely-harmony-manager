@@ -51,17 +51,55 @@ export const useRecipeOperations = () => {
     ingredients: { ingredient: string; amount: string; unit: string }[],
     steps: { description: string }[]
   ) => {
-    await Promise.all([
-      // Delete existing relations
-      supabase.from("recipe_tags").delete().eq('recipe_id', recipeId),
-      supabase.from("recipe_ingredients").delete().eq('recipe_id', recipeId),
-      supabase.from("recipe_steps").delete().eq('recipe_id', recipeId),
-      
-      // Insert new relations
-      insertRecipeTags(recipeId, tags),
-      insertRecipeIngredients(recipeId, ingredients),
-      insertRecipeSteps(recipeId, steps)
-    ]);
+    const { data: existingIngredients } = await supabase
+      .from("recipe_ingredients")
+      .select("*")
+      .eq("recipe_id", recipeId);
+
+    const { data: existingSteps } = await supabase
+      .from("recipe_steps")
+      .select("*")
+      .eq("recipe_id", recipeId);
+
+    const { data: existingTags } = await supabase
+      .from("recipe_tags")
+      .select("*")
+      .eq("recipe_id", recipeId);
+
+    // Only update tags if they've changed
+    const currentTags = existingTags?.map(t => t.tag) || [];
+    if (JSON.stringify(currentTags.sort()) !== JSON.stringify(tags.sort())) {
+      await supabase.from("recipe_tags").delete().eq("recipe_id", recipeId);
+      if (tags.length > 0) {
+        await insertRecipeTags(recipeId, tags);
+      }
+    }
+
+    // Only update ingredients if they've changed
+    const currentIngredients = existingIngredients?.map(i => ({
+      ingredient: i.ingredient,
+      amount: i.amount?.toString() || "",
+      unit: i.unit || ""
+    })) || [];
+    
+    if (JSON.stringify(currentIngredients) !== JSON.stringify(ingredients)) {
+      await supabase.from("recipe_ingredients").delete().eq("recipe_id", recipeId);
+      if (ingredients.length > 0) {
+        await insertRecipeIngredients(recipeId, ingredients);
+      }
+    }
+
+    // Only update steps if they've changed
+    const currentSteps = existingSteps?.map(s => ({
+      description: s.description
+    })) || [];
+    
+    if (JSON.stringify(currentSteps) !== JSON.stringify(steps)) {
+      await supabase.from("recipe_steps").delete().eq("recipe_id", recipeId);
+      if (steps.length > 0) {
+        await insertRecipeSteps(recipeId, steps);
+      }
+    }
   };
 
   return {

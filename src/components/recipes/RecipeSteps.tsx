@@ -1,7 +1,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 interface RecipeStepsProps {
   steps: Array<{ description: string }>;
@@ -19,6 +19,11 @@ export const RecipeSteps = ({ steps, setSteps }: RecipeStepsProps) => {
     setSteps([...steps, { description: "" }]);
   };
 
+  const handleRemoveStep = (index: number) => {
+    const newSteps = steps.filter((_, i) => i !== index);
+    setSteps(newSteps);
+  };
+
   return (
     <div className="space-y-2">
       <Label>Fremgangsmåte</Label>
@@ -30,6 +35,15 @@ export const RecipeSteps = ({ steps, setSteps }: RecipeStepsProps) => {
             value={step.description}
             onChange={(e) => handleStepChange(index, e.target.value)}
           />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => handleRemoveStep(index)}
+            className="mt-2"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
       ))}
       <Button
