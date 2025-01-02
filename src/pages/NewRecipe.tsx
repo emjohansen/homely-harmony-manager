@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,25 +8,57 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
-import { X, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
+import { RecipeBasicInfo } from "@/components/recipes/RecipeBasicInfo";
+import { RecipeTags } from "@/components/recipes/RecipeTags";
 
 const NewRecipe = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
+  
+  // Basic info state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [servings, setServings] = useState(4);
   const [prepTime, setPrepTime] = useState(30);
   const [isPublic, setIsPublic] = useState(false);
+  
+  // Tags state
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
+  
+  // Ingredients and steps state
   const [ingredients, setIngredients] = useState<Array<{ ingredient: string; amount: string; unit: string }>>([
     { ingredient: "", amount: "", unit: "" }
   ]);
   const [steps, setSteps] = useState<Array<{ description: string }>>([
     { description: "" }
   ]);
+
+  useEffect(() => {
+    const fetchHousehold = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/");
+        return;
+      }
+
+      const { data: householdMember } = await supabase
+        .from('household_members')
+        .select('household_id')
+        .eq('user_id', session.user.id)
+        .single();
+
+      console.log("Current household member:", householdMember);
+      if (householdMember) {
+        setCurrentHouseholdId(householdMember.household_id);
+      }
+    };
+
+    fetchHousehold();
+  }, [navigate]);
 
   const handleAddTag = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && newTag.trim()) {
@@ -38,28 +70,24 @@ const NewRecipe = () => {
     }
   };
 
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-  };
-
-  const handleAddIngredient = () => {
-    setIngredients([...ingredients, { ingredient: "", amount: "", unit: "" }]);
-  };
-
   const handleIngredientChange = (index: number, field: keyof typeof ingredients[0], value: string) => {
     const newIngredients = [...ingredients];
     newIngredients[index][field] = value;
     setIngredients(newIngredients);
   };
 
-  const handleAddStep = () => {
-    setSteps([...steps, { description: "" }]);
+  const handleAddIngredient = () => {
+    setIngredients([...ingredients, { ingredient: "", amount: "", unit: "" }]);
   };
 
   const handleStepChange = (index: number, value: string) => {
     const newSteps = [...steps];
     newSteps[index].description = value;
     setSteps(newSteps);
+  };
+
+  const handleAddStep = () => {
+    setSteps([...steps, { description: "" }]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,6 +98,12 @@ const NewRecipe = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("No session");
 
+      if (!currentHouseholdId && !isPublic) {
+        throw new Error("You must be in a household to create a private recipe");
+      }
+
+      console.log("Creating recipe with household_id:", currentHouseholdId);
+
       // Insert recipe
       const { data: recipe, error: recipeError } = await supabase
         .from("recipes")
@@ -79,7 +113,8 @@ const NewRecipe = () => {
           servings,
           preparation_time: prepTime,
           is_public: isPublic,
-          created_by: session.user.id
+          created_by: session.user.id,
+          household_id: isPublic ? null : currentHouseholdId // Set household_id only for private recipes
         })
         .select()
         .single();
@@ -136,7 +171,7 @@ const NewRecipe = () => {
       console.error("Error creating recipe:", error);
       toast({
         title: "Error",
-        description: "Failed to create recipe",
+        description: error instanceof Error ? error.message : "Failed to create recipe",
         variant: "destructive",
       });
     } finally {
@@ -150,76 +185,24 @@ const NewRecipe = () => {
         <h1 className="text-2xl font-bold mb-6">New Recipe</h1>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
+          <RecipeBasicInfo
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            servings={servings}
+            setServings={setServings}
+            prepTime={prepTime}
+            setPrepTime={setPrepTime}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="servings">Servings</Label>
-              <Input
-                id="servings"
-                type="number"
-                min="1"
-                value={servings}
-                onChange={(e) => setServings(parseInt(e.target.value))}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="prepTime">Preparation Time (mins)</Label>
-              <Input
-                id="prepTime"
-                type="number"
-                min="1"
-                value={prepTime}
-                onChange={(e) => setPrepTime(parseInt(e.target.value))}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Tags</Label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm flex items-center"
-                >
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="ml-1 text-gray-500 hover:text-gray-700"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-            <Input
-              placeholder="Type a tag and press Enter"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyDown={handleAddTag}
-            />
-          </div>
+          <RecipeTags
+            tags={tags}
+            setTags={setTags}
+            newTag={newTag}
+            setNewTag={setNewTag}
+            handleAddTag={handleAddTag}
+          />
 
           <div className="space-y-2">
             <Label>Ingredients</Label>
