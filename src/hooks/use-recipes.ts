@@ -34,7 +34,7 @@ export const useRecipes = (householdId: string | null) => {
         setPrivateRecipes(householdRecipes || []);
       }
 
-      // Fetch public recipes from other households
+      // Fetch all public recipes
       const { data: publicRecipesData, error: publicError } = await supabase
         .from('recipes')
         .select(`
@@ -44,7 +44,6 @@ export const useRecipes = (householdId: string | null) => {
           recipe_steps (id, step_number, description)
         `)
         .eq('is_public', true)
-        .is('household_id', null)
         .order('created_at', { ascending: false });
 
       if (publicError) {
@@ -52,7 +51,13 @@ export const useRecipes = (householdId: string | null) => {
         throw publicError;
       }
       console.log("Public recipes fetched:", publicRecipesData);
-      setPublicRecipes(publicRecipesData || []);
+      
+      // Filter out recipes that are already in privateRecipes
+      const filteredPublicRecipes = publicRecipesData?.filter(recipe => 
+        !householdId || recipe.household_id !== householdId
+      ) || [];
+      
+      setPublicRecipes(filteredPublicRecipes);
     } catch (error) {
       console.error('Error fetching recipes:', error);
       toast({
