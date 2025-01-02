@@ -363,6 +363,7 @@ export type Database = {
           description: string | null
           household_id: string | null
           id: string
+          image_url: string | null
           is_public: boolean | null
           preparation_time: number | null
           servings: number
@@ -375,6 +376,7 @@ export type Database = {
           description?: string | null
           household_id?: string | null
           id?: string
+          image_url?: string | null
           is_public?: boolean | null
           preparation_time?: number | null
           servings: number
@@ -387,6 +389,7 @@ export type Database = {
           description?: string | null
           household_id?: string | null
           id?: string
+          image_url?: string | null
           is_public?: boolean | null
           preparation_time?: number | null
           servings?: number

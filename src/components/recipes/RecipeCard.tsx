@@ -13,6 +13,15 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
       className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => navigate(`/recipes/${recipe.id}`)}
     >
+      {recipe.image_url && (
+        <div className="relative w-full h-48 mb-4">
+          <img
+            src={recipe.image_url}
+            alt={recipe.title}
+            className="absolute inset-0 w-full h-full object-cover rounded-md"
+          />
+        </div>
+      )}
       <h3 className="font-semibold">{recipe.title}</h3>
       {recipe.description && (
         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{recipe.description}</p>

@@ -13,6 +13,7 @@ const RecipeDetails = () => {
   const { toast } = useToast();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
+  const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -44,6 +45,28 @@ const RecipeDetails = () => {
 
     fetchRecipe();
   }, [id, toast]);
+
+  useEffect(() => {
+    const checkEditPermissions = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && recipe) {
+        if (recipe.is_public) {
+          setCanEdit(recipe.created_by === session.user.id);
+        } else {
+          const { data: householdMember } = await supabase
+            .from('household_members')
+            .select('household_id')
+            .eq('user_id', session.user.id)
+            .eq('household_id', recipe.household_id)
+            .single();
+          
+          setCanEdit(!!householdMember);
+        }
+      }
+    };
+
+    checkEditPermissions();
+  }, [recipe]);
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this recipe?")) return;
@@ -105,22 +128,33 @@ const RecipeDetails = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate(`/recipes/${id}/edit`)}
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </Button>
-          </div>
+          {canEdit && (
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/recipes/${id}/edit`)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit
+              </Button>
+              <Button variant="destructive" onClick={handleDelete}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
+          {recipe.image_url && (
+            <div className="relative w-full h-64 mb-6">
+              <img
+                src={recipe.image_url}
+                alt={recipe.title}
+                className="absolute inset-0 w-full h-full object-cover rounded-md"
+              />
+            </div>
+          )}
           <h1 className="text-2xl font-bold mb-2">{recipe.title}</h1>
           <p className="text-gray-600 mb-4">{recipe.description}</p>
 
