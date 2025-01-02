@@ -2,7 +2,7 @@ import { Recipe } from "@/types/recipe";
 import { RecipeVisibility } from "./RecipeVisibility";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Clock, Users, ChefHat, Scale } from "lucide-react";
+import { Minus, Plus, Clock, Users, ChefHat, Scale, Tag } from "lucide-react";
 import { convertUnit, getAlternativeUnit, isMetricUnit, isImperialUnit } from "@/utils/unitConversion";
 import { cn } from "@/lib/utils";
 
@@ -73,15 +73,21 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
         <p className="text-gray-600 text-lg leading-relaxed">{recipe.description}</p>
         
         {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2">
-            {recipe.recipe_tags.map(({ tag }) => (
-              <span
-                key={tag}
-                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium"
-              >
-                {tag}
-              </span>
-            ))}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-gray-600">
+              <Tag className="h-4 w-4" />
+              <span className="text-sm font-medium">Tagger</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {recipe.recipe_tags.map(({ tag }) => (
+                <span
+                  key={tag}
+                  className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>

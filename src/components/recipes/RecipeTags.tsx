@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Tag } from "lucide-react";
 
 interface RecipeTagsProps {
   tags: string[];
@@ -117,6 +118,11 @@ export const RecipeTags = ({
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <Tag className="h-4 w-4" />
+        <h2 className="text-lg font-semibold">Kategoriser oppskriften</h2>
+      </div>
+      
       <Accordion type="single" collapsible className="w-full space-y-2">
         {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
           <AccordionItem key={key} value={key} className="border rounded-lg bg-white shadow-sm">
@@ -150,7 +156,7 @@ export const RecipeTags = ({
         {tags.map((tag) => (
           <span
             key={tag}
-            className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm flex items-center"
+            className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs font-medium"
           >
             {tag}
             <button

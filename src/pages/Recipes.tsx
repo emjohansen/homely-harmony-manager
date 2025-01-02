@@ -73,7 +73,7 @@ const Recipes = () => {
               <TabsTrigger value="public">Alle oppskrifter</TabsTrigger>
             </TabsList>
             <TabsContent value="private">
-              <div className="flex justify-end mb-4">
+              <div className="flex justify-end items-center gap-2 mb-4">
                 <Button
                   variant="outline"
                   size="sm"
@@ -97,7 +97,7 @@ const Recipes = () => {
               )}
             </TabsContent>
             <TabsContent value="public">
-              <div className="flex justify-end mb-4">
+              <div className="flex justify-end items-center gap-2 mb-4">
                 <Button
                   variant="outline"
                   size="sm"
