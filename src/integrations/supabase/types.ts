@@ -9,7 +9,760 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      chore_assignments: {
+        Row: {
+          chore_id: string
+          user_id: string
+        }
+        Insert: {
+          chore_id: string
+          user_id: string
+        }
+        Update: {
+          chore_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chore_assignments_chore_id_fkey"
+            columns: ["chore_id"]
+            isOneToOne: false
+            referencedRelation: "chores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chore_assignments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chore_completions: {
+        Row: {
+          chore_id: string | null
+          completed_at: string
+          completed_by: string | null
+          id: string
+        }
+        Insert: {
+          chore_id?: string | null
+          completed_at?: string
+          completed_by?: string | null
+          id?: string
+        }
+        Update: {
+          chore_id?: string | null
+          completed_at?: string
+          completed_by?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chore_completions_chore_id_fkey"
+            columns: ["chore_id"]
+            isOneToOne: false
+            referencedRelation: "chores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chore_completions_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chores: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          custom_frequency: string | null
+          description: string | null
+          frequency: string | null
+          household_id: string | null
+          id: string
+          is_recurring: boolean | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          custom_frequency?: string | null
+          description?: string | null
+          frequency?: string | null
+          household_id?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          custom_frequency?: string | null
+          description?: string | null
+          frequency?: string | null
+          household_id?: string | null
+          id?: string
+          is_recurring?: boolean | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chores_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chores_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      household_invites: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          household_id: string | null
+          id: string
+          invited_by: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          household_id?: string | null
+          id?: string
+          invited_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          household_id?: string | null
+          id?: string
+          invited_by?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_invites_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_invites_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      household_members: {
+        Row: {
+          household_id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          household_id: string
+          joined_at?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          household_id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_members_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      households: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "households_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      recipe_group_items: {
+        Row: {
+          group_id: string
+          recipe_id: string
+        }
+        Insert: {
+          group_id: string
+          recipe_id: string
+        }
+        Update: {
+          group_id?: string
+          recipe_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_group_items_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "recipe_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_group_items_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_groups: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_groups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_ingredients: {
+        Row: {
+          amount: number | null
+          id: string
+          ingredient: string
+          notes: string | null
+          recipe_id: string | null
+          unit: string | null
+        }
+        Insert: {
+          amount?: number | null
+          id?: string
+          ingredient: string
+          notes?: string | null
+          recipe_id?: string | null
+          unit?: string | null
+        }
+        Update: {
+          amount?: number | null
+          id?: string
+          ingredient?: string
+          notes?: string | null
+          recipe_id?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_steps: {
+        Row: {
+          description: string
+          id: string
+          recipe_id: string | null
+          step_number: number
+        }
+        Insert: {
+          description: string
+          id?: string
+          recipe_id?: string | null
+          step_number: number
+        }
+        Update: {
+          description?: string
+          id?: string
+          recipe_id?: string | null
+          step_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_steps_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipe_tags: {
+        Row: {
+          recipe_id: string
+          tag: string
+        }
+        Insert: {
+          recipe_id: string
+          tag: string
+        }
+        Update: {
+          recipe_id?: string
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_tags_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          household_id: string | null
+          id: string
+          is_approved: boolean | null
+          is_public: boolean | null
+          preparation_time: number | null
+          servings: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          household_id?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_public?: boolean | null
+          preparation_time?: number | null
+          servings: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          household_id?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_public?: boolean | null
+          preparation_time?: number | null
+          servings?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reminder_assignments: {
+        Row: {
+          reminder_id: string
+          user_id: string
+        }
+        Insert: {
+          reminder_id: string
+          user_id: string
+        }
+        Update: {
+          reminder_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_assignments_reminder_id_fkey"
+            columns: ["reminder_id"]
+            isOneToOne: false
+            referencedRelation: "reminders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reminder_assignments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reminders: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          household_id: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          household_id?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          household_id?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reminders_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_list_items: {
+        Row: {
+          added_at: string
+          added_by: string | null
+          id: string
+          is_checked: boolean | null
+          item: string
+          price: number | null
+          quantity: number | null
+          shopping_list_id: string | null
+          store: string | null
+          unit: string | null
+        }
+        Insert: {
+          added_at?: string
+          added_by?: string | null
+          id?: string
+          is_checked?: boolean | null
+          item: string
+          price?: number | null
+          quantity?: number | null
+          shopping_list_id?: string | null
+          store?: string | null
+          unit?: string | null
+        }
+        Update: {
+          added_at?: string
+          added_by?: string | null
+          id?: string
+          is_checked?: boolean | null
+          item?: string
+          price?: number | null
+          quantity?: number | null
+          shopping_list_id?: string | null
+          store?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_list_items_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_list_items_shopping_list_id_fkey"
+            columns: ["shopping_list_id"]
+            isOneToOne: false
+            referencedRelation: "shopping_lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_list_receipts: {
+        Row: {
+          id: string
+          image_url: string
+          shopping_list_id: string | null
+          uploaded_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          id?: string
+          image_url: string
+          shopping_list_id?: string | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          id?: string
+          image_url?: string
+          shopping_list_id?: string | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_list_receipts_shopping_list_id_fkey"
+            columns: ["shopping_list_id"]
+            isOneToOne: false
+            referencedRelation: "shopping_lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_list_receipts_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_lists: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          created_by: string | null
+          household_id: string | null
+          id: string
+          name: string
+          status: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          household_id?: string | null
+          id?: string
+          name: string
+          status?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          household_id?: string | null
+          id?: string
+          name?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_lists_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      storage_items: {
+        Row: {
+          added_by: string | null
+          description: string | null
+          id: string
+          name: string
+          storage_unit_id: string | null
+          stored_at: string
+          updated_at: string
+        }
+        Insert: {
+          added_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          storage_unit_id?: string | null
+          stored_at?: string
+          updated_at?: string
+        }
+        Update: {
+          added_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          storage_unit_id?: string | null
+          stored_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storage_items_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "storage_items_storage_unit_id_fkey"
+            columns: ["storage_unit_id"]
+            isOneToOne: false
+            referencedRelation: "storage_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      storage_units: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          household_id: string | null
+          id: string
+          name: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          household_id?: string | null
+          id?: string
+          name: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          household_id?: string | null
+          id?: string
+          name?: string
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storage_units_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "storage_units_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
