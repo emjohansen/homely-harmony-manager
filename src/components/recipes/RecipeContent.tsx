@@ -14,7 +14,7 @@ interface RecipeContentProps {
 
 export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeContentProps) => {
   const [currentServings, setCurrentServings] = useState(recipe.servings);
-  const [showAlternativeUnits, setShowAlternativeUnits] = useState(false); // Metric is default (false)
+  const [showAlternativeUnits, setShowAlternativeUnits] = useState(false);
 
   const handleServingsChange = (delta: number) => {
     const newServings = Math.max(1, currentServings + delta);
@@ -74,57 +74,51 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-4">
-          <Users className="h-6 w-6 text-gray-500" />
-          <div>
-            <p className="text-sm text-gray-500">Porsjoner</p>
-            <div className="flex items-center space-x-2 mt-1">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => handleServingsChange(-1)}
-                disabled={currentServings <= 1}
-                className="h-8 w-8"
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="text-lg font-medium w-8 text-center">{currentServings}</span>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => handleServingsChange(1)}
-                className="h-8 w-8"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-4">
-          <Clock className="h-6 w-6 text-gray-500" />
-          <div>
-            <p className="text-sm text-gray-500">Tilberedningstid</p>
-            <p className="text-lg font-medium">{recipe.preparation_time} min</p>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 rounded-lg p-4 flex items-center space-x-4">
-          <Scale className="h-6 w-6 text-gray-500" />
-          <div>
-            <p className="text-sm text-gray-500">Måleenheter</p>
+        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:shadow-lg transition-shadow">
+          <Users className="h-6 w-6 text-gray-500 mb-2" />
+          <p className="text-sm text-gray-500 mb-2">Porsjoner</p>
+          <div className="flex items-center space-x-2">
             <Button
               type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowAlternativeUnits(!showAlternativeUnits)}
-              className="text-sm font-medium hover:bg-gray-100"
+              variant="outline"
+              size="icon"
+              onClick={() => handleServingsChange(-1)}
+              disabled={currentServings <= 1}
+              className="h-8 w-8"
             >
-              {showAlternativeUnits ? "Vis metrisk" : "Vis amerikansk"}
+              <Minus className="h-4 w-4" />
+            </Button>
+            <span className="text-lg font-medium w-8 text-center">{currentServings}</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => handleServingsChange(1)}
+              className="h-8 w-8"
+            >
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:shadow-lg transition-shadow">
+          <Clock className="h-6 w-6 text-gray-500 mb-2" />
+          <p className="text-sm text-gray-500 mb-2">Tilberedningstid</p>
+          <p className="text-lg font-medium">{recipe.preparation_time} min</p>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:shadow-lg transition-shadow">
+          <Scale className="h-6 w-6 text-gray-500 mb-2" />
+          <p className="text-sm text-gray-500 mb-2">Måleenheter</p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAlternativeUnits(!showAlternativeUnits)}
+            className="text-sm font-medium hover:bg-gray-100"
+          >
+            {showAlternativeUnits ? "Vis metrisk" : "Vis amerikansk"}
+          </Button>
         </div>
       </div>
 
@@ -150,16 +144,16 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
             <ChefHat className="h-5 w-5" />
             Ingredienser
           </h2>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ul className="space-y-3">
             {recipe.recipe_ingredients.map((ingredient) => (
               <li 
                 key={ingredient.id} 
                 className={cn(
-                  "flex items-baseline p-2 rounded",
+                  "flex items-baseline p-3 rounded",
                   "hover:bg-gray-50 transition-colors duration-200"
                 )}
               >
-                <span className="font-medium text-gray-700 min-w-[100px]">
+                <span className="font-medium text-gray-700 min-w-[120px]">
                   {renderAmount(ingredient.amount, ingredient.unit)}
                 </span>
                 <span className="text-gray-600">{ingredient.ingredient}</span>
