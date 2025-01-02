@@ -2,6 +2,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface RecipeIngredientsProps {
   ingredients: Array<{ ingredient: string; amount: string; unit: string }>;
@@ -9,6 +16,28 @@ interface RecipeIngredientsProps {
   originalServings?: number;
   currentServings?: number;
 }
+
+const commonUnits = [
+  // Volume
+  { value: "dl", label: "Desiliter (dl)" },
+  { value: "l", label: "Liter (l)" },
+  { value: "ml", label: "Milliliter (ml)" },
+  { value: "ss", label: "Spiseskje (ss)" },
+  { value: "ts", label: "Teskje (ts)" },
+  { value: "kl", label: "Klype" },
+  // Weight
+  { value: "g", label: "Gram (g)" },
+  { value: "kg", label: "Kilogram (kg)" },
+  { value: "mg", label: "Milligram (mg)" },
+  // Count
+  { value: "stk", label: "Stykk" },
+  // Other
+  { value: "bunt", label: "Bunt" },
+  { value: "neve", label: "Neve" },
+  { value: "pakke", label: "Pakke" },
+  { value: "boks", label: "Boks" },
+  { value: "glass", label: "Glass" },
+];
 
 export const RecipeIngredients = ({ 
   ingredients, 
@@ -31,7 +60,6 @@ export const RecipeIngredients = ({
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount)) return amount;
     const adjustedAmount = (numericAmount * currentServings) / originalServings;
-    // Round to 2 decimal places only if the number has decimals
     return adjustedAmount % 1 === 0 ? adjustedAmount.toString() : adjustedAmount.toFixed(1);
   };
 
@@ -47,17 +75,27 @@ export const RecipeIngredients = ({
             onChange={(e) => handleIngredientChange(index, "ingredient", e.target.value)}
           />
           <Input
-            className="col-span-2"
+            className="col-span-1"
             placeholder="Mengde"
             value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
             onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
           />
-          <Input
-            className="col-span-1"
-            placeholder="Enhet"
-            value={ingredient.unit}
-            onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
-          />
+          <div className="col-span-2 relative">
+            <Input
+              placeholder="Enhet"
+              value={ingredient.unit}
+              onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
+              list={`units-${index}`}
+              className="w-full"
+            />
+            <datalist id={`units-${index}`}>
+              {commonUnits.map((unit) => (
+                <option key={unit.value} value={unit.value}>
+                  {unit.label}
+                </option>
+              ))}
+            </datalist>
+          </div>
         </div>
       ))}
       <Button
