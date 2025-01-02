@@ -30,13 +30,6 @@ export type Database = {
             referencedRelation: "chores"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "chore_assignments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       chore_completions: {
@@ -64,13 +57,6 @@ export type Database = {
             columns: ["chore_id"]
             isOneToOne: false
             referencedRelation: "chores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chore_completions_completed_by_fkey"
-            columns: ["completed_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -109,67 +95,7 @@ export type Database = {
           is_recurring?: boolean | null
           title?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "chores_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chores_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      household_invites: {
-        Row: {
-          created_at: string
-          email: string
-          expires_at: string
-          household_id: string | null
-          id: string
-          invited_by: string | null
-          status: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          expires_at?: string
-          household_id?: string | null
-          id?: string
-          invited_by?: string | null
-          status?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          expires_at?: string
-          household_id?: string | null
-          id?: string
-          invited_by?: string | null
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "household_invites_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "household_invites_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       household_members: {
         Row: {
@@ -210,19 +136,19 @@ export type Database = {
       households: {
         Row: {
           created_at: string
-          created_by: string
+          created_by: string | null
           id: string
           name: string
         }
         Insert: {
           created_at?: string
-          created_by: string
+          created_by?: string | null
           id?: string
           name: string
         }
         Update: {
           created_at?: string
-          created_by?: string
+          created_by?: string | null
           id?: string
           name?: string
         }
@@ -281,13 +207,6 @@ export type Database = {
             referencedRelation: "recipe_groups"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "recipe_group_items_recipe_id_fkey"
-            columns: ["recipe_id"]
-            isOneToOne: false
-            referencedRelation: "recipes"
-            referencedColumns: ["id"]
-          },
         ]
       }
       recipe_groups: {
@@ -309,22 +228,13 @@ export type Database = {
           id?: string
           name?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "recipe_groups_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       recipe_ingredients: {
         Row: {
           amount: number | null
           id: string
           ingredient: string
-          notes: string | null
           recipe_id: string | null
           unit: string | null
         }
@@ -332,7 +242,6 @@ export type Database = {
           amount?: number | null
           id?: string
           ingredient: string
-          notes?: string | null
           recipe_id?: string | null
           unit?: string | null
         }
@@ -340,7 +249,6 @@ export type Database = {
           amount?: number | null
           id?: string
           ingredient?: string
-          notes?: string | null
           recipe_id?: string | null
           unit?: string | null
         }
@@ -413,7 +321,6 @@ export type Database = {
           description: string | null
           household_id: string | null
           id: string
-          is_approved: boolean | null
           is_public: boolean | null
           preparation_time: number | null
           servings: number
@@ -426,7 +333,6 @@ export type Database = {
           description?: string | null
           household_id?: string | null
           id?: string
-          is_approved?: boolean | null
           is_public?: boolean | null
           preparation_time?: number | null
           servings: number
@@ -439,7 +345,6 @@ export type Database = {
           description?: string | null
           household_id?: string | null
           id?: string
-          is_approved?: boolean | null
           is_public?: boolean | null
           preparation_time?: number | null
           servings?: number
@@ -484,13 +389,6 @@ export type Database = {
             referencedRelation: "reminders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "reminder_assignments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       reminders: {
@@ -521,22 +419,7 @@ export type Database = {
           id?: string
           title?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "reminders_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reminders_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       shopping_list_items: {
         Row: {
@@ -577,13 +460,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "shopping_list_items_added_by_fkey"
-            columns: ["added_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "shopping_list_items_shopping_list_id_fkey"
             columns: ["shopping_list_id"]
             isOneToOne: false
@@ -622,13 +498,6 @@ export type Database = {
             referencedRelation: "shopping_lists"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "shopping_list_receipts_uploaded_by_fkey"
-            columns: ["uploaded_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       shopping_lists: {
@@ -659,22 +528,7 @@ export type Database = {
           name?: string
           status?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "shopping_lists_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shopping_lists_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       storage_items: {
         Row: {
@@ -705,13 +559,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "storage_items_added_by_fkey"
-            columns: ["added_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "storage_items_storage_unit_id_fkey"
             columns: ["storage_unit_id"]
@@ -746,22 +593,7 @@ export type Database = {
           name?: string
           type?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "storage_units_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "storage_units_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
