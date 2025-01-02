@@ -6,15 +6,16 @@ import { Plus, Shuffle } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RecipeList } from "@/components/recipes/RecipeList";
+import { useRecipes } from "@/hooks/use-recipes";
 import type { Recipe } from "@/types/recipe";
 
 const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [privateRecipes, setPrivateRecipes] = useState<Recipe[]>([]);
-  const [publicRecipes, setPublicRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
+  
+  const { privateRecipes, publicRecipes, loading } = useRecipes(currentHouseholdId);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -29,62 +30,15 @@ const Recipes = () => {
           .eq('user_id', session.user.id)
           .single();
 
+        console.log("Current household member:", householdMember);
         if (householdMember) {
           setCurrentHouseholdId(householdMember.household_id);
-          fetchRecipes(householdMember.household_id);
-        } else {
-          fetchRecipes(null);
         }
       }
     };
     
     checkUser();
   }, [navigate]);
-
-  const fetchRecipes = async (householdId: string | null) => {
-    try {
-      // Fetch private (household) recipes
-      if (householdId) {
-        const { data: privateRecipesData, error: privateError } = await supabase
-          .from('recipes')
-          .select(`
-            *,
-            recipe_tags (tag),
-            recipe_ingredients (id, ingredient, amount, unit),
-            recipe_steps (id, step_number, description)
-          `)
-          .eq('household_id', householdId)
-          .order('created_at', { ascending: false });
-
-        if (privateError) throw privateError;
-        setPrivateRecipes(privateRecipesData || []);
-      }
-
-      // Fetch public recipes
-      const { data: publicRecipesData, error: publicError } = await supabase
-        .from('recipes')
-        .select(`
-          *,
-          recipe_tags (tag),
-          recipe_ingredients (id, ingredient, amount, unit),
-          recipe_steps (id, step_number, description)
-        `)
-        .eq('is_public', true)
-        .order('created_at', { ascending: false });
-
-      if (publicError) throw publicError;
-      setPublicRecipes(publicRecipesData || []);
-    } catch (error) {
-      console.error('Error fetching recipes:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load recipes",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getRandomRecipe = (recipes: Recipe[]) => {
     if (recipes.length === 0) {
@@ -97,33 +51,6 @@ const Recipes = () => {
     const randomIndex = Math.floor(Math.random() * recipes.length);
     navigate(`/recipes/${recipes[randomIndex].id}`);
   };
-
-  const RecipeList = ({ recipes }: { recipes: Recipe[] }) => (
-    <div className="grid gap-4">
-      {recipes.map((recipe) => (
-        <div
-          key={recipe.id}
-          className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate(`/recipes/${recipe.id}`)}
-        >
-          <h3 className="font-semibold">{recipe.title}</h3>
-          <p className="text-sm text-gray-500 mt-1">
-            {recipe.preparation_time} mins • {recipe.servings} servings
-          </p>
-          <div className="flex flex-wrap gap-1 mt-2">
-            {recipe.recipe_tags?.map(({ tag }) => (
-              <span
-                key={tag}
-                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
