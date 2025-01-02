@@ -7,7 +7,6 @@ export interface Recipe {
   servings: number;
   preparation_time: number | null;
   is_public: boolean;
-  is_approved: boolean;
   created_at: string;
   updated_at: string;
   recipe_tags?: { tag: string }[];

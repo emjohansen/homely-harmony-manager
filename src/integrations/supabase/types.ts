@@ -97,6 +97,48 @@ export type Database = {
         }
         Relationships: []
       }
+      household_invites: {
+        Row: {
+          created_at: string
+          email: string
+          household_id: string | null
+          id: string
+          invited_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          household_id?: string | null
+          id?: string
+          invited_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          household_id?: string | null
+          id?: string
+          invited_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_invites_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_invites_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       household_members: {
         Row: {
           household_id: string
