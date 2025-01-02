@@ -3,11 +3,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Settings from "./components/Settings";
+import Navigation from "./components/Navigation";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Recipes from "./pages/Recipes";
 import NewRecipe from "./pages/NewRecipe";
+import Settings from "./pages/Settings";
 import "./i18n/config";
 
 const queryClient = new QueryClient();
@@ -16,9 +17,6 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <div className="min-h-screen">
-        <div className="fixed top-4 right-4 z-50">
-          <Settings />
-        </div>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -31,7 +29,9 @@ const App = () => (
             <Route path="/reminders" element={<Dashboard />} />
             <Route path="/chores" element={<Dashboard />} />
             <Route path="/storage" element={<Dashboard />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
+          <Navigation />
         </BrowserRouter>
       </div>
     </TooltipProvider>

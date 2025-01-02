@@ -1,4 +1,4 @@
-import { House, ShoppingCart, CalendarClock, ClipboardList, Refrigerator } from "lucide-react";
+import { Utensils, ShoppingCart, CalendarClock, ClipboardList, Refrigerator, Settings } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +19,7 @@ const Navigation = () => {
               isActive("/recipes") ? "text-blue-600" : "text-gray-600"
             }`}
           >
-            <House className="h-6 w-6" />
+            <Utensils className="h-6 w-6" />
             <span className="text-xs mt-1">{t('navigation.recipes')}</span>
           </button>
           <button
@@ -57,6 +57,15 @@ const Navigation = () => {
           >
             <Refrigerator className="h-6 w-6" />
             <span className="text-xs mt-1">{t('navigation.storage')}</span>
+          </button>
+          <button
+            onClick={() => navigate("/settings")}
+            className={`flex flex-col items-center p-2 ${
+              isActive("/settings") ? "text-blue-600" : "text-gray-600"
+            }`}
+          >
+            <Settings className="h-6 w-6" />
+            <span className="text-xs mt-1">{t('navigation.settings')}</span>
           </button>
         </div>
       </div>
