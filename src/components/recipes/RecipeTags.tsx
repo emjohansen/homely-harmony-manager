@@ -1,14 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface RecipeTagsProps {
   tags: string[];
@@ -29,15 +22,71 @@ const TAG_CATEGORIES = {
   },
   allergens: {
     label: "Allergener",
-    options: ["Glutenfri", "Laktosefri", "Nøttefri", "Eggfri", "Vegansk", "Vegetarisk"]
+    options: [
+      "Glutenfri", 
+      "Laktosefri", 
+      "Nøttefri", 
+      "Eggfri", 
+      "Soyafri",
+      "Melkefri",
+      "Sesamfri",
+      "Skalldyrfri",
+      "Fiskefri",
+      "Sellerfri",
+      "Sennepfri",
+      "Sulfittfri"
+    ]
   },
   meatType: {
     label: "Kjøtttype",
-    options: ["Kylling", "Storfe", "Svin", "Lam", "Fisk", "Skalldyr"]
+    options: [
+      "Kylling", 
+      "Kalkun",
+      "Storfe", 
+      "Svin", 
+      "Lam", 
+      "Fisk", 
+      "Skalldyr",
+      "Vilt",
+      "And"
+    ]
+  },
+  dietType: {
+    label: "Kosthold",
+    options: [
+      "Vegansk",
+      "Vegetarisk",
+      "Pescetariansk",
+      "Ketogen",
+      "Lavkarbo",
+      "Paleo"
+    ]
   },
   misc: {
     label: "Annet",
-    options: ["Sunn", "Rask", "Budsjettvennlig", "Festmat", "Tradisjonell", "Internasjonal"]
+    options: [
+      "Sunn", 
+      "Rask", 
+      "Budsjettvennlig", 
+      "Festmat", 
+      "Tradisjonell", 
+      "Internasjonal",
+      "Grillet",
+      "Bakt",
+      "Kokt",
+      "Stekt",
+      "Dampet",
+      "Fersk",
+      "Sesongbasert",
+      "Barnevennlig",
+      "Frossen",
+      "Matlaging i bulk",
+      "Lite oppvask",
+      "En-potte rett",
+      "Slow cooker",
+      "Airfryer",
+      "Matpakke"
+    ]
   }
 };
 
@@ -52,37 +101,42 @@ export const RecipeTags = ({
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  const handleSelectTag = (category: string, value: string) => {
-    if (!tags.includes(value)) {
-      setTags([...tags, value]);
+  const handleToggleTag = (tag: string) => {
+    if (tags.includes(tag)) {
+      handleRemoveTag(tag);
+    } else {
+      setTags([...tags, tag]);
     }
   };
 
   return (
     <div className="space-y-4">
-      <Label>Tagger</Label>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-          <div key={key} className="space-y-2">
-            <Label className="text-sm text-gray-500">{category.label}</Label>
-            <Select onValueChange={(value) => handleSelectTag(key, value)}>
-              <SelectTrigger>
-                <SelectValue placeholder={`Velg ${category.label.toLowerCase()}`} />
-              </SelectTrigger>
-              <SelectContent>
-                {category.options.map((option) => (
-                  <SelectItem key={option} value={option}>
+          <div key={key} className="p-4 border rounded-lg bg-white shadow-sm">
+            <Label className="text-sm font-semibold mb-2">{category.label}</Label>
+            <div className="space-y-2">
+              {category.options.map((option) => (
+                <div key={option} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`${key}-${option}`}
+                    checked={tags.includes(option)}
+                    onCheckedChange={() => handleToggleTag(option)}
+                  />
+                  <label
+                    htmlFor={`${key}-${option}`}
+                    className="text-sm cursor-pointer"
+                  >
                     {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-2">
+      <div className="flex flex-wrap gap-2 mt-4">
         {tags.map((tag) => (
           <span
             key={tag}
