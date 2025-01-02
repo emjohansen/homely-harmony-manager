@@ -14,19 +14,24 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
       onClick={() => navigate(`/recipes/${recipe.id}`)}
     >
       <h3 className="font-semibold">{recipe.title}</h3>
-      <p className="text-sm text-gray-500 mt-1">
+      {recipe.description && (
+        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{recipe.description}</p>
+      )}
+      <p className="text-sm text-gray-500 mt-2">
         {recipe.preparation_time} mins • {recipe.servings} servings
       </p>
-      <div className="flex flex-wrap gap-1 mt-2">
-        {recipe.recipe_tags?.map(({ tag }) => (
-          <span
-            key={tag}
-            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+      {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {recipe.recipe_tags.map(({ tag }) => (
+            <span
+              key={tag}
+              className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
