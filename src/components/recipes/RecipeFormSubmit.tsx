@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface RecipeFormSubmitProps {
   mode: 'create' | 'edit';
@@ -11,19 +11,36 @@ interface RecipeFormSubmitProps {
     description: string;
     servings: number;
     prepTime: number;
-    isPublic: boolean;
-    imageUrl: string | null;
     tags: string[];
     ingredients: { ingredient: string; amount: string; unit: string }[];
     steps: { description: string }[];
   };
-  currentHouseholdId: string | null;
 }
 
-export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }: RecipeFormSubmitProps) => {
+export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHouseholdId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: householdMember } = await supabase
+          .from('household_members')
+          .select('household_id')
+          .eq('user_id', session.user.id)
+          .single();
+
+        if (householdMember) {
+          setCurrentHouseholdId(householdMember.household_id);
+        }
+      }
+    };
+
+    fetchHouseholdId();
+  }, []);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +76,8 @@ export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }
         description: formData.description,
         servings: formData.servings,
         preparation_time: formData.prepTime,
-        is_public: formData.isPublic,
         created_by: session.user.id,
         household_id: currentHouseholdId,
-        image_url: formData.imageUrl
       };
 
       if (mode === 'create') {

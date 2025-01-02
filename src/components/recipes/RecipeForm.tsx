@@ -4,8 +4,6 @@ import { RecipeBasicInfo } from "./RecipeBasicInfo";
 import { RecipeTags } from "./RecipeTags";
 import { RecipeIngredients } from "./RecipeIngredients";
 import { RecipeSteps } from "./RecipeSteps";
-import { RecipeVisibility } from "./RecipeVisibility";
-import { RecipeImageUpload } from "./RecipeImageUpload";
 import { useRecipeSubmit } from "./RecipeFormSubmit";
 import { Loader2 } from "lucide-react";
 
@@ -16,15 +14,11 @@ interface RecipeFormProps {
 }
 
 export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => {
-  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
-
   // Form state
   const [title, setTitle] = useState(initialData?.title || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [servings, setServings] = useState(initialData?.servings || 4);
   const [prepTime, setPrepTime] = useState(initialData?.preparation_time || 30);
-  const [isPublic, setIsPublic] = useState(initialData?.is_public ?? true);
-  const [imageUrl, setImageUrl] = useState(initialData?.image_url || null);
   const [tags, setTags] = useState<string[]>(initialData?.recipe_tags?.map((t: any) => t.tag) || []);
   const [newTag, setNewTag] = useState("");
   const [ingredients, setIngredients] = useState(
@@ -39,8 +33,6 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
     description,
     servings,
     prepTime,
-    isPublic,
-    imageUrl,
     tags,
     ingredients,
     steps
@@ -49,17 +41,11 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
   const { handleSubmit, isSubmitting } = useRecipeSubmit({ 
     mode, 
     recipeId, 
-    formData, 
-    currentHouseholdId 
+    formData
   });
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <RecipeImageUpload
-        imageUrl={imageUrl}
-        onImageUpload={setImageUrl}
-      />
-
       <RecipeBasicInfo
         title={title}
         setTitle={setTitle}
@@ -69,11 +55,6 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
         setServings={setServings}
         prepTime={prepTime}
         setPrepTime={setPrepTime}
-      />
-
-      <RecipeVisibility
-        isPublic={isPublic}
-        setIsPublic={setIsPublic}
       />
 
       <RecipeTags
