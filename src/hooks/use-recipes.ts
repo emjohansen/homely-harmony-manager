@@ -14,7 +14,7 @@ export const useRecipes = (householdId: string | null) => {
       console.log("Fetching recipes for household:", householdId);
       
       if (householdId) {
-        // Fetch household recipes (both private and public)
+        // Fetch all household recipes
         const { data: householdRecipes, error: privateError } = await supabase
           .from('recipes')
           .select(`
@@ -32,32 +32,45 @@ export const useRecipes = (householdId: string | null) => {
         }
         console.log("Household recipes fetched:", householdRecipes);
         setPrivateRecipes(householdRecipes || []);
-      }
 
-      // Fetch all public recipes
-      const { data: publicRecipesData, error: publicError } = await supabase
-        .from('recipes')
-        .select(`
-          *,
-          recipe_tags (tag),
-          recipe_ingredients (id, ingredient, amount, unit),
-          recipe_steps (id, step_number, description)
-        `)
-        .eq('is_public', true)
-        .order('created_at', { ascending: false });
+        // Set public recipes - include all public recipes from any household
+        const { data: allPublicRecipes, error: publicError } = await supabase
+          .from('recipes')
+          .select(`
+            *,
+            recipe_tags (tag),
+            recipe_ingredients (id, ingredient, amount, unit),
+            recipe_steps (id, step_number, description)
+          `)
+          .eq('is_public', true)
+          .order('created_at', { ascending: false });
 
-      if (publicError) {
-        console.error('Error fetching public recipes:', publicError);
-        throw publicError;
+        if (publicError) {
+          console.error('Error fetching public recipes:', publicError);
+          throw publicError;
+        }
+        console.log("Public recipes fetched:", allPublicRecipes);
+        setPublicRecipes(allPublicRecipes || []);
+      } else {
+        // If no household, only show public recipes
+        const { data: publicRecipesData, error: publicError } = await supabase
+          .from('recipes')
+          .select(`
+            *,
+            recipe_tags (tag),
+            recipe_ingredients (id, ingredient, amount, unit),
+            recipe_steps (id, step_number, description)
+          `)
+          .eq('is_public', true)
+          .order('created_at', { ascending: false });
+
+        if (publicError) {
+          console.error('Error fetching public recipes:', publicError);
+          throw publicError;
+        }
+        setPublicRecipes(publicRecipesData || []);
+        setPrivateRecipes([]);
       }
-      console.log("Public recipes fetched:", publicRecipesData);
-      
-      // Filter out recipes that are already in privateRecipes
-      const filteredPublicRecipes = publicRecipesData?.filter(recipe => 
-        !householdId || recipe.household_id !== householdId
-      ) || [];
-      
-      setPublicRecipes(filteredPublicRecipes);
     } catch (error) {
       console.error('Error fetching recipes:', error);
       toast({
