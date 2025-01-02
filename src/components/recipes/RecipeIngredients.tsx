@@ -2,13 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface RecipeIngredientsProps {
   ingredients: Array<{ ingredient: string; amount: string; unit: string }>;
@@ -18,25 +11,39 @@ interface RecipeIngredientsProps {
 }
 
 const commonUnits = [
-  // Volume
+  // Metric Volume
   { value: "dl", label: "Desiliter (dl)" },
   { value: "l", label: "Liter (l)" },
   { value: "ml", label: "Milliliter (ml)" },
   { value: "ss", label: "Spiseskje (ss)" },
   { value: "ts", label: "Teskje (ts)" },
   { value: "kl", label: "Klype" },
-  // Weight
+  // US Volume
+  { value: "cup", label: "Cup" },
+  { value: "tbsp", label: "Tablespoon" },
+  { value: "tsp", label: "Teaspoon" },
+  { value: "fl oz", label: "Fluid Ounce" },
+  { value: "qt", label: "Quart" },
+  { value: "gal", label: "Gallon" },
+  { value: "pt", label: "Pint" },
+  // Metric Weight
   { value: "g", label: "Gram (g)" },
   { value: "kg", label: "Kilogram (kg)" },
   { value: "mg", label: "Milligram (mg)" },
+  // US Weight
+  { value: "oz", label: "Ounce" },
+  { value: "lb", label: "Pound" },
   // Count
   { value: "stk", label: "Stykk" },
+  { value: "pc", label: "Piece" },
   // Other
   { value: "bunt", label: "Bunt" },
   { value: "neve", label: "Neve" },
   { value: "pakke", label: "Pakke" },
   { value: "boks", label: "Boks" },
   { value: "glass", label: "Glass" },
+  { value: "pinch", label: "Pinch" },
+  { value: "dash", label: "Dash" },
 ];
 
 export const RecipeIngredients = ({ 

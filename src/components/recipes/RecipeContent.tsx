@@ -3,6 +3,7 @@ import { RecipeVisibility } from "./RecipeVisibility";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
+import { convertUnit, getAlternativeUnit } from "@/utils/unitConversion";
 
 interface RecipeContentProps {
   recipe: Recipe;
@@ -12,6 +13,7 @@ interface RecipeContentProps {
 
 export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeContentProps) => {
   const [currentServings, setCurrentServings] = useState(recipe.servings);
+  const [showAlternativeUnits, setShowAlternativeUnits] = useState(false);
 
   const handleServingsChange = (delta: number) => {
     const newServings = Math.max(1, currentServings + delta);
@@ -22,6 +24,23 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
     if (!amount || !recipe.servings) return amount;
     const adjustedAmount = (amount * currentServings) / recipe.servings;
     return adjustedAmount % 1 === 0 ? adjustedAmount.toString() : adjustedAmount.toFixed(1);
+  };
+
+  const renderAmount = (amount: number | null, unit: string | null) => {
+    if (!amount || !unit) return `${amount || ''} ${unit || ''}`;
+    
+    const adjustedAmount = calculateAdjustedAmount(amount);
+    const alternativeUnit = getAlternativeUnit(unit);
+    
+    if (!alternativeUnit) return `${adjustedAmount} ${unit}`;
+
+    const convertedAmount = convertUnit(parseFloat(adjustedAmount), unit, alternativeUnit);
+    
+    if (convertedAmount === null) return `${adjustedAmount} ${unit}`;
+
+    return showAlternativeUnits
+      ? `${Number(convertedAmount).toFixed(1)} ${alternativeUnit}`
+      : `${adjustedAmount} ${unit}`;
   };
 
   return (
@@ -76,6 +95,18 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
           <span className="text-sm text-gray-500">Tilberedningstid</span>
           <p className="font-medium">{recipe.preparation_time} mins</p>
         </div>
+        <div>
+          <span className="text-sm text-gray-500">Måleenheter</span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAlternativeUnits(!showAlternativeUnits)}
+            className="ml-2"
+          >
+            {showAlternativeUnits ? "Vis metrisk" : "Vis amerikansk"}
+          </Button>
+        </div>
       </div>
 
       {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
@@ -101,7 +132,7 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
             {recipe.recipe_ingredients.map((ingredient) => (
               <li key={ingredient.id} className="flex items-baseline">
                 <span className="font-medium mr-2">
-                  {calculateAdjustedAmount(ingredient.amount)} {ingredient.unit}
+                  {renderAmount(ingredient.amount, ingredient.unit)}
                 </span>
                 <span>{ingredient.ingredient}</span>
               </li>
