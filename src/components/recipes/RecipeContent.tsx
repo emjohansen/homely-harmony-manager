@@ -71,10 +71,23 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
       <div className="space-y-4">
         <h1 className="text-3xl font-bold text-gray-800">{recipe.title}</h1>
         <p className="text-gray-600 text-lg leading-relaxed">{recipe.description}</p>
+        
+        {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            {recipe.recipe_tags.map(({ tag }) => (
+              <span
+                key={tag}
+                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:shadow-lg transition-shadow">
+        <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-200 hover:border-gray-300 transition-all">
           <Users className="h-6 w-6 text-gray-500 mb-2" />
           <p className="text-sm text-gray-500 mb-2">Porsjoner</p>
           <div className="flex items-center space-x-2">
@@ -101,13 +114,13 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
           </div>
         </div>
 
-        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:shadow-lg transition-shadow">
+        <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-200 hover:border-gray-300 transition-all">
           <Clock className="h-6 w-6 text-gray-500 mb-2" />
           <p className="text-sm text-gray-500 mb-2">Tilberedningstid</p>
           <p className="text-lg font-medium">{recipe.preparation_time} min</p>
         </div>
 
-        <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-100 hover:shadow-lg transition-shadow">
+        <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center border border-gray-200 hover:border-gray-300 transition-all">
           <Scale className="h-6 w-6 text-gray-500 mb-2" />
           <p className="text-sm text-gray-500 mb-2">Måleenheter</p>
           <Button
@@ -121,22 +134,6 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
           </Button>
         </div>
       </div>
-
-      {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold text-gray-800">Tags</h2>
-          <div className="flex flex-wrap gap-2">
-            {recipe.recipe_tags.map(({ tag }) => (
-              <span
-                key={tag}
-                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
 
       {recipe.recipe_ingredients && recipe.recipe_ingredients.length > 0 && (
         <div className="space-y-4">

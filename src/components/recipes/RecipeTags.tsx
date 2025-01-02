@@ -1,6 +1,14 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface RecipeTagsProps {
   tags: string[];
@@ -9,6 +17,29 @@ interface RecipeTagsProps {
   setNewTag: (tag: string) => void;
   handleAddTag: (e: React.KeyboardEvent) => void;
 }
+
+const TAG_CATEGORIES = {
+  mealType: {
+    label: "Måltidstype",
+    options: ["Frokost", "Lunsj", "Middag", "Dessert", "Snacks", "Drikke"]
+  },
+  difficulty: {
+    label: "Vanskelighetsgrad",
+    options: ["Enkel", "Middels", "Avansert"]
+  },
+  allergens: {
+    label: "Allergener",
+    options: ["Glutenfri", "Laktosefri", "Nøttefri", "Eggfri", "Vegansk", "Vegetarisk"]
+  },
+  meatType: {
+    label: "Kjøtttype",
+    options: ["Kylling", "Storfe", "Svin", "Lam", "Fisk", "Skalldyr"]
+  },
+  misc: {
+    label: "Annet",
+    options: ["Sunn", "Rask", "Budsjettvennlig", "Festmat", "Tradisjonell", "Internasjonal"]
+  }
+};
 
 export const RecipeTags = ({
   tags,
@@ -21,9 +52,36 @@ export const RecipeTags = ({
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
+  const handleSelectTag = (category: string, value: string) => {
+    if (!tags.includes(value)) {
+      setTags([...tags, value]);
+    }
+  };
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <Label>Tagger</Label>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
+          <div key={key} className="space-y-2">
+            <Label className="text-sm text-gray-500">{category.label}</Label>
+            <Select onValueChange={(value) => handleSelectTag(key, value)}>
+              <SelectTrigger>
+                <SelectValue placeholder={`Velg ${category.label.toLowerCase()}`} />
+              </SelectTrigger>
+              <SelectContent>
+                {category.options.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+      </div>
+
       <div className="flex flex-wrap gap-2 mb-2">
         {tags.map((tag) => (
           <span
@@ -41,12 +99,15 @@ export const RecipeTags = ({
           </span>
         ))}
       </div>
-      <Input
-        placeholder="Skriv en tagg og trykk Enter"
-        value={newTag}
-        onChange={(e) => setNewTag(e.target.value)}
-        onKeyDown={handleAddTag}
-      />
+
+      <div className="flex gap-2">
+        <Input
+          placeholder="Eller skriv en egen tagg og trykk Enter"
+          value={newTag}
+          onChange={(e) => setNewTag(e.target.value)}
+          onKeyDown={handleAddTag}
+        />
+      </div>
     </div>
   );
 };
