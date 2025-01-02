@@ -50,6 +50,21 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
     if (isSubmitting) return;
     
     try {
+      // Validate ingredient amounts
+      const invalidIngredients = formData.ingredients.filter(ing => {
+        if (!ing.amount) return false; // Empty amount is ok
+        return isNaN(parseFloat(ing.amount));
+      });
+
+      if (invalidIngredients.length > 0) {
+        toast({
+          title: "Ugyldig mengde",
+          description: "Alle mengder må være tall",
+          variant: "destructive",
+        });
+        return;
+      }
+
       setIsSubmitting(true);
       const { data: { session } } = await supabase.auth.getSession();
       

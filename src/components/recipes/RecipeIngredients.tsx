@@ -18,14 +18,7 @@ export const RecipeIngredients = ({
 }: RecipeIngredientsProps) => {
   const handleIngredientChange = (index: number, field: keyof typeof ingredients[0], value: string) => {
     const newIngredients = [...ingredients];
-    if (field === 'amount') {
-      // Allow only numbers and decimal point
-      if (value === '' || /^\d*\.?\d*$/.test(value)) {
-        newIngredients[index][field] = value;
-      }
-    } else {
-      newIngredients[index][field] = value;
-    }
+    newIngredients[index][field] = value;
     setIngredients(newIngredients);
   };
 
