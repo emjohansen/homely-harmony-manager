@@ -2,6 +2,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface RecipeTagsProps {
   tags: string[];
@@ -111,30 +117,34 @@ export const RecipeTags = ({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Accordion type="single" collapsible className="w-full space-y-2">
         {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-          <div key={key} className="p-4 border rounded-lg bg-white shadow-sm">
-            <Label className="text-sm font-semibold mb-2">{category.label}</Label>
-            <div className="space-y-2">
-              {category.options.map((option) => (
-                <div key={option} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`${key}-${option}`}
-                    checked={tags.includes(option)}
-                    onCheckedChange={() => handleToggleTag(option)}
-                  />
-                  <label
-                    htmlFor={`${key}-${option}`}
-                    className="text-sm cursor-pointer"
-                  >
-                    {option}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
+          <AccordionItem key={key} value={key} className="border rounded-lg bg-white shadow-sm">
+            <AccordionTrigger className="px-4">
+              <span className="text-sm font-semibold">{category.label}</span>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <div className="grid grid-cols-2 gap-2">
+                {category.options.map((option) => (
+                  <div key={option} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`${key}-${option}`}
+                      checked={tags.includes(option)}
+                      onCheckedChange={() => handleToggleTag(option)}
+                    />
+                    <label
+                      htmlFor={`${key}-${option}`}
+                      className="text-sm cursor-pointer"
+                    >
+                      {option}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
 
       <div className="flex flex-wrap gap-2 mt-4">
         {tags.map((tag) => (
