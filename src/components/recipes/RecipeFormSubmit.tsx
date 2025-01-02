@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useRecipeOperations } from "@/hooks/use-recipe-operations";
 
 interface RecipeFormSubmitProps {
   mode: 'create' | 'edit';
@@ -11,6 +12,7 @@ interface RecipeFormSubmitProps {
     description: string;
     servings: number;
     prepTime: number;
+    isPublic: boolean;
     tags: string[];
     ingredients: { ingredient: string; amount: string; unit: string }[];
     steps: { description: string }[];
@@ -22,6 +24,7 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
+  const recipeOperations = useRecipeOperations();
 
   useEffect(() => {
     const fetchHouseholdId = async () => {
@@ -31,7 +34,7 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
           .from('household_members')
           .select('household_id')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (householdMember) {
           setCurrentHouseholdId(householdMember.household_id);
@@ -44,7 +47,6 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (isSubmitting) return;
     
     try {
@@ -76,6 +78,7 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
         description: formData.description,
         servings: formData.servings,
         preparation_time: formData.prepTime,
+        is_public: formData.isPublic,
         created_by: session.user.id,
         household_id: currentHouseholdId,
       };
@@ -94,46 +97,11 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
 
         console.log("Recipe created:", recipe);
 
-        // Insert related data
-        const promises = [];
-
-        if (formData.tags.length > 0) {
-          promises.push(
-            supabase
-              .from("recipe_tags")
-              .insert(formData.tags.map(tag => ({
-                recipe_id: recipe.id,
-                tag
-              })))
-          );
-        }
-
-        if (formData.ingredients.filter(i => i.ingredient.trim()).length > 0) {
-          promises.push(
-            supabase
-              .from("recipe_ingredients")
-              .insert(formData.ingredients.filter(i => i.ingredient.trim()).map(i => ({
-                recipe_id: recipe.id,
-                ingredient: i.ingredient,
-                amount: i.amount ? parseFloat(i.amount) : null,
-                unit: i.unit || null
-              })))
-          );
-        }
-
-        if (formData.steps.filter(s => s.description.trim()).length > 0) {
-          promises.push(
-            supabase
-              .from("recipe_steps")
-              .insert(formData.steps.filter(s => s.description.trim()).map((s, index) => ({
-                recipe_id: recipe.id,
-                step_number: index + 1,
-                description: s.description
-              })))
-          );
-        }
-
-        await Promise.all(promises);
+        await Promise.all([
+          recipeOperations.insertRecipeTags(recipe.id, formData.tags),
+          recipeOperations.insertRecipeIngredients(recipe.id, formData.ingredients),
+          recipeOperations.insertRecipeSteps(recipe.id, formData.steps)
+        ]);
 
         toast({
           title: "Suksess",
@@ -141,7 +109,8 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
         });
         navigate("/recipes");
       } else {
-        // Update recipe
+        if (!recipeId) return;
+
         const { error: recipeError } = await supabase
           .from("recipes")
           .update(recipeData)
@@ -152,38 +121,12 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
           throw recipeError;
         }
 
-        // Update related data
-        await Promise.all([
-          // Update tags
-          supabase.from("recipe_tags").delete().eq('recipe_id', recipeId),
-          formData.tags.length > 0 && supabase
-            .from("recipe_tags")
-            .insert(formData.tags.map(tag => ({
-              recipe_id: recipeId,
-              tag
-            }))),
-
-          // Update ingredients
-          supabase.from("recipe_ingredients").delete().eq('recipe_id', recipeId),
-          formData.ingredients.filter(i => i.ingredient.trim()).length > 0 && supabase
-            .from("recipe_ingredients")
-            .insert(formData.ingredients.filter(i => i.ingredient.trim()).map(i => ({
-              recipe_id: recipeId,
-              ingredient: i.ingredient,
-              amount: i.amount ? parseFloat(i.amount) : null,
-              unit: i.unit || null
-            }))),
-
-          // Update steps
-          supabase.from("recipe_steps").delete().eq('recipe_id', recipeId),
-          formData.steps.filter(s => s.description.trim()).length > 0 && supabase
-            .from("recipe_steps")
-            .insert(formData.steps.filter(s => s.description.trim()).map((s, index) => ({
-              recipe_id: recipeId,
-              step_number: index + 1,
-              description: s.description
-            })))
-        ]);
+        await recipeOperations.updateRecipeRelations(
+          recipeId,
+          formData.tags,
+          formData.ingredients,
+          formData.steps
+        );
 
         toast({
           title: "Suksess",

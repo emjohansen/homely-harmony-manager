@@ -10,7 +10,7 @@ export const RecipeVisibility = ({ isPublic, setIsPublic }: RecipeVisibilityProp
   return (
     <div className="flex items-center justify-between">
       <Label htmlFor="recipe-visibility" className="text-sm font-medium">
-        Offentlig oppskrift
+        Vis oppskrift offentlig
       </Label>
       <Switch
         id="recipe-visibility"
