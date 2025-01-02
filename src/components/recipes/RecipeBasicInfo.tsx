@@ -26,7 +26,7 @@ export const RecipeBasicInfo = ({
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="title">Tittel</Label>
+        <Label htmlFor="title">Navn på matrett</Label>
         <Input
           id="title"
           value={title}
