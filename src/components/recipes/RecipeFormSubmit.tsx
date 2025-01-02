@@ -28,8 +28,23 @@ export const useRecipeSubmit = ({ mode, recipeId, formData, currentHouseholdId }
     
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("No session");
-      if (!currentHouseholdId) throw new Error("No household selected");
+      if (!session) {
+        toast({
+          title: "Feil",
+          description: "Du må være logget inn for å opprette oppskrifter",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (!currentHouseholdId) {
+        toast({
+          title: "Feil",
+          description: "Du må være medlem av en husholdning for å opprette oppskrifter",
+          variant: "destructive",
+        });
+        return;
+      }
 
       console.log("Submitting recipe with household:", currentHouseholdId);
 
