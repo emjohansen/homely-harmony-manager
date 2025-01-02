@@ -3,9 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import { useNavigate } from "react-router-dom";
-import { CreateHousehold } from "@/components/household/CreateHousehold";
-import { InviteMember } from "@/components/household/InviteMember";
-import { InvitationsList } from "@/components/household/InvitationsList";
+import CreateHousehold from "@/components/household/CreateHousehold";
+import InviteMember from "@/components/household/InviteMember";
+import InvitationsList from "@/components/household/InvitationsList";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const Settings = () => {
             ) : currentHousehold ? (
               <div className="space-y-4">
                 <p>Din husholdning: {currentHousehold.name}</p>
-                <InviteMember />
+                <InviteMember householdId={currentHousehold.id} />
                 <InvitationsList />
               </div>
             ) : (

@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-const CreateHousehold = ({ onCreated }: { onCreated: () => void }) => {
-  const { t } = useTranslation();
+const CreateHousehold = ({ onCreated }: { onCreated: (household: any) => void }) => {
   const { toast } = useToast();
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +15,7 @@ const CreateHousehold = ({ onCreated }: { onCreated: () => void }) => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
+      if (!user) throw new Error("Ingen bruker funnet");
 
       // First create the household
       const { data: household, error: householdError } = await supabase
@@ -40,17 +38,17 @@ const CreateHousehold = ({ onCreated }: { onCreated: () => void }) => {
       if (memberError) throw memberError;
 
       toast({
-        title: t('household.createSuccess'),
-        description: t('household.createSuccessMessage'),
+        title: "Husholdning opprettet",
+        description: "Din nye husholdning har blitt opprettet",
       });
       
-      onCreated();
+      onCreated(household);
     } catch (error) {
       console.error("Error creating household:", error);
       toast({
         variant: "destructive",
-        title: t('common.error'),
-        description: t('household.createError'),
+        title: "Feil",
+        description: "Kunne ikke opprette husholdning. Vennligst prøv igjen.",
       });
     } finally {
       setIsLoading(false);
@@ -61,17 +59,17 @@ const CreateHousehold = ({ onCreated }: { onCreated: () => void }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <label className="text-sm font-medium">
-          {t('household.name')}
+          Navn på husholdning
         </label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder={t('household.namePlaceholder')}
+          placeholder="Skriv inn navn på husholdning"
           required
         />
       </div>
       <Button type="submit" disabled={isLoading}>
-        {t('household.create')}
+        Opprett husholdning
       </Button>
     </form>
   );
