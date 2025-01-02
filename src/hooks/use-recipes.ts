@@ -35,7 +35,7 @@ export const useRecipes = (householdId: string | null) => {
       }
 
       // Fetch public recipes from other households
-      const { data: publicRecipesData, error: publicError } = await supabase
+      let query = supabase
         .from('recipes')
         .select(`
           *,
@@ -44,8 +44,14 @@ export const useRecipes = (householdId: string | null) => {
           recipe_steps (id, step_number, description)
         `)
         .eq('is_public', true)
-        .not('household_id', householdId || '')
         .order('created_at', { ascending: false });
+
+      // Only filter by household_id if we have one
+      if (householdId) {
+        query = query.neq('household_id', householdId);
+      }
+
+      const { data: publicRecipesData, error: publicError } = await query;
 
       if (publicError) {
         console.error('Error fetching public recipes:', publicError);
