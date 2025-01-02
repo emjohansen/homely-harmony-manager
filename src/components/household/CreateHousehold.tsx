@@ -19,15 +19,29 @@ const CreateHousehold = ({ onCreated }: { onCreated: () => void }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      const { error } = await supabase
+      // First create the household
+      const { data: household, error: householdError } = await supabase
         .from("households")
-        .insert([{ name, created_by: user.id }]);
+        .insert([{ name, created_by: user.id }])
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (householdError) throw householdError;
+
+      // Then add the creator as a member
+      const { error: memberError } = await supabase
+        .from("household_members")
+        .insert([{
+          household_id: household.id,
+          user_id: user.id,
+          role: "admin"
+        }]);
+
+      if (memberError) throw memberError;
 
       toast({
-        title: t('household.create'),
-        description: t('household.createSuccess'),
+        title: t('household.createSuccess'),
+        description: t('household.createSuccessMessage'),
       });
       
       onCreated();

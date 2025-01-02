@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import CreateHousehold from "@/components/household/CreateHousehold";
@@ -26,13 +25,14 @@ const Settings = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        // Use maybeSingle() instead of single()
         const { data: memberData, error: memberError } = await supabase
           .from("household_members")
           .select("household_id")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
 
-        if (memberError && memberError.code !== "PGRST116") {
+        if (memberError) {
           console.error("Error fetching household membership:", memberError);
           return;
         }
@@ -53,13 +53,18 @@ const Settings = () => {
         }
       } catch (error) {
         console.error("Error:", error);
+        toast({
+          variant: "destructive",
+          title: t('common.error'),
+          description: t('household.fetchError'),
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchHousehold();
-  }, []);
+  }, [toast, t]);
 
   const handleHouseholdCreated = () => {
     toast({
