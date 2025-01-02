@@ -24,7 +24,6 @@ export const useRecipes = (householdId: string | null) => {
             recipe_steps (id, step_number, description)
           `)
           .eq('household_id', householdId)
-          .eq('is_public', false)
           .order('created_at', { ascending: false });
 
         if (privateError) {
@@ -57,7 +56,7 @@ export const useRecipes = (householdId: string | null) => {
       console.error('Error fetching recipes:', error);
       toast({
         title: "Error",
-        description: "Failed to load recipes. Please try again.",
+        description: "Kunne ikke laste oppskrifter. Vennligst prøv igjen.",
         variant: "destructive",
       });
     } finally {
