@@ -31,9 +31,10 @@ const Recipes = () => {
 
         if (householdMember) {
           setCurrentHouseholdId(householdMember.household_id);
+          fetchRecipes(householdMember.household_id);
+        } else {
+          fetchRecipes(null);
         }
-        
-        fetchRecipes(householdMember?.household_id);
       }
     };
     
@@ -53,7 +54,6 @@ const Recipes = () => {
             recipe_steps (id, step_number, description)
           `)
           .eq('household_id', householdId)
-          .eq('is_public', false)
           .order('created_at', { ascending: false });
 
         if (privateError) throw privateError;
@@ -143,8 +143,8 @@ const Recipes = () => {
         ) : (
           <Tabs defaultValue="private" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="private">Household Recipes</TabsTrigger>
-              <TabsTrigger value="public">Public Recipes</TabsTrigger>
+              <TabsTrigger value="private">My Dishes</TabsTrigger>
+              <TabsTrigger value="public">All Dishes</TabsTrigger>
             </TabsList>
             <TabsContent value="private">
               <div className="flex justify-end mb-4">
@@ -158,9 +158,13 @@ const Recipes = () => {
                   Random
                 </Button>
               </div>
-              {privateRecipes.length === 0 ? (
+              {!currentHouseholdId ? (
                 <div className="text-center py-8 text-gray-500">
-                  No household recipes yet. Add your first recipe!
+                  Join a household to start adding your own recipes!
+                </div>
+              ) : privateRecipes.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No recipes yet. Add your first recipe!
                 </div>
               ) : (
                 <RecipeList recipes={privateRecipes} />
