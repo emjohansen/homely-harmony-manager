@@ -11,15 +11,18 @@ const Settings = () => {
   const navigate = useNavigate();
   const [currentHousehold, setCurrentHousehold] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchHousehold = async () => {
+    const fetchData = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
           navigate("/");
           return;
         }
+
+        setUserEmail(session.user.email);
 
         const { data: householdMember } = await supabase
           .from('household_members')
@@ -37,13 +40,13 @@ const Settings = () => {
           setCurrentHousehold(household);
         }
       } catch (error) {
-        console.error('Error fetching household:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchHousehold();
+    fetchData();
   }, [navigate]);
 
   const handleSignOut = async () => {
@@ -74,6 +77,11 @@ const Settings = () => {
 
           <div className="bg-white p-4 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">Konto</h2>
+            {userEmail && (
+              <p className="text-gray-600 mb-4">
+                Innlogget som: {userEmail}
+              </p>
+            )}
             <Button variant="destructive" onClick={handleSignOut}>
               Logg ut
             </Button>
