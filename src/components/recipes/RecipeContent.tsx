@@ -3,7 +3,7 @@ import { RecipeVisibility } from "./RecipeVisibility";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
-import { convertUnit, getAlternativeUnit } from "@/utils/unitConversion";
+import { convertUnit, getAlternativeUnit, isMetricUnit, isImperialUnit } from "@/utils/unitConversion";
 
 interface RecipeContentProps {
   recipe: Recipe;
@@ -23,24 +23,28 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
   const calculateAdjustedAmount = (amount: number | null) => {
     if (!amount || !recipe.servings) return amount;
     const adjustedAmount = (amount * currentServings) / recipe.servings;
-    return adjustedAmount % 1 === 0 ? adjustedAmount.toString() : adjustedAmount.toFixed(1);
+    return adjustedAmount % 1 === 0 ? adjustedAmount : Number(adjustedAmount.toFixed(1));
   };
 
   const renderAmount = (amount: number | null, unit: string | null) => {
     if (!amount || !unit) return `${amount || ''} ${unit || ''}`;
     
     const adjustedAmount = calculateAdjustedAmount(amount);
+    if (!adjustedAmount) return `${amount} ${unit}`;
+
+    // Determine if we need to convert based on the current display preference
+    const shouldConvert = (showAlternativeUnits && isMetricUnit(unit)) || 
+                         (!showAlternativeUnits && isImperialUnit(unit));
+
+    if (!shouldConvert) return `${adjustedAmount} ${unit}`;
+
     const alternativeUnit = getAlternativeUnit(unit);
-    
     if (!alternativeUnit) return `${adjustedAmount} ${unit}`;
 
-    const convertedAmount = convertUnit(parseFloat(adjustedAmount), unit, alternativeUnit);
-    
+    const convertedAmount = convertUnit(adjustedAmount, unit, alternativeUnit);
     if (convertedAmount === null) return `${adjustedAmount} ${unit}`;
 
-    return showAlternativeUnits
-      ? `${Number(convertedAmount).toFixed(1)} ${alternativeUnit}`
-      : `${adjustedAmount} ${unit}`;
+    return `${Number(convertedAmount).toFixed(1)} ${alternativeUnit}`;
   };
 
   return (

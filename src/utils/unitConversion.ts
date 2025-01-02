@@ -41,12 +41,29 @@ const conversionMap: ConversionMap = {
     },
     type: 'volume'
   },
+  'l': {
+    to: {
+      'ml': 1000,
+      'dl': 10,
+      'cup': 4.227,
+      'fl oz': 33.814,
+    },
+    type: 'volume'
+  },
   // Weight conversions
   'g': {
     to: {
       'oz': 0.035,
       'lb': 0.0022,
       'kg': 0.001,
+    },
+    type: 'weight'
+  },
+  'kg': {
+    to: {
+      'g': 1000,
+      'oz': 35.274,
+      'lb': 2.205,
     },
     type: 'weight'
   },
@@ -64,6 +81,17 @@ const conversionMap: ConversionMap = {
     },
     type: 'weight'
   },
+};
+
+const metricUnits = ['g', 'kg', 'ml', 'dl', 'l', 'ss', 'ts'];
+const imperialUnits = ['oz', 'lb', 'cup', 'tbsp', 'tsp', 'fl oz'];
+
+export const isMetricUnit = (unit: string): boolean => {
+  return metricUnits.includes(unit.toLowerCase());
+};
+
+export const isImperialUnit = (unit: string): boolean => {
+  return imperialUnits.includes(unit.toLowerCase());
 };
 
 export const convertUnit = (amount: number, fromUnit: string, toUnit: string): number | null => {
