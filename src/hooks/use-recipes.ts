@@ -27,7 +27,10 @@ export const useRecipes = (householdId: string | null) => {
           .eq('is_public', false)
           .order('created_at', { ascending: false });
 
-        if (privateError) throw privateError;
+        if (privateError) {
+          console.error('Error fetching private recipes:', privateError);
+          throw privateError;
+        }
         console.log("Private recipes fetched:", privateRecipesData);
         setPrivateRecipes(privateRecipesData || []);
       }
@@ -44,14 +47,17 @@ export const useRecipes = (householdId: string | null) => {
         .eq('is_public', true)
         .order('created_at', { ascending: false });
 
-      if (publicError) throw publicError;
+      if (publicError) {
+        console.error('Error fetching public recipes:', publicError);
+        throw publicError;
+      }
       console.log("Public recipes fetched:", publicRecipesData);
       setPublicRecipes(publicRecipesData || []);
     } catch (error) {
       console.error('Error fetching recipes:', error);
       toast({
         title: "Error",
-        description: "Failed to load recipes",
+        description: "Failed to load recipes. Please try again.",
         variant: "destructive",
       });
     } finally {

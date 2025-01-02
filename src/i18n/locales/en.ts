@@ -22,6 +22,7 @@ export default {
       chores: 'Chores',
       storage: 'Storage',
       settings: 'Settings',
+      more: 'More'
     },
     household: {
       create: 'Create Household',

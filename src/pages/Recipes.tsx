@@ -15,7 +15,7 @@ const Recipes = () => {
   const { toast } = useToast();
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
   
-  const { privateRecipes, publicRecipes, loading } = useRecipes(currentHouseholdId);
+  const { privateRecipes, publicRecipes, loading, refetch } = useRecipes(currentHouseholdId);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -28,7 +28,7 @@ const Recipes = () => {
           .from('household_members')
           .select('household_id')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         console.log("Current household member:", householdMember);
         if (householdMember) {

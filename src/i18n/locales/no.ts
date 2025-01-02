@@ -22,6 +22,7 @@ export default {
       chores: 'Gjøremål',
       storage: 'Lagring',
       settings: 'Innstillinger',
+      more: 'Mer'
     },
     household: {
       create: 'Opprett Husholdning',
