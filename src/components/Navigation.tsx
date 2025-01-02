@@ -1,24 +1,22 @@
 import { Utensils, ShoppingCart, CalendarClock, ClipboardList, Refrigerator, Settings, Menu } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
   const navigationItems = [
-    { path: "/recipes", icon: Utensils, label: t('navigation.recipes') },
-    { path: "/shopping", icon: ShoppingCart, label: t('navigation.shopping') },
-    { path: "/reminders", icon: CalendarClock, label: t('navigation.reminders') },
-    { path: "/chores", icon: ClipboardList, label: t('navigation.chores') },
-    { path: "/storage", icon: Refrigerator, label: t('navigation.storage') },
-    { path: "/settings", icon: Settings, label: t('navigation.settings') },
+    { path: "/recipes", icon: Utensils, label: "Oppskrifter" },
+    { path: "/shopping", icon: ShoppingCart, label: "Handleliste" },
+    { path: "/reminders", icon: CalendarClock, label: "Påminnelser" },
+    { path: "/chores", icon: ClipboardList, label: "Gjøremål" },
+    { path: "/storage", icon: Refrigerator, label: "Lagring" },
+    { path: "/settings", icon: Settings, label: "Innstillinger" },
   ];
 
   const mainItems = navigationItems.slice(0, 4);
@@ -51,7 +49,7 @@ const Navigation = () => {
             <SheetTrigger asChild>
               <button className="flex flex-col items-center p-2 text-gray-600">
                 <Menu className="h-6 w-6" />
-                <span className="text-xs mt-1 whitespace-nowrap">{t('navigation.more')}</span>
+                <span className="text-xs mt-1 whitespace-nowrap">Mer</span>
               </button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[200px]">
