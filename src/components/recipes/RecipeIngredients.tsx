@@ -6,17 +6,38 @@ import { Plus } from "lucide-react";
 interface RecipeIngredientsProps {
   ingredients: Array<{ ingredient: string; amount: string; unit: string }>;
   setIngredients: (ingredients: Array<{ ingredient: string; amount: string; unit: string }>) => void;
+  originalServings?: number;
+  currentServings?: number;
 }
 
-export const RecipeIngredients = ({ ingredients, setIngredients }: RecipeIngredientsProps) => {
+export const RecipeIngredients = ({ 
+  ingredients, 
+  setIngredients,
+  originalServings,
+  currentServings 
+}: RecipeIngredientsProps) => {
   const handleIngredientChange = (index: number, field: keyof typeof ingredients[0], value: string) => {
     const newIngredients = [...ingredients];
-    newIngredients[index][field] = value;
+    if (field === 'amount') {
+      // Only allow numeric values for amount
+      if (value === '' || !isNaN(Number(value))) {
+        newIngredients[index][field] = value;
+      }
+    } else {
+      newIngredients[index][field] = value;
+    }
     setIngredients(newIngredients);
   };
 
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { ingredient: "", amount: "", unit: "" }]);
+  };
+
+  const calculateAdjustedAmount = (amount: string) => {
+    if (!amount || !originalServings || !currentServings) return amount;
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount)) return amount;
+    return ((numericAmount * currentServings) / originalServings).toFixed(2);
   };
 
   return (
@@ -33,7 +54,10 @@ export const RecipeIngredients = ({ ingredients, setIngredients }: RecipeIngredi
           <Input
             className="col-span-2"
             placeholder="Mengde"
-            value={ingredient.amount}
+            type="number"
+            step="0.01"
+            min="0"
+            value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
             onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
           />
           <Input

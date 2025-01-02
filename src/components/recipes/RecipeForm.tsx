@@ -15,12 +15,11 @@ interface RecipeFormProps {
 }
 
 export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => {
-  // Form state
+  const [isPublic, setIsPublic] = useState(initialData?.is_public ?? false);
   const [title, setTitle] = useState(initialData?.title || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [servings, setServings] = useState(initialData?.servings || 4);
   const [prepTime, setPrepTime] = useState(initialData?.preparation_time || 30);
-  const [isPublic, setIsPublic] = useState(initialData?.is_public ?? false);
   const [tags, setTags] = useState<string[]>(initialData?.recipe_tags?.map((t: any) => t.tag) || []);
   const [newTag, setNewTag] = useState("");
   const [ingredients, setIngredients] = useState(
@@ -49,6 +48,11 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <RecipeVisibility
+        isPublic={isPublic}
+        setIsPublic={setIsPublic}
+      />
+
       <RecipeBasicInfo
         title={title}
         setTitle={setTitle}
@@ -58,11 +62,6 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
         setServings={setServings}
         prepTime={prepTime}
         setPrepTime={setPrepTime}
-      />
-
-      <RecipeVisibility
-        isPublic={isPublic}
-        setIsPublic={setIsPublic}
       />
 
       <RecipeTags
@@ -84,6 +83,8 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
       <RecipeIngredients
         ingredients={ingredients}
         setIngredients={setIngredients}
+        originalServings={initialData?.servings || servings}
+        currentServings={servings}
       />
 
       <RecipeSteps
