@@ -5,6 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 interface RecipeListProps {
   recipes: Recipe[];
@@ -134,31 +140,35 @@ export const RecipeList = ({ recipes }: RecipeListProps) => {
       </div>
 
       {showFilters && (
-        <div className="mb-6 p-4 border rounded-lg bg-white shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mb-6">
+          <Accordion type="single" collapsible className="w-full space-y-2">
             {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-              <div key={key} className="space-y-2">
-                <Label className="text-sm font-semibold">{category.label}</Label>
-                <div className="space-y-1">
-                  {category.options.map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`filter-${key}-${option}`}
-                        checked={selectedTags.includes(option)}
-                        onCheckedChange={() => toggleTag(option)}
-                      />
-                      <label
-                        htmlFor={`filter-${key}-${option}`}
-                        className="text-sm cursor-pointer"
-                      >
-                        {option}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <AccordionItem key={key} value={key} className="border rounded-lg bg-white shadow-sm">
+                <AccordionTrigger className="px-4">
+                  <span className="text-sm font-semibold">{category.label}</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    {category.options.map((option) => (
+                      <div key={option} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`filter-${key}-${option}`}
+                          checked={selectedTags.includes(option)}
+                          onCheckedChange={() => toggleTag(option)}
+                        />
+                        <label
+                          htmlFor={`filter-${key}-${option}`}
+                          className="text-sm cursor-pointer"
+                        >
+                          {option}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </div>
       )}
 
