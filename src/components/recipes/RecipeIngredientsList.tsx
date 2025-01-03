@@ -43,31 +43,36 @@ export const RecipeIngredientsList = ({
   if (!recipe.recipe_ingredients || recipe.recipe_ingredients.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg p-6 sm:p-8 border border-gray-100 shadow-sm max-w-2xl mx-auto">
-      <div className="flex items-center gap-2 mb-6 justify-center">
-        <UtensilsCrossed className="h-5 w-5 text-gray-700" />
-        <h2 className="text-2xl font-semibold text-gray-900">Ingredienser</h2>
-      </div>
-      <div className="divide-y divide-gray-200">
-        {recipe.recipe_ingredients.map((ingredient, index) => (
-          <div 
-            key={ingredient.id} 
-            className={cn(
-              "grid grid-cols-12 py-4",
-              "transition-colors duration-200",
-              index % 2 === 0 ? "bg-gray-50" : "bg-white"
-            )}
-          >
-            <div className="col-span-5 text-right pr-6">
-              <span className="font-medium text-blue-900">
-                {renderAmount(ingredient.amount, ingredient.unit)}
-              </span>
+    <div className="max-w-xl mx-auto px-4">
+      <div className="bg-[#FEF7CD] rounded-3xl p-6 shadow-sm">
+        <div className="flex items-center gap-2 mb-6 justify-center">
+          <UtensilsCrossed className="h-5 w-5 text-[#FEC6A1]" />
+          <h2 className="text-2xl font-semibold text-[#8B7355]">Ingredienser</h2>
+        </div>
+        
+        <div className="space-y-3">
+          {recipe.recipe_ingredients.map((ingredient, index) => (
+            <div 
+              key={ingredient.id} 
+              className={cn(
+                "flex items-center rounded-2xl p-3 transition-all duration-200 hover:transform hover:scale-102",
+                index % 2 === 0 ? "bg-[#F2FCE2]" : "bg-[#E5DEFF]"
+              )}
+            >
+              <div className="w-1/3 pr-4 text-right">
+                <span className="font-medium text-[#FEC6A1] bg-white px-3 py-1 rounded-full text-sm">
+                  {renderAmount(ingredient.amount, ingredient.unit)}
+                </span>
+              </div>
+              
+              <div className="w-2/3 pl-4 border-l-2 border-[#FDE1D3]">
+                <span className="text-[#8B7355] text-lg">
+                  {ingredient.ingredient}
+                </span>
+              </div>
             </div>
-            <div className="col-span-7 text-left pl-4 border-l border-gray-200">
-              <span className="text-gray-700">{ingredient.ingredient}</span>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
