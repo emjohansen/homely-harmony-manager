@@ -35,8 +35,8 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
           .map((step) => (
             <li key={step.id} className="border-b border-gray-100 py-3 last:border-0">
               <div className="flex flex-col gap-1">
-                <span className="text-sm text-muted-foreground">
-                  {step.step_number}.
+                <span className="text-lg font-bold text-primary">
+                  {step.step_number}
                 </span>
                 <p className="text-sm">
                   {step.description}
