@@ -2,7 +2,7 @@ import { Recipe } from "@/types/recipe";
 import { RecipeVisibility } from "./RecipeVisibility";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Clock, Users, ChefHat, Scale, Tag } from "lucide-react";
+import { Minus, Plus, Clock, Users, ChefHat, Scale, Tag, Info, UtensilsCrossed, ListChecks } from "lucide-react";
 import { convertUnit, getAlternativeUnit, isMetricUnit, isImperialUnit } from "@/utils/unitConversion";
 import { cn } from "@/lib/utils";
 
@@ -69,7 +69,11 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
       )}
       
       <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-gray-800">{recipe.title}</h1>
+        <div className="flex items-center gap-2 mb-2">
+          <Info className="h-5 w-5" />
+          <h1 className="text-2xl font-semibold">Oppskriftsinformasjon</h1>
+        </div>
+        <h2 className="text-3xl font-bold text-gray-800">{recipe.title}</h2>
         <p className="text-gray-600 text-lg leading-relaxed">{recipe.description}</p>
         
         {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
@@ -143,10 +147,10 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
 
       {recipe.recipe_ingredients && recipe.recipe_ingredients.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <ChefHat className="h-5 w-5" />
-            Ingredienser
-          </h2>
+          <div className="flex items-center gap-2">
+            <UtensilsCrossed className="h-5 w-5" />
+            <h2 className="text-2xl font-semibold">Ingredienser</h2>
+          </div>
           <ul className="space-y-3">
             {recipe.recipe_ingredients.map((ingredient) => (
               <li 
@@ -168,7 +172,10 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
 
       {recipe.recipe_steps && recipe.recipe_steps.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-800">Fremgangsmåte</h2>
+          <div className="flex items-center gap-2">
+            <ListChecks className="h-5 w-5" />
+            <h2 className="text-2xl font-semibold">Fremgangsmåte</h2>
+          </div>
           <ol className="space-y-6">
             {recipe.recipe_steps
               .sort((a, b) => a.step_number - b.step_number)

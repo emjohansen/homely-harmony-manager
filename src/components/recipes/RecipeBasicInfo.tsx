@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Info } from "lucide-react";
 
 interface RecipeBasicInfoProps {
   title: string;
@@ -32,6 +32,11 @@ export const RecipeBasicInfo = ({
 
   return (
     <>
+      <div className="flex items-center gap-2 mb-4">
+        <Info className="h-5 w-5" />
+        <h2 className="text-2xl font-semibold">Oppskriftsinformasjon</h2>
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="title">Navn på matrett</Label>
         <Input

@@ -68,12 +68,12 @@ const Recipes = () => {
           <div className="text-center py-8">Laster oppskrifter...</div>
         ) : (
           <Tabs defaultValue="private" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="private">Mine oppskrifter</TabsTrigger>
-              <TabsTrigger value="public">Alle oppskrifter</TabsTrigger>
-            </TabsList>
-            <TabsContent value="private">
-              <div className="flex justify-end items-center gap-2 mb-4">
+            <div className="flex justify-between items-center mb-4">
+              <TabsList className="grid w-[200px] grid-cols-2">
+                <TabsTrigger value="private">Mine</TabsTrigger>
+                <TabsTrigger value="public">Alle</TabsTrigger>
+              </TabsList>
+              <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -84,6 +84,8 @@ const Recipes = () => {
                   Tilfeldig
                 </Button>
               </div>
+            </div>
+            <TabsContent value="private">
               {!currentHouseholdId ? (
                 <div className="text-center py-8 text-gray-500">
                   Bli med i en husholdning for å begynne å legge til dine egne oppskrifter!
