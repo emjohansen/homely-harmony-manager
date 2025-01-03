@@ -15,21 +15,6 @@ interface RecipeIngredientsListProps {
 export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngredientsListProps) => {
   if (!ingredients || ingredients.length === 0) return null;
 
-  // Function to get different separators based on index
-  const getSeparator = (index: number) => {
-    const separators = [
-      " - ",           // Simple dash
-      " • ",           // Bullet point
-      " ⟶ ",          // Arrow
-      " ∷ ",          // Double colon
-      " ⋮ ",          // Vertical dots
-      " ⊳ ",          // Triangle
-      " ≫ ",          // Double angle
-      " ⌁ ",          // Electric arrow
-    ];
-    return separators[index % separators.length];
-  };
-
   return (
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="ingredients" className="border-none">
@@ -41,14 +26,14 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
         </AccordionTrigger>
         <AccordionContent>
           <ul className="space-y-0">
-            {ingredients.map((ingredient, index) => {
+            {ingredients.map((ingredient) => {
               const amountAndUnit = renderAmount(ingredient.amount, ingredient.unit);
               return (
                 <li key={ingredient.id} className="border-b border-gray-100 py-3 last:border-0">
                   <div className="flex items-start">
                     <p className="text-sm text-foreground">
                       <span className="font-bold">{amountAndUnit}</span>
-                      <span className="text-muted-foreground font-mono">{getSeparator(index)}</span>
+                      <span className="text-muted-foreground font-mono"> • </span>
                       {ingredient.ingredient}
                     </p>
                   </div>
