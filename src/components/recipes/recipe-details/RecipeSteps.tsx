@@ -1,20 +1,35 @@
 import { RecipeStep } from "@/types/recipe";
-import { ListChecks } from "lucide-react";
+import { ListChecks, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface RecipeStepsProps {
   steps: RecipeStep[];
 }
 
 export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   if (!steps || steps.length === 0) return null;
 
   return (
     <div className="space-y-4 mt-8">
-      <div className="flex items-center gap-2">
+      <button 
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="flex items-center gap-2 w-full text-left"
+      >
         <ListChecks className="h-5 w-5" />
-        <h2 className="text-xl font-semibold">Fremgangsmåte</h2>
-      </div>
-      <ol className="space-y-4">
+        <h2 className="text-xl font-semibold flex-1">Fremgangsmåte</h2>
+        {isCollapsed ? (
+          <ChevronDown className="h-5 w-5" />
+        ) : (
+          <ChevronUp className="h-5 w-5" />
+        )}
+      </button>
+      <ol className={cn(
+        "space-y-4 transition-all duration-300",
+        isCollapsed ? "hidden" : "block"
+      )}>
         {steps
           .sort((a, b) => a.step_number - b.step_number)
           .map((step) => (
