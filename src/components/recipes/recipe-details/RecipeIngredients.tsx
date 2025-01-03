@@ -15,20 +15,6 @@ interface RecipeIngredientsListProps {
 export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngredientsListProps) => {
   if (!ingredients || ingredients.length === 0) return null;
 
-  // Find the longest amount + unit combination to determine spacing
-  const maxLength = ingredients.reduce((max, ingredient) => {
-    const amountUnitLength = renderAmount(ingredient.amount, ingredient.unit).length;
-    return Math.max(max, amountUnitLength);
-  }, 0);
-
-  const getSeparator = (amountAndUnit: string) => {
-    const minSeparators = 2; // Minimum number of "//" separators
-    const separatorLength = 2; // Length of one "//"
-    const spacingNeeded = (maxLength - amountAndUnit.length) + (minSeparators * separatorLength);
-    const separatorCount = Math.max(minSeparators, Math.ceil(spacingNeeded / separatorLength));
-    return " " + "//".repeat(separatorCount) + " ";
-  };
-
   return (
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="ingredients" className="border-none">
@@ -47,9 +33,7 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
                   <div className="flex items-start">
                     <p className="text-sm text-foreground">
                       <span className="font-bold">{amountAndUnit}</span>
-                      <span className="text-muted-foreground font-mono">
-                        {getSeparator(amountAndUnit)}
-                      </span>
+                      <span className="text-muted-foreground font-mono"> // </span>
                       {ingredient.ingredient}
                     </p>
                   </div>
