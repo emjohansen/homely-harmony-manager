@@ -11,12 +11,12 @@ const Navigation = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navigationItems = [
-    { path: "/recipes", icon: Utensils, label: "Oppskrifter" },
-    { path: "/shopping", icon: ShoppingCart, label: "Handleliste" },
-    { path: "/reminders", icon: CalendarClock, label: "Påminnelser" },
-    { path: "/chores", icon: ClipboardList, label: "Gjøremål" },
-    { path: "/storage", icon: Refrigerator, label: "Lagring" },
-    { path: "/settings", icon: Settings, label: "Innstillinger" },
+    { path: "/recipes", icon: Utensils, label: "Recipes" },
+    { path: "/shopping", icon: ShoppingCart, label: "Shopping" },
+    { path: "/reminders", icon: CalendarClock, label: "Reminders" },
+    { path: "/chores", icon: ClipboardList, label: "Chores" },
+    { path: "/storage", icon: Refrigerator, label: "Storage" },
+    { path: "/settings", icon: Settings, label: "Settings" },
   ];
 
   const mainItems = navigationItems.slice(0, 4);
@@ -49,7 +49,7 @@ const Navigation = () => {
             <SheetTrigger asChild>
               <button className="flex flex-col items-center p-2 text-gray-600">
                 <Menu className="h-6 w-6" />
-                <span className="text-xs mt-1 whitespace-nowrap">Mer</span>
+                <span className="text-xs mt-1 whitespace-nowrap">More</span>
               </button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[200px]">
