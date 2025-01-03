@@ -10,16 +10,24 @@ export interface Recipe {
   created_at: string;
   updated_at: string;
   image_url: string | null;
-  recipe_tags?: { tag: string }[];
-  recipe_ingredients?: {
-    id: string;
-    ingredient: string;
-    amount: number | null;
-    unit: string | null;
-  }[];
-  recipe_steps?: {
-    id: string;
-    step_number: number;
-    description: string;
-  }[];
+  recipe_tags?: RecipeTag[];
+  recipe_ingredients?: RecipeIngredient[];
+  recipe_steps?: RecipeStep[];
+}
+
+export interface RecipeTag {
+  tag: string;
+}
+
+export interface RecipeIngredient {
+  id: string;
+  ingredient: string;
+  amount: number | null;
+  unit: string | null;
+}
+
+export interface RecipeStep {
+  id: string;
+  step_number: number;
+  description: string;
 }
