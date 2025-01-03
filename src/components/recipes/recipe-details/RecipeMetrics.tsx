@@ -69,7 +69,7 @@ export const RecipeMetrics = ({
           onClick={onToggleUnits}
           className="text-[10px] font-medium h-5 px-2 border-primary hover:bg-primary/10"
         >
-          {showAlternativeUnits ? "Metric" : "US"}
+          Switch to {showAlternativeUnits ? "US" : "Metric"}
         </Button>
       </div>
     </div>
