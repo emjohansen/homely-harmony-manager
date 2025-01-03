@@ -30,12 +30,12 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
               const amountAndUnit = renderAmount(ingredient.amount, ingredient.unit);
               return (
                 <li key={ingredient.id} className="border-b border-gray-100 py-3 last:border-0">
-                  <div className="flex items-start">
-                    <p className="text-sm text-foreground">
-                      <span className="font-bold">{amountAndUnit}</span>
-                      <span className="text-muted-foreground font-mono"> • </span>
-                      {ingredient.ingredient}
-                    </p>
+                  <div className="flex items-center">
+                    <div className="flex items-center min-w-[100px] justify-end">
+                      <span className="font-bold text-sm">{amountAndUnit}</span>
+                    </div>
+                    <span className="text-muted-foreground font-mono mx-2">•</span>
+                    <span className="text-sm">{ingredient.ingredient}</span>
                   </div>
                 </li>
               );
