@@ -17,12 +17,12 @@ export const RecipeMetrics = ({
   onToggleUnits,
 }: RecipeMetricsProps) => {
   return (
-    <div className="grid grid-cols-3 gap-2 mt-6">
-      <div className="bg-white rounded-xl p-3 flex flex-col items-center justify-center text-center
+    <div className="grid grid-cols-3 gap-1.5">
+      <div className="bg-white rounded-lg p-2 flex flex-col items-center justify-center text-center
                     border border-border border-opacity-20 transition-all duration-300
                     hover:border-opacity-100">
-        <Users className="h-4 w-4 mb-1" />
-        <p className="text-xs text-muted-foreground mb-1">Porsjoner</p>
+        <Users className="h-3.5 w-3.5 mb-0.5" />
+        <p className="text-[10px] text-muted-foreground">Porsjoner</p>
         <div className="flex items-center space-x-1">
           <Button
             type="button"
@@ -30,11 +30,11 @@ export const RecipeMetrics = ({
             size="icon"
             onClick={() => onServingsChange(-1)}
             disabled={currentServings <= 1}
-            className="h-6 w-6"
+            className="h-5 w-5"
           >
             <Minus className="h-3 w-3" />
           </Button>
-          <span className="text-sm font-medium w-6 text-center">
+          <span className="text-xs font-medium w-4 text-center">
             {currentServings}
           </span>
           <Button
@@ -42,34 +42,34 @@ export const RecipeMetrics = ({
             variant="outline"
             size="icon"
             onClick={() => onServingsChange(1)}
-            className="h-6 w-6"
+            className="h-5 w-5"
           >
             <Plus className="h-3 w-3" />
           </Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-3 flex flex-col items-center justify-center text-center
+      <div className="bg-white rounded-lg p-2 flex flex-col items-center justify-center text-center
                     border border-border border-opacity-20 transition-all duration-300
                     hover:border-opacity-100">
-        <Clock className="h-4 w-4 mb-1" />
-        <p className="text-xs text-muted-foreground mb-1">Tilberedningstid</p>
-        <p className="text-sm font-medium">{preparationTime} min</p>
+        <Clock className="h-3.5 w-3.5 mb-0.5" />
+        <p className="text-[10px] text-muted-foreground">Tid</p>
+        <p className="text-xs font-medium">{preparationTime} min</p>
       </div>
 
-      <div className="bg-white rounded-xl p-3 flex flex-col items-center justify-center text-center
+      <div className="bg-white rounded-lg p-2 flex flex-col items-center justify-center text-center
                     border border-border border-opacity-20 transition-all duration-300
                     hover:border-opacity-100">
-        <Scale className="h-4 w-4 mb-1" />
-        <p className="text-xs text-muted-foreground mb-1">Måleenheter</p>
+        <Scale className="h-3.5 w-3.5 mb-0.5" />
+        <p className="text-[10px] text-muted-foreground">Enheter</p>
         <Button
           type="button"
           variant="ghost"
           size="sm"
           onClick={onToggleUnits}
-          className="text-xs font-medium hover:bg-accent hover:text-accent-foreground h-6 px-2"
+          className="text-[10px] font-medium hover:bg-accent hover:text-accent-foreground h-5 px-1"
         >
-          {showAlternativeUnits ? "Vis metrisk" : "Vis amerikansk"}
+          {showAlternativeUnits ? "Metrisk" : "US"}
         </Button>
       </div>
     </div>

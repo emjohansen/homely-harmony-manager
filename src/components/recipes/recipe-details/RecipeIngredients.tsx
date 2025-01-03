@@ -14,36 +14,36 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
   if (!ingredients || ingredients.length === 0) return null;
 
   return (
-    <div className="space-y-4 mt-8">
+    <div className="space-y-2">
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="flex items-center gap-2 w-full text-left"
       >
-        <UtensilsCrossed className="h-5 w-5" />
-        <h2 className="text-xl font-semibold flex-1">Ingredienser</h2>
+        <UtensilsCrossed className="h-4 w-4" />
+        <h2 className="text-lg font-semibold flex-1">Ingredienser</h2>
         {isCollapsed ? (
-          <ChevronDown className="h-5 w-5" />
+          <ChevronDown className="h-4 w-4" />
         ) : (
-          <ChevronUp className="h-5 w-5" />
+          <ChevronUp className="h-4 w-4" />
         )}
       </button>
       <ul className={cn(
-        "space-y-2 transition-all duration-300",
+        "space-y-1.5 transition-all duration-300",
         isCollapsed ? "hidden" : "block"
       )}>
         {ingredients.map((ingredient) => (
           <li 
             key={ingredient.id} 
             className={cn(
-              "flex items-baseline p-3 rounded-lg bg-white",
+              "flex items-baseline p-2 rounded-lg bg-white",
               "border border-border border-opacity-20 transition-all duration-300",
               "hover:border-opacity-100"
             )}
           >
-            <span className="font-medium min-w-[120px]">
+            <span className="font-medium text-sm min-w-[90px]">
               {renderAmount(ingredient.amount, ingredient.unit)}
             </span>
-            <span className="text-foreground">{ingredient.ingredient}</span>
+            <span className="text-sm">{ingredient.ingredient}</span>
           </li>
         ))}
       </ul>

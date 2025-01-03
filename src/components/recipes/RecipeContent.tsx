@@ -49,9 +49,9 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
+    <div className="bg-white rounded-lg shadow-sm p-4 space-y-4">
       {canEdit && (
-        <div className="mb-4">
+        <div className="mb-2">
           <RecipeVisibility
             isPublic={recipe.is_public || false}
             setIsPublic={onVisibilityChange}
@@ -60,7 +60,7 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
       )}
 
       {recipe.image_url && (
-        <div className="relative w-full h-[300px] rounded-xl overflow-hidden">
+        <div className="relative w-full h-[250px] rounded-lg overflow-hidden -mt-1">
           <img
             src={recipe.image_url}
             alt={recipe.title}
@@ -69,12 +69,11 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
         </div>
       )}
       
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold">
+      <div className="space-y-1">
+        <h1 className="text-xl font-bold">
           {recipe.title}
         </h1>
-        <p className="text-muted-foreground">{recipe.description}</p>
-        
+        <p className="text-muted-foreground text-sm">{recipe.description}</p>
         <RecipeTagsDisplay tags={recipe.recipe_tags || []} />
       </div>
 
