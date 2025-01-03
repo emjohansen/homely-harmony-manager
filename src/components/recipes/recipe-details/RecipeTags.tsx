@@ -8,7 +8,7 @@ export const RecipeTagsDisplay = ({ tags }: RecipeTagsProps) => {
   if (!tags || tags.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-1 mt-1">
+    <div className="flex flex-wrap gap-1">
       {tags.map(({ tag }) => (
         <span
           key={tag}
