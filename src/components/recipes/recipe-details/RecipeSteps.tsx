@@ -20,7 +20,7 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
         <AccordionTrigger className="hover:no-underline py-0">
           <div className="flex items-center gap-2">
             <ListChecks className="h-4 w-4" />
-            <h2 className="text-lg font-semibold text-foreground">Fremgangsmåte</h2>
+            <h2 className="text-lg font-semibold text-foreground">Instructions</h2>
           </div>
         </AccordionTrigger>
         <AccordionContent>

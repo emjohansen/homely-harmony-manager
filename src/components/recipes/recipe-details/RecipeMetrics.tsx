@@ -21,7 +21,7 @@ export const RecipeMetrics = ({
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Users className="h-3 w-3" />
-          <span className="text-[10px]">Porsjoner</span>
+          <span className="text-[10px]">Servings</span>
         </div>
         <div className="flex items-center gap-1">
           <Button
@@ -52,7 +52,7 @@ export const RecipeMetrics = ({
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Clock className="h-3 w-3" />
-          <span className="text-[10px]">Tid</span>
+          <span className="text-[10px]">Time</span>
         </div>
         <p className="text-xs font-medium">{preparationTime} min</p>
       </div>
@@ -60,7 +60,7 @@ export const RecipeMetrics = ({
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Scale className="h-3 w-3" />
-          <span className="text-[10px]">Enheter</span>
+          <span className="text-[10px]">Units</span>
         </div>
         <Button
           type="button"
@@ -69,7 +69,7 @@ export const RecipeMetrics = ({
           onClick={onToggleUnits}
           className="text-[10px] font-medium h-5 px-2 border-primary hover:bg-primary/10"
         >
-          {showAlternativeUnits ? "Metrisk" : "US"}
+          {showAlternativeUnits ? "Metric" : "US"}
         </Button>
       </div>
     </div>

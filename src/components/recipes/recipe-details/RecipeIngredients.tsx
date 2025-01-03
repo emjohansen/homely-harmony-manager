@@ -21,7 +21,7 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
         <AccordionTrigger className="hover:no-underline py-0">
           <div className="flex items-center gap-2">
             <UtensilsCrossed className="h-4 w-4" />
-            <h2 className="text-lg font-semibold text-foreground">Ingredienser</h2>
+            <h2 className="text-lg font-semibold text-foreground">Ingredients</h2>
           </div>
         </AccordionTrigger>
         <AccordionContent>
