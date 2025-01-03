@@ -33,7 +33,7 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
                   <div className="flex items-start">
                     <p className="text-sm text-foreground">
                       <span className="font-bold">{amountAndUnit}</span>
-                      <span className="text-muted-foreground font-mono"> // </span>
+                      <span className="text-muted-foreground font-mono"> -- </span>
                       {ingredient.ingredient}
                     </p>
                   </div>
