@@ -48,23 +48,27 @@ export const RecipeIngredientsList = ({
         <UtensilsCrossed className="h-5 w-5 text-gray-700" />
         <h2 className="text-2xl font-semibold text-gray-900">Ingredienser</h2>
       </div>
-      <ul className="space-y-3 divide-y divide-gray-50">
-        {recipe.recipe_ingredients.map((ingredient) => (
-          <li 
+      <div className="divide-y divide-gray-100">
+        {recipe.recipe_ingredients.map((ingredient, index) => (
+          <div 
             key={ingredient.id} 
             className={cn(
-              "flex items-baseline py-3",
-              "hover:bg-gray-50 transition-colors duration-200 rounded-lg px-4",
-              "bg-gray-50/30"
+              "grid grid-cols-12 py-3 px-4",
+              "transition-colors duration-200",
+              index % 2 === 0 ? "bg-gray-50/50" : "bg-white"
             )}
           >
-            <span className="font-medium text-gray-900 min-w-[120px] text-right pr-4">
-              {renderAmount(ingredient.amount, ingredient.unit)}
-            </span>
-            <span className="text-gray-700 flex-1">{ingredient.ingredient}</span>
-          </li>
+            <div className="col-span-4 text-right pr-6">
+              <span className="font-medium text-gray-900">
+                {renderAmount(ingredient.amount, ingredient.unit)}
+              </span>
+            </div>
+            <div className="col-span-8 text-left">
+              <span className="text-gray-700">{ingredient.ingredient}</span>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
