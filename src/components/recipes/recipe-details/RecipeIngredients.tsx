@@ -28,17 +28,13 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
         )}
       </button>
       <ul className={cn(
-        "space-y-1.5 transition-all duration-300",
+        "space-y-1 transition-all duration-300",
         isCollapsed ? "hidden" : "block"
       )}>
         {ingredients.map((ingredient) => (
           <li 
             key={ingredient.id} 
-            className={cn(
-              "flex items-baseline p-2 rounded-lg bg-white",
-              "border border-border border-opacity-20 transition-all duration-300",
-              "hover:border-opacity-100"
-            )}
+            className="flex items-baseline py-1"
           >
             <span className="font-medium text-sm min-w-[90px]">
               {renderAmount(ingredient.amount, ingredient.unit)}

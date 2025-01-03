@@ -55,7 +55,7 @@ export const RecipeContent = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 space-y-4">
+    <div className="bg-white rounded-lg shadow-sm p-3 space-y-4 mx-auto max-w-2xl">
       {canEdit && isEditing && (
         <div className="mb-2">
           <RecipeVisibility
@@ -66,7 +66,7 @@ export const RecipeContent = ({
       )}
 
       {recipe.image_url && (
-        <div className="relative w-full h-[250px] rounded-lg overflow-hidden -mt-1">
+        <div className="relative w-full h-[250px] rounded-lg overflow-hidden -mt-1 -mx-3">
           <img
             src={recipe.image_url}
             alt={recipe.title}
