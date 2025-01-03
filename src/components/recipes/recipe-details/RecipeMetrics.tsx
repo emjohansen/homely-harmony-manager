@@ -17,7 +17,7 @@ export const RecipeMetrics = ({
   onToggleUnits,
 }: RecipeMetricsProps) => {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="flex justify-between items-start px-1">
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Users className="h-3 w-3" />
@@ -67,9 +67,9 @@ export const RecipeMetrics = ({
           variant="outline"
           size="sm"
           onClick={onToggleUnits}
-          className="text-[10px] font-medium h-5 px-2 border-primary/20 hover:bg-primary/5"
+          className="text-[10px] font-medium h-5 px-2 border-primary hover:bg-primary/10"
         >
-          {!showAlternativeUnits ? "Metrisk" : "US"}
+          {showAlternativeUnits ? "Metrisk" : "US"}
         </Button>
       </div>
     </div>

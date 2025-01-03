@@ -27,20 +27,20 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
         )}
       </button>
       <ol className={cn(
-        "space-y-2 transition-all duration-300",
+        "space-y-3 transition-all duration-300",
         isCollapsed ? "hidden" : "block"
       )}>
         {steps
           .sort((a, b) => a.step_number - b.step_number)
           .map((step) => (
-            <li key={step.id} className="flex gap-3 group">
-              <span className="flex-shrink-0 w-6 h-6 bg-white rounded-full 
-                            border border-border border-opacity-20
-                            flex items-center justify-center text-sm font-medium
-                            group-hover:border-opacity-100 transition-all duration-300">
+            <li key={step.id} className="flex gap-4 group">
+              <span className="flex-shrink-0 w-7 h-7 bg-primary/5 rounded-full 
+                            border border-primary/10
+                            flex items-center justify-center text-sm font-medium text-primary/80
+                            group-hover:bg-primary/10 group-hover:border-primary/20 transition-all duration-300">
                 {step.step_number}
               </span>
-              <p className="text-sm leading-relaxed pt-0.5 group-hover:text-primary transition-colors duration-300">
+              <p className="text-sm leading-relaxed pt-1 group-hover:text-primary/90 transition-colors duration-300">
                 {step.description}
               </p>
             </li>
