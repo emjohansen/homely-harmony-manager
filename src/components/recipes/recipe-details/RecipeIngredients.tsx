@@ -29,7 +29,7 @@ export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngre
             {ingredients.map((ingredient) => (
               <li key={ingredient.id} className="border-b border-gray-100 py-3 last:border-0">
                 <div className="flex items-start gap-4">
-                  <span className="text-lg font-bold text-foreground min-w-[100px] text-right">
+                  <span className="text-sm font-bold text-foreground min-w-[80px]">
                     {renderAmount(ingredient.amount, ingredient.unit)}
                   </span>
                   <p className="text-sm text-foreground flex-1">
