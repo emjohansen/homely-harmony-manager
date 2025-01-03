@@ -1,48 +1,46 @@
 import { RecipeIngredient } from "@/types/recipe";
-import { UtensilsCrossed, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { UtensilsCrossed } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
-interface RecipeIngredientsProps {
+interface RecipeIngredientsListProps {
   ingredients: RecipeIngredient[];
   renderAmount: (amount: number | null, unit: string | null) => string;
 }
 
-export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngredientsProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  
+export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngredientsListProps) => {
   if (!ingredients || ingredients.length === 0) return null;
 
   return (
-    <div className="space-y-2">
-      <button 
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex items-center gap-2 w-full text-left text-primary"
-      >
-        <UtensilsCrossed className="h-4 w-4" />
-        <h2 className="text-lg font-semibold flex-1">Ingredienser</h2>
-        {isCollapsed ? (
-          <ChevronDown className="h-4 w-4" />
-        ) : (
-          <ChevronUp className="h-4 w-4" />
-        )}
-      </button>
-      <ul className={cn(
-        "space-y-1 transition-all duration-300",
-        isCollapsed ? "hidden" : "block"
-      )}>
-        {ingredients.map((ingredient) => (
-          <li 
-            key={ingredient.id} 
-            className="flex items-baseline py-1"
-          >
-            <span className="font-medium text-sm min-w-[90px]">
-              {renderAmount(ingredient.amount, ingredient.unit)}
-            </span>
-            <span className="text-sm">{ingredient.ingredient}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="ingredients" className="border-none">
+        <AccordionTrigger className="hover:no-underline py-0">
+          <div className="flex items-center gap-2">
+            <UtensilsCrossed className="h-4 w-4" />
+            <h2 className="text-lg font-semibold text-foreground">Ingredienser</h2>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent>
+          <ul className="space-y-0">
+            {ingredients.map((ingredient) => (
+              <li key={ingredient.id} className="border-b border-gray-100 py-3 last:border-0">
+                <div className="flex items-start gap-4">
+                  <span className="text-lg font-bold text-foreground min-w-[100px] text-right">
+                    {renderAmount(ingredient.amount, ingredient.unit)}
+                  </span>
+                  <p className="text-sm text-foreground flex-1">
+                    {ingredient.ingredient}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
