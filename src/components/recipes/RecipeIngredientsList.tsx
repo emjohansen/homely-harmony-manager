@@ -43,8 +43,8 @@ export const RecipeIngredientsList = ({
   if (!recipe.recipe_ingredients || recipe.recipe_ingredients.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg p-8 border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-6">
+    <div className="bg-white rounded-lg p-8 border border-gray-100 shadow-sm max-w-2xl mx-auto">
+      <div className="flex items-center gap-2 mb-6 justify-center">
         <UtensilsCrossed className="h-5 w-5 text-gray-700" />
         <h2 className="text-2xl font-semibold text-gray-900">Ingredienser</h2>
       </div>
@@ -54,13 +54,14 @@ export const RecipeIngredientsList = ({
             key={ingredient.id} 
             className={cn(
               "flex items-baseline py-3",
-              "hover:bg-gray-50/50 transition-colors duration-200 rounded-lg px-3"
+              "hover:bg-gray-50 transition-colors duration-200 rounded-lg px-4",
+              "bg-gray-50/30"
             )}
           >
-            <span className="font-medium text-gray-900 min-w-[120px]">
+            <span className="font-medium text-gray-900 min-w-[120px] text-right pr-4">
               {renderAmount(ingredient.amount, ingredient.unit)}
             </span>
-            <span className="text-gray-700">{ingredient.ingredient}</span>
+            <span className="text-gray-700 flex-1">{ingredient.ingredient}</span>
           </li>
         ))}
       </ul>

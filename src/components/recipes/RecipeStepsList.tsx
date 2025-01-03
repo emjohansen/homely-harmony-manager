@@ -9,8 +9,8 @@ export const RecipeStepsList = ({ recipe }: RecipeStepsListProps) => {
   if (!recipe.recipe_steps || recipe.recipe_steps.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-lg p-8 border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-6">
+    <div className="bg-white rounded-lg p-8 border border-gray-100 shadow-sm max-w-2xl mx-auto">
+      <div className="flex items-center gap-2 mb-6 justify-center">
         <ListChecks className="h-5 w-5 text-gray-700" />
         <h2 className="text-2xl font-semibold text-gray-900">Fremgangsmåte</h2>
       </div>
@@ -18,7 +18,7 @@ export const RecipeStepsList = ({ recipe }: RecipeStepsListProps) => {
         {recipe.recipe_steps
           .sort((a, b) => a.step_number - b.step_number)
           .map((step) => (
-            <li key={step.id} className="flex gap-4 group">
+            <li key={step.id} className="flex gap-4 group bg-gray-50/30 p-4 rounded-lg hover:bg-gray-50 transition-all">
               <span className="flex-shrink-0 w-8 h-8 bg-gray-100 group-hover:bg-gray-200 transition-colors rounded-full flex items-center justify-center font-medium text-gray-700">
                 {step.step_number}
               </span>
