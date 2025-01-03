@@ -34,6 +34,10 @@ export const RecipeContent = ({
     return adjustedAmount % 1 === 0 ? adjustedAmount : Number(adjustedAmount.toFixed(1));
   };
 
+  const formatNumber = (num: number): string => {
+    return num % 1 === 0 ? num.toString() : num.toFixed(1);
+  };
+
   const renderAmount = (amount: number | null, unit: string | null) => {
     if (!amount || !unit) return `${amount || ''} ${unit || ''}`;
     
@@ -43,15 +47,15 @@ export const RecipeContent = ({
     const shouldConvert = (showAlternativeUnits && isMetricUnit(unit)) || 
                          (!showAlternativeUnits && isImperialUnit(unit));
 
-    if (!shouldConvert) return `${adjustedAmount} ${unit}`;
+    if (!shouldConvert) return `${formatNumber(adjustedAmount)} ${unit}`;
 
     const alternativeUnit = getAlternativeUnit(unit);
-    if (!alternativeUnit) return `${adjustedAmount} ${unit}`;
+    if (!alternativeUnit) return `${formatNumber(adjustedAmount)} ${unit}`;
 
     const convertedAmount = convertUnit(adjustedAmount, unit, alternativeUnit);
-    if (convertedAmount === null) return `${adjustedAmount} ${unit}`;
+    if (convertedAmount === null) return `${formatNumber(adjustedAmount)} ${unit}`;
 
-    return `${Number(convertedAmount).toFixed(1)} ${alternativeUnit}`;
+    return `${formatNumber(convertedAmount)} ${alternativeUnit}`;
   };
 
   return (
