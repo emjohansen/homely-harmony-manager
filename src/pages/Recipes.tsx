@@ -55,44 +55,44 @@ const Recipes = () => {
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Oppskrifter</h1>
+          <h1 className="text-2xl font-bold">Recipes</h1>
           <div className="flex gap-2">
             <Button onClick={() => navigate("/recipes/new")}>
               <Plus className="h-4 w-4 mr-2" />
-              Ny oppskrift
+              New Recipe
             </Button>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-8">Laster oppskrifter...</div>
+          <div className="text-center py-8">Loading recipes...</div>
         ) : (
           <Tabs defaultValue="private" className="w-full">
             <div className="flex justify-between items-center mb-4">
               <TabsList className="grid w-[200px] grid-cols-2">
                 <TabsTrigger value="private">Mine</TabsTrigger>
-                <TabsTrigger value="public">Alle</TabsTrigger>
+                <TabsTrigger value="public">All</TabsTrigger>
               </TabsList>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => getRandomRecipe(privateRecipes)}
-                  title="Tilfeldig oppskrift"
+                  title="Random Recipe"
                 >
                   <Shuffle className="h-4 w-4 mr-2" />
-                  Tilfeldig
+                  Random
                 </Button>
               </div>
             </div>
             <TabsContent value="private">
               {!currentHouseholdId ? (
                 <div className="text-center py-8 text-gray-500">
-                  Bli med i en husholdning for å begynne å legge til dine egne oppskrifter!
+                  Join a household to start adding your own recipes!
                 </div>
               ) : privateRecipes.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  Ingen oppskrifter enda. Legg til din første oppskrift!
+                  No recipes yet. Add your first recipe!
                 </div>
               ) : (
                 <RecipeList recipes={privateRecipes} />
@@ -104,15 +104,15 @@ const Recipes = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => getRandomRecipe(publicRecipes)}
-                  title="Tilfeldig oppskrift"
+                  title="Random Recipe"
                 >
                   <Shuffle className="h-4 w-4 mr-2" />
-                  Tilfeldig
+                  Random
                 </Button>
               </div>
               {publicRecipes.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  Ingen offentlige oppskrifter tilgjengelig.
+                  No public recipes available.
                 </div>
               ) : (
                 <RecipeList recipes={publicRecipes} />

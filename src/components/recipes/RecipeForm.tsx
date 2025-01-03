@@ -96,10 +96,10 @@ export const RecipeForm = ({ mode, initialData, recipeId }: RecipeFormProps) => 
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {mode === 'create' ? "Oppretter..." : "Oppdaterer..."}
+            {mode === 'create' ? "Creating..." : "Updating..."}
           </>
         ) : (
-          mode === 'create' ? "Opprett oppskrift" : "Oppdater oppskrift"
+          mode === 'create' ? "Create Recipe" : "Update Recipe"
         )}
       </Button>
     </form>

@@ -35,20 +35,20 @@ export const RecipeBasicInfo = ({
       <div className="space-y-2">
         <div className="flex items-center gap-2 mb-2">
           <FileText className="h-4 w-4" />
-          <Label htmlFor="title" className="text-lg font-semibold">Navn og beskrivelse</Label>
+          <Label htmlFor="title" className="text-lg font-semibold">Name and Description</Label>
         </div>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Skriv inn navnet på retten"
+          placeholder="Enter the name of the dish"
           required
         />
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Beskriv retten"
+          placeholder="Describe the dish"
         />
       </div>
 
@@ -56,7 +56,7 @@ export const RecipeBasicInfo = ({
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Users className="h-4 w-4" />
-            <Label htmlFor="servings" className="text-lg font-semibold">Porsjoner</Label>
+            <Label htmlFor="servings" className="text-lg font-semibold">Servings</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -90,7 +90,7 @@ export const RecipeBasicInfo = ({
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="h-4 w-4" />
-            <Label htmlFor="prepTime" className="text-lg font-semibold">Tilberedningstid</Label>
+            <Label htmlFor="prepTime" className="text-lg font-semibold">Preparation Time</Label>
           </div>
           <Input
             id="prepTime"
@@ -99,7 +99,7 @@ export const RecipeBasicInfo = ({
             value={prepTime}
             onChange={(e) => setPrepTime(parseInt(e.target.value))}
             required
-            placeholder="Minutter"
+            placeholder="Minutes"
           />
         </div>
       </div>

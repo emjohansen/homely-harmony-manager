@@ -20,79 +20,79 @@ interface RecipeTagsProps {
 
 const TAG_CATEGORIES = {
   mealType: {
-    label: "Måltidstype",
-    options: ["Frokost", "Lunsj", "Middag", "Dessert", "Snacks", "Drikke"]
+    label: "Meal Type",
+    options: ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks"]
   },
   difficulty: {
-    label: "Vanskelighetsgrad",
-    options: ["Enkel", "Middels", "Avansert"]
+    label: "Difficulty",
+    options: ["Easy", "Medium", "Advanced"]
   },
   allergens: {
-    label: "Allergener",
+    label: "Allergens",
     options: [
-      "Glutenfri", 
-      "Laktosefri", 
-      "Nøttefri", 
-      "Eggfri", 
-      "Soyafri",
-      "Melkefri",
-      "Sesamfri",
-      "Skalldyrfri",
-      "Fiskefri",
-      "Sellerfri",
-      "Sennepfri",
-      "Sulfittfri"
+      "Gluten Free", 
+      "Lactose Free", 
+      "Nut Free", 
+      "Egg Free", 
+      "Soy Free",
+      "Dairy Free",
+      "Sesame Free",
+      "Shellfish Free",
+      "Fish Free",
+      "Celery Free",
+      "Mustard Free",
+      "Sulfite Free"
     ]
   },
   meatType: {
-    label: "Kjøtttype",
+    label: "Meat Type",
     options: [
-      "Kylling", 
-      "Kalkun",
-      "Storfe", 
-      "Svin", 
-      "Lam", 
-      "Fisk", 
-      "Skalldyr",
-      "Vilt",
-      "And"
+      "Chicken", 
+      "Turkey",
+      "Beef", 
+      "Pork", 
+      "Lamb", 
+      "Fish", 
+      "Shellfish",
+      "Game",
+      "Duck"
     ]
   },
   dietType: {
-    label: "Kosthold",
+    label: "Diet",
     options: [
-      "Vegansk",
-      "Vegetarisk",
-      "Pescetariansk",
-      "Ketogen",
-      "Lavkarbo",
+      "Vegan",
+      "Vegetarian",
+      "Pescatarian",
+      "Ketogenic",
+      "Low Carb",
       "Paleo"
     ]
   },
   misc: {
-    label: "Annet",
+    label: "Other",
     options: [
-      "Sunn", 
-      "Rask", 
-      "Budsjettvennlig", 
-      "Festmat", 
-      "Tradisjonell", 
-      "Internasjonal",
-      "Grillet",
-      "Bakt",
-      "Kokt",
-      "Stekt",
-      "Dampet",
-      "Fersk",
-      "Sesongbasert",
-      "Barnevennlig",
-      "Frossen",
-      "Matlaging i bulk",
-      "Lite oppvask",
-      "En-potte rett",
-      "Slow cooker",
-      "Airfryer",
-      "Matpakke"
+      "Healthy", 
+      "Quick", 
+      "Budget Friendly", 
+      "Party Food", 
+      "Traditional", 
+      "International",
+      "Grilled",
+      "Baked",
+      "Boiled",
+      "Fried",
+      "Steamed",
+      "Fresh",
+      "Seasonal",
+      "Kid Friendly",
+      "Frozen",
+      "Batch Cooking",
+      "Minimal Dishes",
+      "One Pot Meal",
+      "Slow Cooker",
+      "Air Fryer",
+      "Lunch Box"
     ]
   }
 };
@@ -120,7 +120,7 @@ export const RecipeTags = ({
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <Tag className="h-4 w-4" />
-        <h2 className="text-lg font-semibold">Kategoriser oppskriften</h2>
+        <h2 className="text-lg font-semibold">Categorize Recipe</h2>
       </div>
       
       <Accordion type="single" collapsible className="w-full space-y-2">
@@ -172,7 +172,7 @@ export const RecipeTags = ({
 
       <div className="flex gap-2">
         <Input
-          placeholder="Eller skriv en egen tagg og trykk Enter"
+          placeholder="Or type a custom tag and press Enter"
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
           onKeyDown={handleAddTag}
