@@ -25,7 +25,6 @@ const conversionMap: ConversionMap = {
     to: { 
       'ml': 14.79,
       'tsp': 3,
-      'ss': 1,
       'cup': 0.0625,
     },
     type: 'volume'
@@ -33,7 +32,6 @@ const conversionMap: ConversionMap = {
   'tsp': { 
     to: { 
       'ml': 4.93,
-      'ts': 1,
       'tbsp': 0.333,
     },
     type: 'volume'
@@ -145,7 +143,7 @@ const conversionMap: ConversionMap = {
   },
 };
 
-const metricUnits = ['g', 'kg', 'ml', 'dl', 'l', 'ss', 'ts'];
+const metricUnits = ['g', 'kg', 'ml', 'dl', 'l', 'tbsp', 'tsp'];
 const imperialUnits = ['oz', 'lb', 'cup', 'tbsp', 'tsp', 'fl oz', 'pt', 'qt', 'gal'];
 
 export const isMetricUnit = (unit: string): boolean => {
@@ -184,14 +182,14 @@ export const getAlternativeUnit = (unit: string): string | null => {
     'ml': 'fl oz',
     'dl': 'cup',
     'l': 'qt',
-    'ss': 'tbsp',
-    'ts': 'tsp',
+    'tbsp': 'tbsp',
+    'tsp': 'tsp',
     // US to metric
     'oz': 'g',
     'lb': 'kg',
     'cup': 'dl',
-    'tbsp': 'ss',
-    'tsp': 'ts',
+    'tbsp': 'tbsp',
+    'tsp': 'tsp',
     'fl oz': 'ml',
     'qt': 'l',
     'pt': 'l',
