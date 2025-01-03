@@ -71,51 +71,55 @@ export const RecipeIngredients = ({
   };
 
   return (
-    <div className="space-y-4 max-w-full">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="space-y-2 max-w-full">
+      <div className="flex items-center gap-2">
         <UtensilsCrossed className="h-4 w-4" />
         <Label className="text-lg font-semibold">Ingredients</Label>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-1">
         {ingredients.map((ingredient, index) => (
-          <div key={index} className="space-y-2 p-4 bg-gray-50 rounded-lg relative">
-            <div className="absolute right-2 top-2">
+          <div key={index} className="p-2 bg-gray-50 rounded-md relative">
+            <div className="absolute right-1 top-1">
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
+                className="h-6 w-6"
                 onClick={() => handleRemoveIngredient(index)}
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </div>
-            <div className="w-full">
+            <div className="space-y-1 pr-8">
               <Input
                 placeholder="Ingredient"
                 value={ingredient.ingredient}
                 onChange={(e) => handleIngredientChange(index, "ingredient", e.target.value)}
+                className="h-8"
               />
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Input
-                placeholder="Amount"
-                value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
-                onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
-              />
-              <div className="relative">
+              <div className="grid grid-cols-2 gap-1">
                 <Input
-                  placeholder="Unit"
-                  value={ingredient.unit}
-                  onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
-                  list={`units-${index}`}
+                  placeholder="Amount"
+                  value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
+                  onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
+                  className="h-8"
                 />
-                <datalist id={`units-${index}`}>
-                  {commonUnits.map((unit) => (
-                    <option key={unit.value} value={unit.value}>
-                      {unit.label}
-                    </option>
-                  ))}
-                </datalist>
+                <div className="relative">
+                  <Input
+                    placeholder="Unit"
+                    value={ingredient.unit}
+                    onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
+                    list={`units-${index}`}
+                    className="h-8"
+                  />
+                  <datalist id={`units-${index}`}>
+                    {commonUnits.map((unit) => (
+                      <option key={unit.value} value={unit.value}>
+                        {unit.label}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
               </div>
             </div>
           </div>
@@ -126,7 +130,7 @@ export const RecipeIngredients = ({
         variant="outline"
         size="sm"
         onClick={handleAddIngredient}
-        className="w-full"
+        className="w-full mt-1"
       >
         <Plus className="h-4 w-4 mr-2" />
         Add ingredient
