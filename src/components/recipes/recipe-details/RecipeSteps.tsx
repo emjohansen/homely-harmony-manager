@@ -16,7 +16,7 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
     <div className="space-y-2">
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex items-center gap-2 w-full text-center text-foreground"
+        className="flex items-center gap-2 w-full text-foreground"
       >
         <ListChecks className="h-4 w-4" />
         <h2 className="text-lg font-semibold flex-1">Fremgangsmåte</h2>

@@ -75,11 +75,13 @@ export const RecipeContent = ({
         </div>
       )}
       
-      <div className="space-y-1 text-center">
+      <div className="space-y-4 text-center">
         <h1 className="text-xl font-bold text-foreground">
           {recipe.title}
         </h1>
-        <p className="text-sm text-foreground">{recipe.description}</p>
+        <p className="text-sm text-foreground mb-4">
+          {recipe.description}
+        </p>
         <RecipeTagsDisplay tags={recipe.recipe_tags || []} />
       </div>
 
