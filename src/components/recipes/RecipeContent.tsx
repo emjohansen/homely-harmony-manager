@@ -70,10 +70,10 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
       )}
       
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-[#638889]">
+        <h1 className="text-2xl font-bold">
           {recipe.title}
         </h1>
-        <p className="text-gray-600">{recipe.description}</p>
+        <p className="text-muted-foreground">{recipe.description}</p>
         
         <RecipeTagsDisplay tags={recipe.recipe_tags || []} />
       </div>
