@@ -10,7 +10,7 @@ export const RecipeTagsDisplay = ({ tags }: RecipeTagsProps) => {
 
   return (
     <div className="space-y-2 mt-4">
-      <div className="flex items-center gap-2 text-[#638889]">
+      <div className="flex items-center gap-2">
         <Tag className="h-4 w-4" />
         <span className="text-sm font-medium">Tagger</span>
       </div>
@@ -18,8 +18,8 @@ export const RecipeTagsDisplay = ({ tags }: RecipeTagsProps) => {
         {tags.map(({ tag }) => (
           <span
             key={tag}
-            className="bg-white px-3 py-1 rounded-full text-xs font-medium text-[#638889]
-                     border border-[#9DBC98] border-opacity-20 transition-all duration-300
+            className="bg-white px-3 py-1 rounded-full text-xs font-medium
+                     border border-border border-opacity-20 transition-all duration-300
                      hover:border-opacity-100"
           >
             {tag}
