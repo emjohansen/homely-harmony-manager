@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, UtensilsCrossed } from "lucide-react";
+import { Plus, UtensilsCrossed, Trash2 } from "lucide-react";
 
 interface RecipeIngredientsProps {
   ingredients: Array<{ ingredient: string; amount: string; unit: string }>;
@@ -57,6 +57,11 @@ export const RecipeIngredients = ({
     setIngredients([...ingredients, { ingredient: "", amount: "", unit: "" }]);
   };
 
+  const handleRemoveIngredient = (index: number) => {
+    const newIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(newIngredients);
+  };
+
   const calculateAdjustedAmount = (amount: string) => {
     if (!amount || !originalServings || !currentServings) return amount;
     const numericAmount = parseFloat(amount);
@@ -71,38 +76,49 @@ export const RecipeIngredients = ({
         <UtensilsCrossed className="h-4 w-4" />
         <Label className="text-lg font-semibold">Ingredients</Label>
       </div>
-      {ingredients.map((ingredient, index) => (
-        <div key={index} className="grid grid-cols-6 gap-2">
-          <Input
-            className="col-span-3"
-            placeholder="Ingredient"
-            value={ingredient.ingredient}
-            onChange={(e) => handleIngredientChange(index, "ingredient", e.target.value)}
-          />
-          <Input
-            className="col-span-1"
-            placeholder="Amount"
-            value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
-            onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
-          />
-          <div className="col-span-2 relative">
+      <div className="space-y-4">
+        {ingredients.map((ingredient, index) => (
+          <div key={index} className="grid grid-cols-12 gap-2 items-center">
             <Input
-              placeholder="Unit"
-              value={ingredient.unit}
-              onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
-              list={`units-${index}`}
-              className="w-full"
+              className="col-span-5"
+              placeholder="Ingredient"
+              value={ingredient.ingredient}
+              onChange={(e) => handleIngredientChange(index, "ingredient", e.target.value)}
             />
-            <datalist id={`units-${index}`}>
-              {commonUnits.map((unit) => (
-                <option key={unit.value} value={unit.value}>
-                  {unit.label}
-                </option>
-              ))}
-            </datalist>
+            <Input
+              className="col-span-2"
+              placeholder="Amount"
+              value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
+              onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
+            />
+            <div className="col-span-4 relative">
+              <Input
+                placeholder="Unit"
+                value={ingredient.unit}
+                onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
+                list={`units-${index}`}
+                className="w-full"
+              />
+              <datalist id={`units-${index}`}>
+                {commonUnits.map((unit) => (
+                  <option key={unit.value} value={unit.value}>
+                    {unit.label}
+                  </option>
+                ))}
+              </datalist>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="col-span-1"
+              onClick={() => handleRemoveIngredient(index)}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <Button
         type="button"
         variant="outline"
