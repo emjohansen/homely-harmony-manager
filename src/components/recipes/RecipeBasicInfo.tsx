@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Info } from "lucide-react";
+import { Minus, Plus, FileText, Clock, Users } from "lucide-react";
 
 interface RecipeBasicInfoProps {
   title: string;
@@ -31,34 +31,33 @@ export const RecipeBasicInfo = ({
   };
 
   return (
-    <>
-      <div className="flex items-center gap-2 mb-4">
-        <Info className="h-5 w-5" />
-        <h2 className="text-2xl font-semibold">Oppskriftsinformasjon</h2>
-      </div>
-
+    <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="title">Navn på matrett</Label>
+        <div className="flex items-center gap-2 mb-2">
+          <FileText className="h-4 w-4" />
+          <Label htmlFor="title" className="text-lg font-semibold">Navn og beskrivelse</Label>
+        </div>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          placeholder="Skriv inn navnet på retten"
           required
         />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="description">Beskrivelse</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          placeholder="Beskriv retten"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="servings">Porsjoner</Label>
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="h-4 w-4" />
+            <Label htmlFor="servings" className="text-lg font-semibold">Porsjoner</Label>
+          </div>
           <div className="flex items-center space-x-2">
             <Button
               type="button"
@@ -89,7 +88,10 @@ export const RecipeBasicInfo = ({
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="prepTime">Tilberedningstid (minutter)</Label>
+          <div className="flex items-center gap-2 mb-2">
+            <Clock className="h-4 w-4" />
+            <Label htmlFor="prepTime" className="text-lg font-semibold">Tilberedningstid</Label>
+          </div>
           <Input
             id="prepTime"
             type="number"
@@ -97,9 +99,10 @@ export const RecipeBasicInfo = ({
             value={prepTime}
             onChange={(e) => setPrepTime(parseInt(e.target.value))}
             required
+            placeholder="Minutter"
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };

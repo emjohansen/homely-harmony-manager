@@ -1,7 +1,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ListChecks } from "lucide-react";
 
 interface RecipeStepsProps {
   steps: Array<{ description: string }>;
@@ -25,8 +25,11 @@ export const RecipeSteps = ({ steps, setSteps }: RecipeStepsProps) => {
   };
 
   return (
-    <div className="space-y-2">
-      <Label>Fremgangsmåte</Label>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <ListChecks className="h-4 w-4" />
+        <Label className="text-lg font-semibold">Fremgangsmåte</Label>
+      </div>
       {steps.map((step, index) => (
         <div key={index} className="flex gap-2 items-start">
           <span className="mt-2 text-sm text-gray-500">{index + 1}.</span>

@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, UtensilsCrossed } from "lucide-react";
 
 interface RecipeIngredientsProps {
   ingredients: Array<{ ingredient: string; amount: string; unit: string }>;
@@ -71,8 +71,11 @@ export const RecipeIngredients = ({
   };
 
   return (
-    <div className="space-y-2">
-      <Label>Ingredienser</Label>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-2">
+        <UtensilsCrossed className="h-4 w-4" />
+        <Label className="text-lg font-semibold">Ingredienser</Label>
+      </div>
       {ingredients.map((ingredient, index) => (
         <div key={index} className="grid grid-cols-6 gap-2">
           <Input
