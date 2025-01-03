@@ -70,6 +70,11 @@ export const RecipeIngredients = ({
     return adjustedAmount % 1 === 0 ? adjustedAmount.toString() : adjustedAmount.toFixed(1);
   };
 
+  const getUnitLabel = (value: string) => {
+    const unit = commonUnits.find(u => u.value === value);
+    return unit ? unit.label : value;
+  };
+
   return (
     <div className="space-y-2 max-w-full">
       <div className="flex items-center gap-2">
