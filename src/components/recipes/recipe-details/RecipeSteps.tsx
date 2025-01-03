@@ -14,18 +14,10 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
 
   return (
     <div className="space-y-2">
-      <button 
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex items-center gap-2 w-full text-foreground"
-      >
+      <div className="flex items-center gap-2 mb-2">
         <ListChecks className="h-4 w-4" />
-        <h2 className="text-lg font-semibold flex-1">Fremgangsmåte</h2>
-        {isCollapsed ? (
-          <ChevronDown className="h-4 w-4" />
-        ) : (
-          <ChevronUp className="h-4 w-4" />
-        )}
-      </button>
+        <h2 className="text-lg font-semibold">Fremgangsmåte</h2>
+      </div>
       <ol className={cn(
         "space-y-0 transition-all duration-300",
         isCollapsed ? "hidden" : "block"
