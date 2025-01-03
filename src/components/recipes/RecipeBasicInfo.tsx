@@ -41,14 +41,14 @@ export const RecipeBasicInfo = ({
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter the name of the dish"
+          placeholder="Enter recipe name"
           required
         />
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Describe the dish"
+          placeholder="Describe the recipe"
         />
       </div>
 

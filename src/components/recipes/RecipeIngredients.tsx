@@ -12,16 +12,14 @@ interface RecipeIngredientsProps {
 
 const commonUnits = [
   // Metric Volume
-  { value: "dl", label: "Desiliter (dl)" },
-  { value: "l", label: "Liter (l)" },
   { value: "ml", label: "Milliliter (ml)" },
-  { value: "ss", label: "Spiseskje (ss)" },
-  { value: "ts", label: "Teskje (ts)" },
-  { value: "kl", label: "Klype" },
-  // US Volume
-  { value: "cup", label: "Cup" },
+  { value: "dl", label: "Deciliter (dl)" },
+  { value: "l", label: "Liter (l)" },
   { value: "tbsp", label: "Tablespoon" },
   { value: "tsp", label: "Teaspoon" },
+  { value: "pinch", label: "Pinch" },
+  // US Volume
+  { value: "cup", label: "Cup" },
   { value: "fl oz", label: "Fluid Ounce" },
   { value: "qt", label: "Quart" },
   { value: "gal", label: "Gallon" },
@@ -34,15 +32,12 @@ const commonUnits = [
   { value: "oz", label: "Ounce" },
   { value: "lb", label: "Pound" },
   // Count
-  { value: "stk", label: "Stykk" },
   { value: "pc", label: "Piece" },
-  // Other
-  { value: "bunt", label: "Bunt" },
-  { value: "neve", label: "Neve" },
-  { value: "pakke", label: "Pakke" },
-  { value: "boks", label: "Boks" },
+  { value: "bunch", label: "Bunch" },
+  { value: "handful", label: "Handful" },
+  { value: "package", label: "Package" },
+  { value: "can", label: "Can" },
   { value: "glass", label: "Glass" },
-  { value: "pinch", label: "Pinch" },
   { value: "dash", label: "Dash" },
 ];
 
@@ -74,25 +69,25 @@ export const RecipeIngredients = ({
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <UtensilsCrossed className="h-4 w-4" />
-        <Label className="text-lg font-semibold">Ingredienser</Label>
+        <Label className="text-lg font-semibold">Ingredients</Label>
       </div>
       {ingredients.map((ingredient, index) => (
         <div key={index} className="grid grid-cols-6 gap-2">
           <Input
             className="col-span-3"
-            placeholder="Ingrediens"
+            placeholder="Ingredient"
             value={ingredient.ingredient}
             onChange={(e) => handleIngredientChange(index, "ingredient", e.target.value)}
           />
           <Input
             className="col-span-1"
-            placeholder="Mengde"
+            placeholder="Amount"
             value={originalServings && currentServings ? calculateAdjustedAmount(ingredient.amount) : ingredient.amount}
             onChange={(e) => handleIngredientChange(index, "amount", e.target.value)}
           />
           <div className="col-span-2 relative">
             <Input
-              placeholder="Enhet"
+              placeholder="Unit"
               value={ingredient.unit}
               onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
               list={`units-${index}`}
@@ -116,7 +111,7 @@ export const RecipeIngredients = ({
         className="w-full"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Legg til ingrediens
+        Add ingredient
       </Button>
     </div>
   );
