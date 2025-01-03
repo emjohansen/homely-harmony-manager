@@ -33,12 +33,12 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
         {steps
           .sort((a, b) => a.step_number - b.step_number)
           .map((step) => (
-            <li key={step.id} className="border-b border-gray-100 py-4 last:border-0">
-              <div className="flex flex-col gap-2">
-                <span className="text-base font-semibold text-primary">
+            <li key={step.id} className="border-b border-gray-100 py-3 last:border-0">
+              <div className="flex flex-col gap-1">
+                <span className="text-sm text-muted-foreground">
                   {step.step_number}.
                 </span>
-                <p className="text-sm leading-relaxed">
+                <p className="text-sm">
                   {step.description}
                 </p>
               </div>
