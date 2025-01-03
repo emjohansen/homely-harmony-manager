@@ -16,7 +16,7 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
     <div className="space-y-2">
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex items-center gap-2 w-full text-left text-primary"
+        className="flex items-center gap-2 w-full text-center text-primary"
       >
         <ListChecks className="h-4 w-4" />
         <h2 className="text-lg font-semibold flex-1">Fremgangsmåte</h2>
@@ -34,11 +34,11 @@ export const RecipeStepsList = ({ steps }: RecipeStepsProps) => {
           .sort((a, b) => a.step_number - b.step_number)
           .map((step) => (
             <li key={step.id} className="border-b border-gray-100 py-3 last:border-0">
-              <div className="flex flex-col gap-1">
-                <span className="text-lg font-bold text-primary">
+              <div className="flex items-start gap-4">
+                <span className="text-lg font-bold text-primary min-w-[24px]">
                   {step.step_number}
                 </span>
-                <p className="text-sm">
+                <p className="text-sm text-muted-foreground flex-1">
                   {step.description}
                 </p>
               </div>
