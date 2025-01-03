@@ -10,10 +10,16 @@ import { RecipeStepsList } from "./recipe-details/RecipeSteps";
 interface RecipeContentProps {
   recipe: Recipe;
   canEdit: boolean;
+  isEditing?: boolean;
   onVisibilityChange: (isPublic: boolean) => void;
 }
 
-export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeContentProps) => {
+export const RecipeContent = ({ 
+  recipe, 
+  canEdit, 
+  isEditing,
+  onVisibilityChange 
+}: RecipeContentProps) => {
   const [currentServings, setCurrentServings] = useState(recipe.servings);
   const [showAlternativeUnits, setShowAlternativeUnits] = useState(false);
 
@@ -50,7 +56,7 @@ export const RecipeContent = ({ recipe, canEdit, onVisibilityChange }: RecipeCon
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 space-y-4">
-      {canEdit && (
+      {canEdit && isEditing && (
         <div className="mb-2">
           <RecipeVisibility
             isPublic={recipe.is_public || false}

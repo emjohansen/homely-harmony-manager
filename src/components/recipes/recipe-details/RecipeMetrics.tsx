@@ -64,12 +64,12 @@ export const RecipeMetrics = ({
         </div>
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={onToggleUnits}
-          className="text-[10px] font-medium h-5 px-1 hover:bg-transparent"
+          className="text-[10px] font-medium h-5 px-2 border-primary/20 hover:bg-primary/5"
         >
-          {showAlternativeUnits ? "Metrisk" : "US"}
+          {!showAlternativeUnits ? "Metrisk" : "US"}
         </Button>
       </div>
     </div>
