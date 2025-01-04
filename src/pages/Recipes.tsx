@@ -54,20 +54,13 @@ const Recipes = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="relative h-[50vh] flex flex-col items-center justify-center overflow-hidden">
-        {/* Background blob */}
-        <div className="absolute inset-0">
-          <svg
-            className="absolute inset-0 w-full h-full"
-            viewBox="0 0 200 200"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill="#FFA94D"
-              d="M44.2,-30.9C57.9,-11.9,69.7,8.1,64.6,22.5C59.5,36.8,37.6,45.5,15.5,51.2C-6.6,56.9,-28.9,59.6,-42.4,49.8C-55.9,40,-60.6,17.8,-56.2,-1.8C-51.8,-21.4,-38.3,-38.3,-22.4,-56C-6.5,-73.7,11.8,-92.2,23.8,-84.8C35.8,-77.4,41.5,-44.2,44.2,-30.9Z"
-              transform="translate(100 100)"
-            />
-          </svg>
-        </div>
+        {/* Background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: 'url("/lovable-uploads/e5cb2452-51e8-40f1-a22e-77651e6b17b2.png")',
+          }}
+        />
         
         {/* Icon */}
         <div className="relative mb-6">
