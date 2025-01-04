@@ -122,7 +122,7 @@ const RecipeDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-16">
+      <div className="min-h-screen bg-cream pb-16">
         <div className="max-w-lg mx-auto px-4 py-8">
           <div className="text-center">Loading recipe details...</div>
         </div>
@@ -133,7 +133,7 @@ const RecipeDetails = () => {
 
   if (!recipe) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-16">
+      <div className="min-h-screen bg-cream pb-16">
         <div className="max-w-lg mx-auto px-4 py-8">
           <div className="text-center">Recipe not found</div>
         </div>
@@ -143,8 +143,13 @@ const RecipeDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="max-w-lg mx-auto px-4 py-8">
+    <div className="min-h-screen bg-cream pb-16 relative">
+      <img 
+        src="/lovable-uploads/7be6df58-cdca-45d2-bce5-727ee304506f.png"
+        alt=""
+        className="absolute top-0 left-0 w-full h-32 object-cover z-0"
+      />
+      <div className="max-w-lg mx-auto px-4 py-8 relative z-10">
         <RecipeHeader 
           canEdit={canEdit} 
           recipeId={recipe.id} 
