@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const InviteMember = ({ householdId }: { householdId: string }) => {
@@ -14,10 +14,33 @@ const InviteMember = ({ householdId }: { householdId: string }) => {
     setIsLoading(true);
 
     try {
+      // First check if there's already a pending invitation
+      const { data: existingInvites, error: fetchError } = await supabase
+        .from("household_invites")
+        .select()
+        .eq("household_id", householdId)
+        .eq("email", email)
+        .eq("status", "pending")
+        .single();
+
+      if (fetchError && fetchError.code !== "PGRST116") { // PGRST116 means no rows returned
+        console.error("Error checking existing invites:", fetchError);
+        throw new Error("Failed to check existing invitations");
+      }
+
+      if (existingInvites) {
+        toast({
+          variant: "destructive",
+          title: "Invitation exists",
+          description: "An invitation has already been sent to this email address",
+        });
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      const { error } = await supabase
+      const { error: insertError } = await supabase
         .from("household_invites")
         .insert([{
           household_id: householdId,
@@ -25,7 +48,10 @@ const InviteMember = ({ householdId }: { householdId: string }) => {
           invited_by: user.id,
         }]);
 
-      if (error) throw error;
+      if (insertError) {
+        console.error("Error creating invitation:", insertError);
+        throw insertError;
+      }
 
       toast({
         title: "Invitation sent",
