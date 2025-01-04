@@ -6,10 +6,9 @@ interface RecipeHeaderProps {
   canEdit: boolean;
   recipeId: string;
   handleDelete: () => void;
-  title: string;
 }
 
-export const RecipeHeader = ({ canEdit, recipeId, handleDelete, title }: RecipeHeaderProps) => {
+export const RecipeHeader = ({ canEdit, recipeId, handleDelete }: RecipeHeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -45,10 +44,6 @@ export const RecipeHeader = ({ canEdit, recipeId, handleDelete, title }: RecipeH
           </div>
         )}
       </div>
-      
-      <h1 className="text-center text-xl font-bold text-foreground mt-2">
-        {title}
-      </h1>
     </div>
   );
 };

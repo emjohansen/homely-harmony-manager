@@ -80,6 +80,9 @@ export const RecipeContent = ({
       )}
       
       <div className="space-y-0 text-center">
+        <h1 className="text-xl font-bold text-foreground">
+          {recipe.title}
+        </h1>
         <p className="text-sm text-foreground">
           {recipe.description}
         </p>

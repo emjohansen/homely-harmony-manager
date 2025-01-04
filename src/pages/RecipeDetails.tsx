@@ -149,7 +149,6 @@ const RecipeDetails = () => {
           canEdit={canEdit} 
           recipeId={recipe.id} 
           handleDelete={handleDelete}
-          title={recipe.title}
         />
         <RecipeContent 
           recipe={recipe} 
