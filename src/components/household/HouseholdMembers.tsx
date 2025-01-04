@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface HouseholdMember {
   user_id: string;
@@ -40,6 +40,11 @@ const HouseholdMembers = ({ householdId, isCreator, onMembershipChange }: Househ
 
       if (error) {
         console.error('Error fetching members:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not fetch household members",
+        });
         return;
       }
 
@@ -47,17 +52,25 @@ const HouseholdMembers = ({ householdId, isCreator, onMembershipChange }: Househ
     };
 
     fetchMembers();
-  }, [householdId]);
+  }, [householdId, toast]);
 
   const handleRemoveMember = async (userId: string) => {
     try {
+      console.log('Attempting to remove member:', userId, 'from household:', householdId);
+      
       const { error } = await supabase
         .from('household_members')
         .delete()
         .eq('household_id', householdId)
         .eq('user_id', userId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error removing member:', error);
+        throw error;
+      }
+
+      // Update the local state to remove the member
+      setMembers(members.filter(member => member.user_id !== userId));
 
       toast({
         title: "Success",
@@ -77,13 +90,18 @@ const HouseholdMembers = ({ householdId, isCreator, onMembershipChange }: Househ
 
   const handleLeaveHousehold = async () => {
     try {
+      console.log('Attempting to leave household:', householdId);
+      
       const { error } = await supabase
         .from('household_members')
         .delete()
         .eq('household_id', householdId)
         .eq('user_id', currentUserId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error leaving household:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
