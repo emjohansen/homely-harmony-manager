@@ -54,16 +54,16 @@ const Recipes = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="relative h-[60vh] flex flex-col items-center justify-start pt-8">
-        <h1 className="text-4xl font-bold mb-8">Recipes</h1>
-        
         {/* Illustration */}
-        <div className="relative mb-6 w-[32rem]">
+        <div className="relative mb-6 w-[40rem]">
           <img 
-            src="/lovable-uploads/3f8a2cc2-2c9d-4361-acdf-74a97a56225c.png" 
-            alt="Cooking illustration" 
+            src="/lovable-uploads/04f4f1a5-8c1a-4ab1-ab29-dfa01b9bc6c5.png" 
+            alt="Chef illustration" 
             className="w-full h-auto"
           />
         </div>
+        
+        <h1 className="text-4xl font-bold mb-8">Recipes</h1>
         
         {/* Add Recipe Button */}
         <Button
