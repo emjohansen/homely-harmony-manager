@@ -76,7 +76,7 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <div className="flex justify-center items-center mb-4">
-              <TabsList className="grid w-[300px] grid-cols-2">
+              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#99c58b] [&_[data-state=active]]:text-white">
                 <TabsTrigger value="private">My Recipes</TabsTrigger>
                 <TabsTrigger value="public">All Recipes</TabsTrigger>
               </TabsList>
@@ -109,7 +109,7 @@ const Recipes = () => {
 
       <Button
         onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#DB9B63] hover:bg-[#DB9B63]/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#99c58b] hover:bg-[#99c58b]/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
         <Plus className="h-12 w-12 text-white" />
