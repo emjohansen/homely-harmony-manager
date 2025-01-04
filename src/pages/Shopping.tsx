@@ -6,10 +6,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { NewShoppingList } from "@/components/shopping/NewShoppingList";
 import { ShoppingListCard } from "@/components/shopping/ShoppingListCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
 
 const Shopping = () => {
   const [lists, setLists] = useState<any[]>([]);
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -100,6 +102,11 @@ const Shopping = () => {
     fetchShoppingLists(currentHouseholdId!);
   };
 
+  const handleViewList = (id: string) => {
+    console.log('Opening shopping list:', id);
+    navigate(`/shopping/list/${id}`);
+  };
+
   const handleDeleteList = async (id: string) => {
     const { error } = await supabase
       .from('shopping_lists')
@@ -145,7 +152,7 @@ const Shopping = () => {
                   list={list}
                   onArchive={handleArchiveList}
                   onDelete={handleDeleteList}
-                  onViewList={(id) => console.log('View list:', id)}
+                  onViewList={handleViewList}
                 />
               ))}
             {lists.filter(list => list.status === 'active').length === 0 && (
@@ -164,7 +171,7 @@ const Shopping = () => {
                   list={list}
                   onArchive={handleArchiveList}
                   onDelete={handleDeleteList}
-                  onViewList={(id) => console.log('View list:', id)}
+                  onViewList={handleViewList}
                 />
               ))}
             {lists.filter(list => list.status === 'archived').length === 0 && (
