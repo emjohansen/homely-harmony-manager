@@ -45,8 +45,9 @@ const HouseholdSwitcher = ({
   const [open, setOpen] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   
-  // Early return if no households
+  // Early return if no households or if households is not an array
   if (!Array.isArray(households)) {
+    console.log('No households array provided');
     return null;
   }
 
@@ -114,10 +115,8 @@ const HouseholdSwitcher = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
-          <Command 
-            className="bg-[#efffed]"
-          >
-            <CommandInput placeholder="Search households..." className="bg-[#efffed]" />
+          <Command>
+            <CommandInput placeholder="Search households..." />
             <CommandEmpty>No household found.</CommandEmpty>
             <CommandGroup>
               {households.map((household) => (
@@ -125,7 +124,6 @@ const HouseholdSwitcher = ({
                   key={household.id}
                   value={household.id}
                   onSelect={() => handleHouseholdSelect(household)}
-                  className="bg-[#efffed] hover:bg-mint"
                 >
                   <Check
                     className={cn(
@@ -142,7 +140,7 @@ const HouseholdSwitcher = ({
                 </CommandItem>
               ))}
             </CommandGroup>
-            <CommandSeparator className="bg-sage/20" />
+            <CommandSeparator />
             <CommandGroup>
               <DialogTrigger asChild>
                 <CommandItem
@@ -150,7 +148,6 @@ const HouseholdSwitcher = ({
                     setOpen(false);
                     setShowCreateDialog(true);
                   }}
-                  className="bg-[#efffed] hover:bg-mint"
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Create New Household
