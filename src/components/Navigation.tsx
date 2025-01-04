@@ -29,7 +29,7 @@ const Navigation = () => {
         setIsOpen(false);
       }}
       className={`flex flex-col items-center p-2 ${
-        isActive(path) ? "text-sage" : "text-forest"
+        isActive(path) ? "text-forest" : "text-sage"
       }`}
     >
       <Icon className="h-6 w-6" />
@@ -47,7 +47,7 @@ const Navigation = () => {
           
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <button className="flex flex-col items-center p-2 text-forest">
+              <button className="flex flex-col items-center p-2 text-sage">
                 <Menu className="h-6 w-6" />
                 <span className="text-xs mt-1 whitespace-nowrap">More</span>
               </button>
