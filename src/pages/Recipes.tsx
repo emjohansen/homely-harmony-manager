@@ -6,14 +6,31 @@ import { useRecipes } from "@/hooks/use-recipes";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Recipe } from "@/types/recipe";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { data: recipes, isLoading } = useRecipes();
+  const [householdId, setHouseholdId] = useState<string | null>(null);
+  const { privateRecipes, publicRecipes, loading } = useRecipes(householdId);
 
-  const privateRecipes = recipes?.filter((recipe) => !recipe.is_public) ?? [];
-  const publicRecipes = recipes?.filter((recipe) => recipe.is_public) ?? [];
+  useEffect(() => {
+    const getHouseholdId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        const { data: householdMember } = await supabase
+          .from('household_members')
+          .select('household_id')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        setHouseholdId(householdMember?.household_id || null);
+      }
+    };
+
+    getHouseholdId();
+  }, []);
 
   const getRandomRecipe = (recipeList: Recipe[]) => {
     if (recipeList.length === 0) {
@@ -30,7 +47,7 @@ export const Recipes = () => {
     navigate(`/recipes/${randomRecipe.id}`);
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
