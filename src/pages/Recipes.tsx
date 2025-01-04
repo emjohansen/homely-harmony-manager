@@ -63,17 +63,7 @@ const Recipes = () => {
         }}
       >
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
-        
         <h1 className="relative text-7xl font-bold mb-4 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
-        
-        <Button
-          onClick={() => navigate("/recipes/new")}
-          variant="outline"
-          size="icon"
-          className="relative bg-white hover:bg-gray-100 rounded-full w-16 h-16 transition-all duration-200 hover:scale-110 shadow-md hover:shadow-lg"
-        >
-          <Plus className="h-8 w-8" />
-        </Button>
       </div>
 
       <div className="max-w-lg mx-auto px-4">
@@ -116,6 +106,14 @@ const Recipes = () => {
           </Tabs>
         )}
       </div>
+
+      <Button
+        onClick={() => navigate("/recipes/new")}
+        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-orange-500 hover:bg-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+        size="icon"
+      >
+        <Plus className="h-10 w-10 text-white" />
+      </Button>
       
       <Navigation />
     </div>
