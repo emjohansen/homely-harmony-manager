@@ -29,7 +29,7 @@ const Navigation = () => {
         setIsOpen(false);
       }}
       className={`flex flex-col items-center p-2 ${
-        isActive(path) ? "text-[#638889]" : "text-[#9DBC98]"
+        isActive(path) ? "text-[#9dbc98]" : "text-[#1e251c]"
       }`}
     >
       <Icon className="h-6 w-6" />
@@ -38,7 +38,7 @@ const Navigation = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#F9EFDB] border-t border-[#EBD9B4]">
+    <div className="fixed bottom-0 left-0 right-0 bg-[#efffed] border-t border-[#c0cfbe]">
       <div className="max-w-lg mx-auto px-4">
         <div className="flex justify-between py-2">
           {mainItems.map(({ path, icon: Icon, label }) => (
@@ -47,7 +47,7 @@ const Navigation = () => {
           
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <button className="flex flex-col items-center p-2 text-[#9DBC98]">
+              <button className="flex flex-col items-center p-2 text-[#1e251c]">
                 <Menu className="h-6 w-6" />
                 <span className="text-xs mt-1 whitespace-nowrap">More</span>
               </button>

@@ -53,7 +53,7 @@ const Recipes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9EFDB] pb-16">
+    <div className="min-h-screen bg-[#efffed] pb-16">
       <div 
         className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
@@ -76,18 +76,18 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <div className="flex justify-center items-center mb-4">
-              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#638889] [&_[data-state=active]]:text-white">
+              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#9dbc98] [&_[data-state=active]]:text-white">
                 <TabsTrigger value="private">My Recipes</TabsTrigger>
                 <TabsTrigger value="public">All Recipes</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="private">
               {!currentHouseholdId ? (
-                <div className="text-center py-8 text-[#638889]">
+                <div className="text-center py-8 text-[#1e251c]">
                   Join a household to start adding your own recipes!
                 </div>
               ) : privateRecipes.length === 0 ? (
-                <div className="text-center py-8 text-[#638889]">
+                <div className="text-center py-8 text-[#1e251c]">
                   No recipes yet. Add your first recipe!
                 </div>
               ) : (
@@ -96,7 +96,7 @@ const Recipes = () => {
             </TabsContent>
             <TabsContent value="public">
               {publicRecipes.length === 0 ? (
-                <div className="text-center py-8 text-[#638889]">
+                <div className="text-center py-8 text-[#1e251c]">
                   No public recipes available.
                 </div>
               ) : (
@@ -109,7 +109,7 @@ const Recipes = () => {
 
       <Button
         onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#638889] hover:bg-[#9DBC98] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#9dbc98] hover:bg-[#c0cfbe] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
         <Plus className="h-12 w-12 text-white" />

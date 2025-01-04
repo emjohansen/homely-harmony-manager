@@ -10,7 +10,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
 
   return (
     <div
-      className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
+      className="bg-[#c0cfbe] rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => navigate(`/recipes/${recipe.id}`)}
     >
       {recipe.image_url && (
@@ -22,11 +22,11 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
           />
         </div>
       )}
-      <h3 className="font-semibold">{recipe.title}</h3>
+      <h3 className="font-semibold text-[#1e251c]">{recipe.title}</h3>
       {recipe.description && (
-        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{recipe.description}</p>
+        <p className="text-sm text-[#1e251c] mt-1 line-clamp-2">{recipe.description}</p>
       )}
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="text-sm text-[#1e251c] mt-2">
         {recipe.preparation_time} mins • {recipe.servings} servings
       </p>
       {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
@@ -34,7 +34,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
           {recipe.recipe_tags.map(({ tag }) => (
             <span
               key={tag}
-              className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+              className="text-xs bg-[#efffed] text-[#1e251c] px-2 py-1 rounded-full"
             >
               {tag}
             </span>
