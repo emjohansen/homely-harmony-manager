@@ -53,7 +53,7 @@ const Recipes = () => {
         <h1 className="relative text-7xl font-bold mb-4 text-cream uppercase tracking-wider font-dongle">RECIPES</h1>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 pb-24">
+      <div className="max-w-lg mx-auto px-4 pb-24 relative">
         {loading ? (
           <div className="text-center py-8 text-forest">Loading recipes...</div>
         ) : (
@@ -90,15 +90,17 @@ const Recipes = () => {
             </TabsContent>
           </Tabs>
         )}
-      </div>
 
-      <Button
-        onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
-        size="icon"
-      >
-        <p className="font-dongle font-bold text-[80px] text-cream group-hover:text-forest leading-none flex items-center justify-center h-full w-full">+</p>
-      </Button>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Button
+            onClick={() => navigate("/recipes/new")}
+            className="w-32 h-32 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+            size="icon"
+          >
+            <p className="font-dongle font-bold text-[160px] text-cream group-hover:text-forest leading-none flex items-center justify-center">+</p>
+          </Button>
+        </div>
+      </div>
       
       <Navigation />
     </div>
