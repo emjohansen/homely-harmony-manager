@@ -28,7 +28,7 @@ interface HouseholdSwitcherProps {
 }
 
 const HouseholdSwitcher = ({ 
-  households = [], // Provide default empty array
+  households = [], 
   currentHousehold, 
   onHouseholdSelect 
 }: HouseholdSwitcherProps) => {

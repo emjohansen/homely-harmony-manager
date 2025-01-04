@@ -25,6 +25,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
   const fetchHouseholds = async (userId: string) => {
     try {
+      console.log('Fetching households for user:', userId);
       const { data: memberships, error } = await supabase
         .from('household_members')
         .select(`
@@ -40,6 +41,8 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       if (error) throw error;
 
+      console.log('Fetched memberships:', memberships);
+
       const formattedHouseholds = memberships?.map(membership => ({
         id: membership.households.id,
         name: membership.households.name,
@@ -47,9 +50,10 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
         isCreator: membership.households.created_by === userId
       })) || [];
 
+      console.log('Formatted households:', formattedHouseholds);
       setHouseholds(formattedHouseholds);
       
-      // If no current household is selected, select the first one
+      // If no current household is selected and we have households, select the first one
       if (!currentHousehold && formattedHouseholds.length > 0) {
         setCurrentHousehold(formattedHouseholds[0]);
       }
@@ -108,6 +112,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
   }, [toast]);
 
   const handleHouseholdSwitch = (household: any) => {
+    console.log('Switching to household:', household);
     setCurrentHousehold(household);
   };
 
