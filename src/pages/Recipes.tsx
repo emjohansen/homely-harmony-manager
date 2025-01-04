@@ -85,7 +85,7 @@ const Recipes = () => {
               </TabsList>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 w-[300px] mx-auto mb-6">
+            <div className="grid grid-cols-1 gap-4 w-[300px] mx-auto mb-6">
               <Button
                 onClick={() => getRandomRecipe(privateRecipes)}
                 variant="outline"
@@ -93,13 +93,6 @@ const Recipes = () => {
               >
                 <Shuffle className="h-4 w-4 mr-2" />
                 Random
-              </Button>
-              <Button
-                onClick={() => navigate("/recipes/filter")}
-                variant="outline"
-                className="w-full"
-              >
-                Filter
               </Button>
             </div>
 
