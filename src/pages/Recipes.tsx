@@ -53,9 +53,11 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="relative h-[50vh] flex flex-col items-center justify-center">
+      <div className="relative h-[60vh] flex flex-col items-center justify-start pt-8">
+        <h1 className="text-4xl font-bold mb-8">Recipes</h1>
+        
         {/* Illustration */}
-        <div className="relative mb-6 w-96">
+        <div className="relative mb-6 w-[32rem]">
           <img 
             src="/lovable-uploads/3f8a2cc2-2c9d-4361-acdf-74a97a56225c.png" 
             alt="Cooking illustration" 
