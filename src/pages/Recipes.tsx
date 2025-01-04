@@ -54,9 +54,9 @@ const Recipes = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       {/* Header Section */}
-      <section className="py-8 mb-8">
+      <section className="h-[50vh] flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400">
         <div className="max-w-lg mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4">Recipes</h1>
+          <h1 className="text-5xl font-bold mb-6 text-white">Recipes</h1>
           <Button
             onClick={() => navigate("/recipes/new")}
             variant="outline"
@@ -69,7 +69,7 @@ const Recipes = () => {
       </section>
 
       {/* Recipe List Section */}
-      <div className="max-w-lg mx-auto px-4">
+      <div className="max-w-lg mx-auto px-4 -mt-8">
         {loading ? (
           <div className="text-center py-8">Loading recipes...</div>
         ) : (
