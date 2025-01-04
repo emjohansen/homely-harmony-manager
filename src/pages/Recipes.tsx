@@ -55,7 +55,7 @@ const Recipes = () => {
     <div className="min-h-screen bg-gray-50 pb-24">
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold">Recipes</h1>
+          <h1 className="text-4xl font-bold">Recipes</h1>
         </div>
 
         {loading ? (
@@ -120,7 +120,7 @@ const Recipes = () => {
         className="fixed bottom-14 left-1/2 transform -translate-x-1/2 rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-shadow"
         size="icon"
       >
-        <Plus className="h-8 w-8" />
+        <Plus className="h-12 w-12" />
       </Button>
       
       <Navigation />
