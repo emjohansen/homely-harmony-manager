@@ -64,7 +64,7 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <div className="flex justify-center items-center mb-4">
-              <TabsList className="grid w-[300px] grid-cols-2 overflow-hidden rounded-md [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border-y [&_[data-state=inactive]]:border-1 [&_[data-state=inactive]:first-child]:border-l [&_[data-state=inactive]:last-child]:border-r">
+              <TabsList className="grid w-[300px] grid-cols-2 overflow-hidden rounded-md [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=inactive]]:bg-cream [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border">
                 <TabsTrigger value="private" className="text-forest font-dongle text-[26px]">My Recipes</TabsTrigger>
                 <TabsTrigger value="public" className="text-forest font-dongle text-[26px]">All Recipes</TabsTrigger>
               </TabsList>
