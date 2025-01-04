@@ -15,20 +15,20 @@ const InviteMember = ({ householdId }: { householdId: string }) => {
 
     try {
       // First check if there's already a pending invitation
-      const { data: existingInvites, error: fetchError } = await supabase
+      const { data: existingInvite, error: fetchError } = await supabase
         .from("household_invites")
         .select()
         .eq("household_id", householdId)
         .eq("email", email)
         .eq("status", "pending")
-        .single();
+        .maybeSingle();
 
-      if (fetchError && fetchError.code !== "PGRST116") { // PGRST116 means no rows returned
+      if (fetchError) {
         console.error("Error checking existing invites:", fetchError);
         throw new Error("Failed to check existing invitations");
       }
 
-      if (existingInvites) {
+      if (existingInvite) {
         toast({
           variant: "destructive",
           title: "Invitation exists",
