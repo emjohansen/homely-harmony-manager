@@ -53,7 +53,7 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="relative h-[50vh] flex flex-col items-center justify-center bg-gradient-to-b from-[#F97316] to-[#F2FCE2] overflow-hidden">
+      <div className="relative h-[50vh] flex flex-col items-center justify-center bg-gradient-to-b from-[#F97316] via-[#F2FCE2] to-white overflow-hidden">
         {/* Icon */}
         <div className="relative mb-6">
           <div className="p-4 bg-white rounded-full shadow-lg">
