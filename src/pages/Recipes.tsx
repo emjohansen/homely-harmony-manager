@@ -14,7 +14,6 @@ const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
-  const [isSliding, setIsSliding] = useState(false);
   
   const { privateRecipes, publicRecipes, loading, refetch } = useRecipes(currentHouseholdId);
 
@@ -40,18 +39,11 @@ const Recipes = () => {
     checkUser();
   }, [navigate]);
 
-  const handleAddRecipe = () => {
-    setIsSliding(true);
-    setTimeout(() => {
-      navigate("/recipes/new");
-    }, 100);
-  };
-
   const getRandomRecipe = (recipes: Recipe[]) => {
     if (recipes.length === 0) {
       toast({
-        title: "No recipes",
-        description: "No recipes available in this category!",
+        title: "Ingen oppskrifter",
+        description: "Ingen oppskrifter tilgjengelig i denne kategorien!",
       });
       return;
     }
@@ -60,18 +52,16 @@ const Recipes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold">Recipes</h1>
-          <Button 
-            onClick={handleAddRecipe}
-            variant="outline"
-            className="gap-2"
-          >
-            <Plus className="h-5 w-5" />
-            Add New Recipe
-          </Button>
+          <h1 className="text-2xl font-bold">Recipes</h1>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate("/recipes/new")}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Recipe
+            </Button>
+          </div>
         </div>
 
         {loading ? (
@@ -83,15 +73,17 @@ const Recipes = () => {
                 <TabsTrigger value="private">Mine</TabsTrigger>
                 <TabsTrigger value="public">All</TabsTrigger>
               </TabsList>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => getRandomRecipe(privateRecipes)}
-                title="Random Recipe"
-              >
-                <Shuffle className="h-4 w-4 mr-2" />
-                Random
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => getRandomRecipe(privateRecipes)}
+                  title="Random Recipe"
+                >
+                  <Shuffle className="h-4 w-4 mr-2" />
+                  Random
+                </Button>
+              </div>
             </div>
             <TabsContent value="private">
               {!currentHouseholdId ? (
@@ -129,7 +121,6 @@ const Recipes = () => {
           </Tabs>
         )}
       </div>
-      
       <Navigation />
     </div>
   );
