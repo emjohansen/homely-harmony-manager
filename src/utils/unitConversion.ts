@@ -1,4 +1,4 @@
-type Unit = 'g' | 'kg' | 'oz' | 'lb' | 'ml' | 'l' | 'fl oz' | 'cup' | 'tbsp' | 'tsp';
+export type Unit = 'g' | 'kg' | 'oz' | 'lb' | 'ml' | 'l' | 'fl oz' | 'cup' | 'tbsp' | 'tsp';
 
 const metricUnits = ['g', 'kg', 'ml', 'l'];
 const imperialUnits = ['oz', 'lb', 'fl oz', 'cup', 'tbsp', 'tsp'];
@@ -132,6 +132,10 @@ export const isMetricUnit = (unit: string): boolean => {
 
 export const isImperialUnit = (unit: string): boolean => {
   return imperialUnits.includes(unit);
+};
+
+export const isValidUnit = (unit: string): unit is Unit => {
+  return [...metricUnits, ...imperialUnits].includes(unit);
 };
 
 export const convertUnit = (value: number, fromUnit: Unit, toUnit: Unit): number => {
