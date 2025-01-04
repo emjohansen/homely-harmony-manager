@@ -27,7 +27,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
         <p className="text-sm text-forest mt-1 line-clamp-2">{recipe.description}</p>
       )}
       <p className="text-sm text-forest mt-2">
-        {recipe.preparation_time} mins • {recipe.servings} servings
+        {recipe.preparation_time} mins
       </p>
       {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
