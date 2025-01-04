@@ -17,7 +17,7 @@ export const RecipeMetrics = ({
   onToggleUnits,
 }: RecipeMetricsProps) => {
   return (
-    <div className="flex justify-between items-start px-4 bg-mint rounded-md p-4">
+    <div className="flex justify-between items-start px-4 border-b border-mint p-4">
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Users className="h-3 w-3" />
