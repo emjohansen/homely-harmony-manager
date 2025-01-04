@@ -16,7 +16,7 @@ export const RecipeVisibility = ({ isPublic, setIsPublic }: RecipeVisibilityProp
         id="recipe-visibility"
         checked={isPublic}
         onCheckedChange={setIsPublic}
-        className="bg-mint data-[state=checked]:bg-mint data-[state=unchecked]:bg-mint"
+        className="bg-mint data-[state=checked]:bg-sage data-[state=unchecked]:bg-mint"
       />
     </div>
   );
