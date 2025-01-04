@@ -90,7 +90,7 @@ export const RecipeBasicInfo = ({
         <div className="space-y-2">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="h-4 w-4" />
-            <Label htmlFor="prepTime" className="text-lg font-semibold">Preparation Time</Label>
+            <Label htmlFor="prepTime" className="text-lg font-semibold">Time</Label>
           </div>
           <Input
             id="prepTime"
