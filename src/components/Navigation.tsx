@@ -33,7 +33,7 @@ const Navigation = () => {
       }`}
     >
       <Icon className="h-6 w-6" />
-      <span className="text-xs mt-1 whitespace-nowrap">{label}</span>
+      <span className="text-[20px] mt-1 whitespace-nowrap">{label}</span>
     </button>
   );
 
@@ -49,7 +49,7 @@ const Navigation = () => {
             <SheetTrigger asChild>
               <button className="flex flex-col items-center p-2 text-gray-600">
                 <Menu className="h-6 w-6" />
-                <span className="text-xs mt-1 whitespace-nowrap">More</span>
+                <span className="text-[20px] mt-1 whitespace-nowrap">More</span>
               </button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[200px]">

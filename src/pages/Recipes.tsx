@@ -69,7 +69,7 @@ const Recipes = () => {
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
-          className="relative bg-white hover:bg-gray-100"
+          className="relative bg-white hover:bg-gray-100 text-[20px]"
         >
           <Plus className="h-4 w-4 mr-2" />
           New Recipe
@@ -87,8 +87,8 @@ const Recipes = () => {
           >
             <div className="flex justify-center items-center mb-4">
               <TabsList className="grid w-[300px] grid-cols-2">
-                <TabsTrigger value="private">My Recipes</TabsTrigger>
-                <TabsTrigger value="public">All Recipes</TabsTrigger>
+                <TabsTrigger value="private" className="text-[28px]">My Recipes</TabsTrigger>
+                <TabsTrigger value="public" className="text-[28px]">All Recipes</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="private">
