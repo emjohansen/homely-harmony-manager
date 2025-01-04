@@ -58,17 +58,18 @@ export const NewShoppingList = ({ onCreateList }: NewShoppingListProps) => {
           <p className="font-bold text-[95px] text-cream group-hover:text-forest leading-none flex items-center justify-center translate-y-[-1.5rem] translate-x-[-0.625rem]">+</p>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-cream border-sage">
         <DialogHeader>
-          <DialogTitle>Create New Shopping List</DialogTitle>
+          <DialogTitle className="text-forest">Create New Shopping List</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             placeholder="Shopping List Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="bg-mint border-sage text-forest placeholder:text-forest/50"
           />
-          <Button type="submit" className="w-full bg-sage hover:bg-sage/90">
+          <Button type="submit" className="w-full bg-sage hover:bg-sage/90 text-cream">
             Create List
           </Button>
         </form>
