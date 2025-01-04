@@ -69,10 +69,10 @@ const Recipes = () => {
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
-          className="relative bg-white hover:bg-gray-100"
+          size="icon"
+          className="relative bg-white hover:bg-gray-100 rounded-full w-16 h-16 transition-all duration-200 hover:scale-110 shadow-md hover:shadow-lg"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          New Recipe
+          <Plus className="h-8 w-8" />
         </Button>
       </div>
 
