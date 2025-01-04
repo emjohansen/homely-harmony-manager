@@ -52,8 +52,8 @@ const Navigation = () => {
                 <span className="text-xs mt-1 whitespace-nowrap">More</span>
               </button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[200px]">
-              <div className="flex justify-around py-4">
+            <SheetContent side="right" className="w-[200px] bg-cream">
+              <div className="flex flex-col gap-4 py-4">
                 {menuItems.map(({ path, icon: Icon, label }) => (
                   <NavigationButton key={path} path={path} Icon={Icon} label={label} />
                 ))}
