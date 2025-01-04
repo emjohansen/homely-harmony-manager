@@ -21,7 +21,7 @@ export const RecipeMetrics = ({
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Users className="h-3 w-3" />
-          <span className="text-[18px]">Servings</span>
+          <span className="text-[10px]">Servings</span>
         </div>
         <div className="flex items-center gap-1">
           <Button
@@ -34,7 +34,7 @@ export const RecipeMetrics = ({
           >
             <Minus className="h-3 w-3" />
           </Button>
-          <span className="text-[18px] font-medium w-4 text-center">
+          <span className="text-xs font-medium w-4 text-center">
             {currentServings}
           </span>
           <Button
@@ -52,22 +52,22 @@ export const RecipeMetrics = ({
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Clock className="h-3 w-3" />
-          <span className="text-[18px]">Time</span>
+          <span className="text-[10px]">Time</span>
         </div>
-        <p className="text-[18px] font-medium">{preparationTime} min</p>
+        <p className="text-xs font-medium">{preparationTime} min</p>
       </div>
 
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-1 text-muted-foreground mb-0.5">
           <Scale className="h-3 w-3" />
-          <span className="text-[18px]">Units</span>
+          <span className="text-[10px]">Units</span>
         </div>
         <Button
           type="button"
           variant="outline"
           size="sm"
           onClick={onToggleUnits}
-          className="text-[18px] font-medium h-5 px-2 border-primary hover:bg-primary/10"
+          className="text-[10px] font-medium h-5 px-2 border-primary hover:bg-primary/10"
         >
           {showAlternativeUnits ? "US" : "Metric"}
         </Button>

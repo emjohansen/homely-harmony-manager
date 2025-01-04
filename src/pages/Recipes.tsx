@@ -69,15 +69,10 @@ const Recipes = () => {
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
-          className="relative bg-white text-[24px] py-7 px-10 transform transition-all duration-300 
-            hover:scale-105 hover:shadow-xl hover:bg-primary hover:text-white
-            active:scale-95 rounded-xl border-2 border-white
-            animate-bounce-subtle font-bold
-            before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/20 before:to-transparent before:opacity-0 before:transition-opacity
-            hover:before:opacity-100 overflow-hidden"
+          className="relative bg-white hover:bg-gray-100"
         >
-          <Plus className="h-7 w-7 mr-3" />
-          Create New Recipe
+          <Plus className="h-4 w-4 mr-2" />
+          New Recipe
         </Button>
       </div>
 
@@ -92,8 +87,8 @@ const Recipes = () => {
           >
             <div className="flex justify-center items-center mb-4">
               <TabsList className="grid w-[300px] grid-cols-2">
-                <TabsTrigger value="private" className="text-[28px]">My Recipes</TabsTrigger>
-                <TabsTrigger value="public" className="text-[28px]">All Recipes</TabsTrigger>
+                <TabsTrigger value="private">My Recipes</TabsTrigger>
+                <TabsTrigger value="public">All Recipes</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="private">

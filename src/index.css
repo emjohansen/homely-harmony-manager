@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -35,15 +35,22 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
+
     --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
+
     --sidebar-accent: 240 4.8% 95.9%;
+
     --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
+
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
- 
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -81,56 +88,14 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground;
-  }
-
-  /* Global font styles with increased sizes */
-  h1 {
-    font-family: 'Dongle', sans-serif;
-    font-weight: 700;
-    font-size: 3.5rem;
-    line-height: 1;
-  }
-
-  h2 {
-    font-family: 'Dongle', sans-serif;
-    font-weight: 700;
-    font-size: 3rem;
-    line-height: 1;
-  }
-
-  h3 {
-    font-family: 'Dongle', sans-serif;
-    font-weight: 700;
-    font-size: 2.5rem;
-    line-height: 1;
-  }
-
-  h4, h5, h6 {
-    font-family: 'Dongle', sans-serif;
-    font-weight: 700;
-    font-size: 2rem;
-    line-height: 1;
-  }
-
-  body, p, span, div {
-    font-family: 'Dongle', sans-serif;
-    font-weight: 400;
-    font-size: 1.5rem;
-    line-height: 1.2;
-  }
-
-  /* Keep form elements slightly smaller for better usability */
-  button, input, textarea, select {
-    font-family: 'Dongle', sans-serif;
-    font-weight: 400;
-    font-size: 1.25rem;
-    line-height: 1.2;
   }
 }
