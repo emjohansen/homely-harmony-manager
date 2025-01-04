@@ -22,11 +22,11 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
           />
         </div>
       )}
-      <h3 className="font-averia text-[22px] text-forest">{recipe.title}</h3>
+      <h3 className="font-averia text-[26px] text-forest">{recipe.title}</h3>
       {recipe.description && (
-        <p className="font-averia text-[16px] text-forest mt-1 line-clamp-2 leading-[1]">{recipe.description}</p>
+        <p className="font-averia text-[20px] text-forest mt-1 line-clamp-2 leading-[1]">{recipe.description}</p>
       )}
-      <p className="text-xs text-forest mt-2">
+      <p className="text-sm text-forest mt-2">
         {recipe.preparation_time} mins • {recipe.servings} servings
       </p>
       {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
