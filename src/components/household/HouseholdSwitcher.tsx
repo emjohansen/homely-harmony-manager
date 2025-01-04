@@ -62,7 +62,10 @@ const HouseholdSwitcher = ({
       // Update the user's current household in the profiles table
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ current_household: household.id })
+        .update({
+          current_household: household.id,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', user.id);
 
       if (updateError) {

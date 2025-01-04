@@ -208,6 +208,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          current_household: string | null
           id: string
           updated_at: string
           username: string | null
@@ -215,6 +216,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          current_household?: string | null
           id: string
           updated_at?: string
           username?: string | null
@@ -222,11 +224,20 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          current_household?: string | null
           id?: string
           updated_at?: string
           username?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_current_household_fkey"
+            columns: ["current_household"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recipe_group_items: {
         Row: {
