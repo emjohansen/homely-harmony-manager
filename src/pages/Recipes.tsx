@@ -62,8 +62,15 @@ const Recipes = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       <div className="max-w-lg mx-auto px-4 py-8">
-        <div className="text-center mb-6">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold">Recipes</h1>
+          <Button 
+            onClick={handleAddRecipe}
+            className="bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Add New Recipe
+          </Button>
         </div>
 
         {loading ? (
@@ -120,17 +127,6 @@ const Recipes = () => {
             </TabsContent>
           </Tabs>
         )}
-
-        <div className="fixed bottom-24 left-0 right-0 flex justify-center">
-          <Button 
-            onClick={handleAddRecipe}
-            className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg"
-            size="lg"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Add New Recipe
-          </Button>
-        </div>
       </div>
       
       <Navigation />
