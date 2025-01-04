@@ -39,16 +39,20 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
         `)
         .eq('user_id', userId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching households:', error);
+        throw error;
+      }
 
       console.log('Fetched memberships:', memberships);
 
-      const formattedHouseholds = memberships?.map(membership => ({
+      // Ensure memberships is an array before mapping
+      const formattedHouseholds = (memberships || []).map(membership => ({
         id: membership.households.id,
         name: membership.households.name,
         role: membership.role,
         isCreator: membership.households.created_by === userId
-      })) || [];
+      }));
 
       console.log('Formatted households:', formattedHouseholds);
       setHouseholds(formattedHouseholds);

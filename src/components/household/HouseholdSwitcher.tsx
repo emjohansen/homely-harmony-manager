@@ -34,8 +34,11 @@ const HouseholdSwitcher = ({
 }: HouseholdSwitcherProps) => {
   const [open, setOpen] = useState(false);
 
+  // Ensure households is always an array
+  const safeHouseholds = Array.isArray(households) ? households : [];
+
   // Don't render if there are no households
-  if (!households || households.length === 0) {
+  if (safeHouseholds.length === 0) {
     return null;
   }
 
@@ -57,7 +60,7 @@ const HouseholdSwitcher = ({
           <CommandInput placeholder="Search households..." />
           <CommandEmpty>No household found.</CommandEmpty>
           <CommandGroup>
-            {households.map((household) => (
+            {safeHouseholds.map((household) => (
               <CommandItem
                 key={household.id}
                 onSelect={() => {
