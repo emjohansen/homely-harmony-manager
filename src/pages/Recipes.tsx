@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Utensils } from "lucide-react";
+import { Plus } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -73,13 +73,14 @@ const Recipes = () => {
           </svg>
         </div>
         
-        {/* Icon */}
-        <div className="relative mb-6">
-          <Utensils className="w-24 h-24 text-white" strokeWidth={1.5} />
+        {/* Illustration */}
+        <div className="relative mb-6 w-64">
+          <img 
+            src="/lovable-uploads/3f8a2cc2-2c9d-4361-acdf-74a97a56225c.png" 
+            alt="Cooking illustration" 
+            className="w-full h-auto"
+          />
         </div>
-        
-        {/* Heading */}
-        <h1 className="relative text-4xl font-bold mb-8 text-white">Recipes</h1>
         
         {/* Add Recipe Button */}
         <Button
