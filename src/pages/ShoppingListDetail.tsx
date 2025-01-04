@@ -1,22 +1,17 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ShoppingListItem } from "@/components/shopping/ShoppingListItem";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ShoppingListHeader } from "@/components/shopping/ShoppingListHeader";
+import { AddShoppingListItem } from "@/components/shopping/AddShoppingListItem";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, ArrowLeft, Receipt, Store } from "lucide-react";
 import Navigation from "@/components/Navigation";
 
 const ShoppingListDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [list, setList] = useState<any>(null);
-  const [newItem, setNewItem] = useState("");
-  const [newQuantity, setNewQuantity] = useState("");
-  const [newUnit, setNewUnit] = useState("");
 
   useEffect(() => {
     fetchList();
@@ -52,7 +47,7 @@ const ShoppingListDetail = () => {
       .from('shopping_list_items')
       .select(`
         *,
-        adder:profiles!shopping_list_items_added_by_fkey (username)
+        adder:profiles(username)
       `)
       .eq('shopping_list_id', id)
       .order('added_at', { ascending: true });
@@ -71,10 +66,7 @@ const ShoppingListDetail = () => {
     setItems(data);
   };
 
-  const handleAddItem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newItem.trim()) return;
-
+  const handleAddItem = async (item: string, quantity: string, unit: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -82,9 +74,9 @@ const ShoppingListDetail = () => {
       .from('shopping_list_items')
       .insert({
         shopping_list_id: id,
-        item: newItem,
-        quantity: newQuantity ? parseFloat(newQuantity) : null,
-        unit: newUnit || null,
+        item,
+        quantity: quantity ? parseFloat(quantity) : null,
+        unit: unit || null,
         added_by: user.id,
       });
 
@@ -98,9 +90,6 @@ const ShoppingListDetail = () => {
       return;
     }
 
-    setNewItem("");
-    setNewQuantity("");
-    setNewUnit("");
     fetchItems();
   };
 
@@ -185,66 +174,18 @@ const ShoppingListDetail = () => {
   return (
     <div className="min-h-screen bg-cream pb-16">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          className="mb-4"
-          onClick={() => navigate('/shopping')}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Lists
-        </Button>
-
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-2xl font-semibold">{list?.name}</h1>
-            <p className="text-sm text-gray-500">
-              Created by {list?.creator?.username || 'Unknown'}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Receipt className="h-4 w-4 mr-2" />
-              Add Receipt
-            </Button>
-            {totalPrice > 0 && (
-              <div className="flex items-center gap-2 text-lg font-semibold">
-                Total: {totalPrice} kr
-              </div>
-            )}
-          </div>
-        </div>
-
-        <form onSubmit={handleAddItem} className="flex gap-2 mb-6">
-          <Input
-            placeholder="Add new item..."
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            className="flex-1"
-          />
-          <Input
-            type="number"
-            placeholder="Quantity"
-            value={newQuantity}
-            onChange={(e) => setNewQuantity(e.target.value)}
-            className="w-24"
-          />
-          <Input
-            placeholder="Unit"
-            value={newUnit}
-            onChange={(e) => setNewUnit(e.target.value)}
-            className="w-24"
-          />
-          <Button type="submit">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Item
-          </Button>
-        </form>
+        <ShoppingListHeader list={list} totalPrice={totalPrice} />
+        
+        <AddShoppingListItem onAddItem={handleAddItem} />
 
         <div className="space-y-2">
           {items.map((item) => (
             <ShoppingListItem
               key={item.id}
-              item={item}
+              item={{
+                ...item,
+                added_by: item.adder?.username || 'Unknown',
+              }}
               onToggle={handleToggleItem}
               onDelete={handleDeleteItem}
               onUpdateStore={handleUpdateStore}

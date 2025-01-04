@@ -505,6 +505,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "shopping_list_items_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "shopping_list_items_shopping_list_id_fkey"
             columns: ["shopping_list_id"]
             isOneToOne: false
