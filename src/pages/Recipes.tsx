@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Utensils } from "lucide-react";
+import { Plus, Utensils, Shuffle } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -84,6 +84,25 @@ const Recipes = () => {
                 <TabsTrigger value="public">All</TabsTrigger>
               </TabsList>
             </div>
+            
+            <div className="grid grid-cols-2 gap-4 w-[300px] mx-auto mb-6">
+              <Button
+                onClick={() => getRandomRecipe(privateRecipes)}
+                variant="outline"
+                className="w-full"
+              >
+                <Shuffle className="h-4 w-4 mr-2" />
+                Random
+              </Button>
+              <Button
+                onClick={() => navigate("/recipes/filter")}
+                variant="outline"
+                className="w-full"
+              >
+                Filter
+              </Button>
+            </div>
+
             <TabsContent value="private">
               {!currentHouseholdId ? (
                 <div className="text-center py-8 text-gray-500">
