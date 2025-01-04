@@ -51,9 +51,9 @@ export const NewShoppingList = ({ onCreateList }: NewShoppingListProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-sage hover:bg-sage/90">
           <Plus className="h-4 w-4 mr-2" />
-          New Shopping List
+          New List
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -66,7 +66,7 @@ export const NewShoppingList = ({ onCreateList }: NewShoppingListProps) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full bg-sage hover:bg-sage/90">
             Create List
           </Button>
         </form>
