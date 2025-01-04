@@ -69,9 +69,9 @@ const Recipes = () => {
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
-          className="relative bg-white hover:bg-gray-100 text-[20px]"
+          className="relative bg-white hover:bg-gray-100 text-[24px] py-6 px-8 transform transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-6 w-6 mr-3" />
           New Recipe
         </Button>
       </div>
