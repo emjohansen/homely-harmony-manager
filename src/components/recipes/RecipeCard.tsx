@@ -22,11 +22,11 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
           />
         </div>
       )}
-      <h3 className="font-open-sans text-recipe-title text-forest">{recipe.title}</h3>
+      <h3 className="font-semibold text-forest">{recipe.title}</h3>
       {recipe.description && (
-        <p className="font-open-sans text-recipe-desc text-forest mt-1 line-clamp-2 leading-[1] font-thin">{recipe.description}</p>
+        <p className="text-sm text-forest mt-1 line-clamp-2">{recipe.description}</p>
       )}
-      <p className="text-recipe-meta text-forest mt-2 font-thin">
+      <p className="text-sm text-forest mt-2">
         {recipe.preparation_time} mins • {recipe.servings} servings
       </p>
       {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
@@ -34,7 +34,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
           {recipe.recipe_tags.map(({ tag }) => (
             <span
               key={tag}
-              className="text-recipe-tag bg-cream text-forest px-2 py-1 rounded-full font-thin"
+              className="text-xs bg-cream text-forest px-2 py-1 rounded-full"
             >
               {tag}
             </span>

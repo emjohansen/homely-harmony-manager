@@ -29,7 +29,7 @@ const Navigation = () => {
         setIsOpen(false);
       }}
       className={`flex flex-col items-center p-2 ${
-        isActive(path) ? "text-forest" : "text-sage"
+        isActive(path) ? "text-[#9dbc98]" : "text-[#1e251c]"
       }`}
     >
       <Icon className="h-6 w-6" />
@@ -38,7 +38,7 @@ const Navigation = () => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-cream border-t border-sage z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-[#efffed] border-t border-[#c0cfbe]">
       <div className="max-w-lg mx-auto px-4">
         <div className="flex justify-between py-2">
           {mainItems.map(({ path, icon: Icon, label }) => (
@@ -47,14 +47,13 @@ const Navigation = () => {
           
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <button className="flex flex-col items-center p-2 text-sage">
+              <button className="flex flex-col items-center p-2 text-[#1e251c]">
                 <Menu className="h-6 w-6" />
                 <span className="text-xs mt-1 whitespace-nowrap">More</span>
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[150px] bg-cream">
-              <h2 className="text-xl font-bold text-forest mb-4">Menu</h2>
-              <div className="flex flex-col gap-4">
+            <SheetContent side="bottom" className="h-[200px]">
+              <div className="flex justify-around py-4">
                 {menuItems.map(({ path, icon: Icon, label }) => (
                   <NavigationButton key={path} path={path} Icon={Icon} label={label} />
                 ))}

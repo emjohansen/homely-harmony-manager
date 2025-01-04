@@ -28,13 +28,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'open-sans': ['Open Sans', 'sans-serif'],
-			},
-			fontSize: {
-				'recipe-title': '18px',
-				'recipe-desc': '14px',
-				'recipe-meta': '11px',
-				'recipe-tag': '8px',
+				dongle: ['Dongle', 'sans-serif'],
 			},
 		}
 	},
