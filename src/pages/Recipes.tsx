@@ -53,29 +53,29 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="relative h-[60vh] flex flex-col items-center justify-start pt-8">
-        {/* Illustration */}
-        <div className="relative mb-6 w-[40rem]">
-          <img 
-            src="/lovable-uploads/04f4f1a5-8c1a-4ab1-ab29-dfa01b9bc6c5.png" 
-            alt="Chef illustration" 
-            className="w-full h-auto"
-          />
+      {/* Header Section */}
+      <section className="py-8 mb-8 bg-white border-b">
+        <div className="max-w-lg mx-auto px-4 text-center">
+          <div className="w-32 mx-auto mb-4">
+            <img 
+              src="/lovable-uploads/04f4f1a5-8c1a-4ab1-ab29-dfa01b9bc6c5.png" 
+              alt="Chef illustration" 
+              className="w-full h-auto"
+            />
+          </div>
+          <h1 className="text-4xl font-bold mb-4">Recipes</h1>
+          <Button
+            onClick={() => navigate("/recipes/new")}
+            variant="outline"
+            className="bg-white hover:bg-gray-50 transition-colors"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            New Recipe
+          </Button>
         </div>
-        
-        <h1 className="text-4xl font-bold mb-8">Recipes</h1>
-        
-        {/* Add Recipe Button */}
-        <Button
-          onClick={() => navigate("/recipes/new")}
-          variant="outline"
-          className="relative bg-white hover:bg-gray-50 transition-colors"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          New Recipe
-        </Button>
-      </div>
+      </section>
 
+      {/* Recipe List Section */}
       <div className="max-w-lg mx-auto px-4">
         {loading ? (
           <div className="text-center py-8">Loading recipes...</div>
