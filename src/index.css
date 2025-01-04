@@ -13,36 +13,6 @@
 
   /* Reset all default colors to use our palette */
   body {
-    @apply bg-cream text-forest font-dongle text-lg;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-dongle font-bold;
-  }
-
-  p, span, div, button, input, textarea, select {
-    @apply font-dongle font-normal;
-  }
-}
-
-/* Adjust specific text sizes to maintain current appearance with Dongle font */
-@layer utilities {
-  .text-xs {
-    @apply text-base;
-  }
-  .text-sm {
-    @apply text-lg;
-  }
-  .text-base {
-    @apply text-xl;
-  }
-  .text-lg {
-    @apply text-2xl;
-  }
-  .text-xl {
-    @apply text-3xl;
-  }
-  .text-2xl {
-    @apply text-4xl;
+    @apply bg-cream text-forest;
   }
 }
