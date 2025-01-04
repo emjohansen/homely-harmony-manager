@@ -1,68 +1,56 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Utensils, Shuffle } from "lucide-react";
-import Navigation from "@/components/Navigation";
-import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Shuffle, Utensils } from "lucide-react";
 import { RecipeList } from "@/components/recipes/RecipeList";
 import { useRecipes } from "@/hooks/use-recipes";
-import type { Recipe } from "@/types/recipe";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Recipe } from "@/types/recipe";
+import { useToast } from "@/hooks/use-toast";
 
-const Recipes = () => {
+export const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
-  
-  const { privateRecipes, publicRecipes, loading, refetch } = useRecipes(currentHouseholdId);
+  const { data: recipes, isLoading } = useRecipes();
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/");
-      } else {
-        const { data: householdMember } = await supabase
-          .from('household_members')
-          .select('household_id')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
+  const privateRecipes = recipes?.filter((recipe) => !recipe.is_public) ?? [];
+  const publicRecipes = recipes?.filter((recipe) => recipe.is_public) ?? [];
 
-        console.log("Current household member:", householdMember);
-        if (householdMember) {
-          setCurrentHouseholdId(householdMember.household_id);
-        }
-      }
-    };
-    
-    checkUser();
-  }, [navigate]);
-
-  const getRandomRecipe = (recipes: Recipe[]) => {
-    if (recipes.length === 0) {
+  const getRandomRecipe = (recipeList: Recipe[]) => {
+    if (recipeList.length === 0) {
       toast({
-        title: "No recipes",
-        description: "No recipes available in this category!",
+        title: "No recipes found",
+        description: "Add some recipes first!",
+        variant: "destructive",
       });
       return;
     }
-    const randomIndex = Math.floor(Math.random() * recipes.length);
-    navigate(`/recipes/${recipes[randomIndex].id}`);
+
+    const randomIndex = Math.floor(Math.random() * recipeList.length);
+    const randomRecipe = recipeList[randomIndex];
+    navigate(`/recipes/${randomRecipe.id}`);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
-      <div 
-        className="relative h-[50vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
+    <div className="min-h-screen bg-gray-50 pb-12">
+      <div
+        className="relative h-[300px] bg-gradient-to-r from-blue-600 to-blue-700 flex flex-col items-center justify-center text-center px-4"
         style={{
-          backgroundImage: 'url("/lovable-uploads/6365d7fa-1a30-4c0d-96e4-15af77dfe48e.png")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundImage:
+            "url('data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E')",
         }}
       >
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
-        <h1 className="relative text-8xl font-bold mb-2 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
+        <h1 className="relative text-8xl font-bold mb-2 text-white uppercase tracking-wider font-dongle">
+          RECIPES
+        </h1>
         <div className="relative flex gap-2">
           <Button
             onClick={() => navigate("/recipes/new")}
@@ -84,45 +72,25 @@ const Recipes = () => {
       </div>
 
       <div className="max-w-lg mx-auto px-4">
-        {loading ? (
-          <div className="text-center py-8">Loading recipes...</div>
-        ) : (
-          <Tabs defaultValue="private" className="w-full">
-            <div className="flex justify-center items-center mb-6">
-              <TabsList className="grid w-[300px] grid-cols-2">
-                <TabsTrigger value="private">Mine</TabsTrigger>
-                <TabsTrigger value="public">All</TabsTrigger>
+        <Tabs defaultValue="private" className="w-full">
+          <div className="sticky top-0 bg-gray-50 pt-6 pb-4 z-10">
+            <div className="flex justify-center mb-6">
+              <TabsList>
+                <TabsTrigger value="private">My Recipes</TabsTrigger>
+                <TabsTrigger value="public">All Recipes</TabsTrigger>
               </TabsList>
             </div>
 
             <TabsContent value="private">
-              {!currentHouseholdId ? (
-                <div className="text-center py-8 text-gray-500">
-                  Join a household to start adding your own recipes!
-                </div>
-              ) : privateRecipes.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No recipes yet. Add your first recipe!
-                </div>
-              ) : (
-                <RecipeList recipes={privateRecipes} />
-              )}
+              <RecipeList recipes={privateRecipes} />
             </TabsContent>
+
             <TabsContent value="public">
-              {publicRecipes.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No public recipes available.
-                </div>
-              ) : (
-                <RecipeList recipes={publicRecipes} />
-              )}
+              <RecipeList recipes={publicRecipes} />
             </TabsContent>
-          </Tabs>
-        )}
+          </div>
+        </Tabs>
       </div>
-      <Navigation />
     </div>
   );
 };
-
-export default Recipes;
