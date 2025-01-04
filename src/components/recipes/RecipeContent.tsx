@@ -1,7 +1,7 @@
 import { Recipe } from "@/types/recipe";
 import { RecipeVisibility } from "./RecipeVisibility";
 import { useState } from "react";
-import { convertUnit, getAlternativeUnit, isMetricUnit, isImperialUnit, Unit } from "@/utils/unitConversion";
+import { convertUnit, getAlternativeUnit, isMetricUnit, isImperialUnit } from "@/utils/unitConversion";
 import { RecipeMetrics } from "./recipe-details/RecipeMetrics";
 import { RecipeTagsDisplay } from "./recipe-details/RecipeTags";
 import { RecipeIngredientsList } from "./recipe-details/RecipeIngredients";
@@ -49,11 +49,10 @@ export const RecipeContent = ({
 
     if (!shouldConvert) return `${formatNumber(adjustedAmount)} ${unit}`;
 
-    // Only proceed with conversion if the unit is a valid Unit type
-    const alternativeUnit = getAlternativeUnit(unit as Unit);
+    const alternativeUnit = getAlternativeUnit(unit);
     if (!alternativeUnit) return `${formatNumber(adjustedAmount)} ${unit}`;
 
-    const convertedAmount = convertUnit(adjustedAmount, unit as Unit, alternativeUnit);
+    const convertedAmount = convertUnit(adjustedAmount, unit, alternativeUnit);
     if (convertedAmount === null) return `${formatNumber(adjustedAmount)} ${unit}`;
 
     return `${formatNumber(convertedAmount)} ${alternativeUnit}`;

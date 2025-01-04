@@ -1,160 +1,200 @@
-export type Unit = 'g' | 'kg' | 'oz' | 'lb' | 'ml' | 'l' | 'fl oz' | 'cup' | 'tbsp' | 'tsp';
-
-const metricUnits = ['g', 'kg', 'ml', 'l'];
-const imperialUnits = ['oz', 'lb', 'fl oz', 'cup', 'tbsp', 'tsp'];
-
-const conversionFactors: Record<Unit, Record<Unit, number>> = {
-  'g': {
-    'g': 1,
-    'kg': 0.001,
-    'oz': 0.035274,
-    'lb': 0.002205,
-    'ml': 1,
-    'l': 0.001,
-    'fl oz': 0.033814,
-    'cup': 0.004227,
-    'tbsp': 0.067628,
-    'tsp': 0.202884
-  },
-  'kg': {
-    'g': 1000,
-    'kg': 1,
-    'oz': 35.274,
-    'lb': 2.20462,
-    'ml': 1000,
-    'l': 1,
-    'fl oz': 33.814,
-    'cup': 4.22675,
-    'tbsp': 67.628,
-    'tsp': 202.884
-  },
-  'oz': {
-    'g': 28.3495,
-    'kg': 0.0283495,
-    'oz': 1,
-    'lb': 0.0625,
-    'ml': 29.5735,
-    'l': 0.0295735,
-    'fl oz': 1,
-    'cup': 0.125,
-    'tbsp': 2,
-    'tsp': 6
-  },
-  'lb': {
-    'g': 453.592,
-    'kg': 0.453592,
-    'oz': 16,
-    'lb': 1,
-    'ml': 453.592,
-    'l': 0.453592,
-    'fl oz': 15.9996,
-    'cup': 2.20462,
-    'tbsp': 35.274,
-    'tsp': 105.822
-  },
-  'ml': {
-    'g': 1,
-    'kg': 0.001,
-    'oz': 0.033814,
-    'lb': 0.002205,
-    'ml': 1,
-    'l': 0.001,
-    'fl oz': 0.033814,
-    'cup': 0.004227,
-    'tbsp': 0.067628,
-    'tsp': 0.202884
-  },
-  'l': {
-    'g': 1000,
-    'kg': 1,
-    'oz': 33.814,
-    'lb': 2.20462,
-    'ml': 1000,
-    'l': 1,
-    'fl oz': 33.814,
-    'cup': 4.22675,
-    'tbsp': 67.628,
-    'tsp': 202.884
-  },
-  'fl oz': {
-    'g': 29.5735,
-    'kg': 0.0295735,
-    'oz': 1,
-    'lb': 0.0625,
-    'ml': 29.5735,
-    'l': 0.0295735,
-    'fl oz': 1,
-    'cup': 0.125,
-    'tbsp': 2,
-    'tsp': 6
-  },
-  'cup': {
-    'g': 236.588,
-    'kg': 0.236588,
-    'oz': 8,
-    'lb': 0.5,
-    'ml': 236.588,
-    'l': 0.236588,
-    'fl oz': 8,
-    'cup': 1,
-    'tbsp': 16,
-    'tsp': 48
-  },
-  'tbsp': {
-    'g': 14.7868,
-    'kg': 0.0147868,
-    'oz': 0.5,
-    'lb': 0.03125,
-    'ml': 14.7868,
-    'l': 0.0147868,
-    'fl oz': 0.5,
-    'cup': 0.0625,
-    'tbsp': 1,
-    'tsp': 3
-  },
-  'tsp': {
-    'g': 4.92892,
-    'kg': 0.00492892,
-    'oz': 0.166667,
-    'lb': 0.0104167,
-    'ml': 4.92892,
-    'l': 0.00492892,
-    'fl oz': 0.166667,
-    'cup': 0.0208333,
-    'tbsp': 0.0625,
-    'tsp': 1
-  }
+type ConversionMap = {
+  [key: string]: {
+    to: { [key: string]: number };
+    type: 'volume' | 'weight';
+  };
 };
 
+const conversionMap: ConversionMap = {
+  // Volume conversions
+  'cup': { 
+    to: { 
+      'dl': 2.37,
+      'ml': 237,
+      'l': 0.237,
+      'tbsp': 16,
+      'tsp': 48,
+      'fl oz': 8,
+      'pt': 0.5,
+      'qt': 0.25,
+      'gal': 0.0625,
+    },
+    type: 'volume'
+  },
+  'tbsp': { 
+    to: { 
+      'ml': 14.79,
+      'tsp': 3,
+      'cup': 0.0625,
+    },
+    type: 'volume'
+  },
+  'tsp': { 
+    to: { 
+      'ml': 4.93,
+      'tbsp': 0.333,
+    },
+    type: 'volume'
+  },
+  'dl': {
+    to: {
+      'cup': 0.422,
+      'ml': 100,
+      'l': 0.1,
+      'fl oz': 3.381,
+      'pt': 0.211,
+      'qt': 0.106,
+      'gal': 0.026,
+    },
+    type: 'volume'
+  },
+  'l': {
+    to: {
+      'ml': 1000,
+      'dl': 10,
+      'cup': 4.227,
+      'fl oz': 33.814,
+      'pt': 2.113,
+      'qt': 1.057,
+      'gal': 0.264,
+    },
+    type: 'volume'
+  },
+  'pt': {
+    to: {
+      'cup': 2,
+      'fl oz': 16,
+      'qt': 0.5,
+      'gal': 0.125,
+      'l': 0.473,
+      'dl': 4.73,
+      'ml': 473,
+    },
+    type: 'volume'
+  },
+  'qt': {
+    to: {
+      'pt': 2,
+      'cup': 4,
+      'fl oz': 32,
+      'gal': 0.25,
+      'l': 0.946,
+      'dl': 9.46,
+      'ml': 946,
+    },
+    type: 'volume'
+  },
+  'gal': {
+    to: {
+      'qt': 4,
+      'pt': 8,
+      'cup': 16,
+      'fl oz': 128,
+      'l': 3.785,
+      'dl': 37.85,
+      'ml': 3785,
+    },
+    type: 'volume'
+  },
+  'fl oz': {
+    to: {
+      'ml': 29.574,
+      'dl': 0.296,
+      'l': 0.0296,
+      'cup': 0.125,
+      'pt': 0.063,
+      'qt': 0.031,
+      'gal': 0.0078,
+    },
+    type: 'volume'
+  },
+  // Weight conversions
+  'g': {
+    to: {
+      'oz': 0.035,
+      'lb': 0.0022,
+      'kg': 0.001,
+    },
+    type: 'weight'
+  },
+  'kg': {
+    to: {
+      'g': 1000,
+      'oz': 35.274,
+      'lb': 2.205,
+    },
+    type: 'weight'
+  },
+  'oz': {
+    to: {
+      'g': 28.35,
+      'kg': 0.0283,
+      'lb': 0.0625,
+    },
+    type: 'weight'
+  },
+  'lb': {
+    to: {
+      'g': 453.59,
+      'kg': 0.4536,
+      'oz': 16,
+    },
+    type: 'weight'
+  },
+};
+
+const metricUnits = ['g', 'kg', 'ml', 'dl', 'l', 'tbsp', 'tsp'];
+const imperialUnits = ['oz', 'lb', 'cup', 'tbsp', 'tsp', 'fl oz', 'pt', 'qt', 'gal'];
+
 export const isMetricUnit = (unit: string): boolean => {
-  return metricUnits.includes(unit);
+  return metricUnits.includes(unit.toLowerCase());
 };
 
 export const isImperialUnit = (unit: string): boolean => {
-  return imperialUnits.includes(unit);
+  return imperialUnits.includes(unit.toLowerCase());
 };
 
-export const convertUnit = (value: number, fromUnit: Unit, toUnit: Unit): number => {
-  if (fromUnit === toUnit) return value;
-  if (!conversionFactors[fromUnit] || !conversionFactors[fromUnit][toUnit]) {
-    throw new Error(`Cannot convert from ${fromUnit} to ${toUnit}`);
+export const convertUnit = (amount: number, fromUnit: string, toUnit: string): number | null => {
+  const from = fromUnit.toLowerCase();
+  const to = toUnit.toLowerCase();
+
+  if (from === to) return amount;
+  
+  if (conversionMap[from] && conversionMap[from].to[to]) {
+    return amount * conversionMap[from].to[to];
   }
-  return value * conversionFactors[fromUnit][toUnit];
+
+  // Try reverse conversion if direct conversion not found
+  if (conversionMap[to] && conversionMap[to].to[from]) {
+    return amount / conversionMap[to].to[from];
+  }
+
+  return null;
 };
 
-export const getAlternativeUnit = (unit: Unit): Unit | null => {
-  const metricToImperial: Record<Unit, Unit> = {
+export const getAlternativeUnit = (unit: string): string | null => {
+  const lowerUnit = unit.toLowerCase();
+  
+  // Common metric to US conversions
+  const alternatives: { [key: string]: string } = {
     'g': 'oz',
     'kg': 'lb',
     'ml': 'fl oz',
-    'l': 'cup',
+    'dl': 'cup',
+    'l': 'qt',
+    'tbsp': 'tbsp',
+    'tsp': 'tsp',
+    // US to metric
     'oz': 'g',
     'lb': 'kg',
+    'cup': 'dl',
+    'tbsp': 'tbsp',
+    'tsp': 'tsp',
     'fl oz': 'ml',
-    'cup': 'l',
-    'tbsp': 'ml',
-    'tsp': 'ml'
+    'qt': 'l',
+    'pt': 'l',
+    'gal': 'l',
   };
-  
-  return metricToImperial[unit] || null;
+
+  return alternatives[lowerUnit] || null;
 };
