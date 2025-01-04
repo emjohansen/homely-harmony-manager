@@ -14,6 +14,7 @@ const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
+  const [isSliding, setIsSliding] = useState(false);
   
   const { privateRecipes, publicRecipes, loading, refetch } = useRecipes(currentHouseholdId);
 
@@ -38,6 +39,13 @@ const Recipes = () => {
     
     checkUser();
   }, [navigate]);
+
+  const handleAddRecipe = () => {
+    setIsSliding(true);
+    setTimeout(() => {
+      navigate("/recipes/new");
+    }, 100);
+  };
 
   const getRandomRecipe = (recipes: Recipe[]) => {
     if (recipes.length === 0) {
@@ -114,14 +122,16 @@ const Recipes = () => {
         )}
       </div>
       
-      {/* Floating Action Button */}
-      <Button
-        onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-14 left-1/2 transform -translate-x-1/2 rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-shadow"
-        size="icon"
-      >
-        <Plus className="h-14 w-14" />
-      </Button>
+      {/* Add Recipe Button */}
+      <div className="fixed bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-blue-500 to-blue-600 flex items-center justify-center">
+        <Button
+          onClick={handleAddRecipe}
+          className="absolute -top-8 w-16 h-16 rounded-full bg-white text-blue-500 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center border-2 border-blue-500"
+          size="icon"
+        >
+          <Plus className="h-14 w-14" />
+        </Button>
+      </div>
       
       <Navigation />
     </div>
