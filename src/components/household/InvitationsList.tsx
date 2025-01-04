@@ -7,6 +7,7 @@ const InvitationsList = () => {
   const { toast } = useToast();
   const [invitations, setInvitations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     const fetchInvitations = async () => {
@@ -17,6 +18,8 @@ const InvitationsList = () => {
           console.log('No user found');
           return;
         }
+
+        setCurrentUser(user);
 
         // Fetch both sent and received invitations
         const { data, error } = await supabase
@@ -52,8 +55,7 @@ const InvitationsList = () => {
 
   const handleAcceptInvite = async (inviteId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!currentUser) return;
 
       const { data: invite } = await supabase
         .from('household_invites')
@@ -68,7 +70,7 @@ const InvitationsList = () => {
         .from('household_members')
         .insert({
           household_id: invite.household_id,
-          user_id: user.id,
+          user_id: currentUser.id,
           role: 'member'
         });
 
@@ -147,7 +149,7 @@ const InvitationsList = () => {
                     {invite.households?.name || 'Unknown Household'}
                   </p>
                   <p className="text-sm text-gray-600">
-                    {invite.invited_by === invite.user?.id
+                    {invite.invited_by === currentUser?.id
                       ? `Sent to: ${invite.email}`
                       : `From: ${invite.inviter?.username || 'Unknown'}`}
                   </p>
@@ -155,7 +157,7 @@ const InvitationsList = () => {
                     Status: {invite.status}
                   </p>
                 </div>
-                {invite.status === 'pending' && invite.email === user?.email && (
+                {invite.status === 'pending' && invite.email === currentUser?.email && (
                   <div className="flex gap-2">
                     <Button
                       onClick={() => handleAcceptInvite(invite.id)}
