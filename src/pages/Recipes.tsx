@@ -65,7 +65,7 @@ const Recipes = () => {
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
         
         {/* Heading */}
-        <h1 className="relative text-5xl font-bold mb-8 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
+        <h1 className="relative text-7xl font-bold mb-8 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
         
         {/* Add Recipe Button */}
         <Button
@@ -85,8 +85,8 @@ const Recipes = () => {
           <Tabs defaultValue="private" className="w-full">
             <div className="flex justify-between items-center mb-4">
               <TabsList className="grid w-[200px] grid-cols-2">
-                <TabsTrigger value="private">Mine</TabsTrigger>
-                <TabsTrigger value="public">All</TabsTrigger>
+                <TabsTrigger value="private">My Recipes</TabsTrigger>
+                <TabsTrigger value="public">All Recipes</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="private">
