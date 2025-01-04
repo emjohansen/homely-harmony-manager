@@ -13,6 +13,7 @@ const Settings = () => {
   const [currentHousehold, setCurrentHousehold] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const fetchHouseholdData = async () => {
     try {
@@ -23,6 +24,7 @@ const Settings = () => {
       }
 
       setUserEmail(session.user.email);
+      setCurrentUserId(session.user.id);
       console.log("Fetching household data for user:", session.user.id);
 
       // First get the household member entry for the current user
@@ -88,7 +90,7 @@ const Settings = () => {
     fetchHouseholdData();
   };
 
-  const isCreator = currentHousehold?.created_by === (supabase.auth.getUser())?.data?.user?.id;
+  const isCreator = currentHousehold?.created_by === currentUserId;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
