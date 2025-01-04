@@ -23,39 +23,21 @@ const Recipes = () => {
       if (!session) {
         navigate("/");
       } else {
-        // Get the current household ID from localStorage
-        const storedHouseholdId = localStorage.getItem('currentHouseholdId');
-        console.log("Stored household ID:", storedHouseholdId);
-        
-        if (storedHouseholdId) {
-          setCurrentHouseholdId(storedHouseholdId);
-        } else {
-          // If no stored household, try to get the first available household
-          const { data: householdMember } = await supabase
-            .from('household_members')
-            .select('household_id')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
+        const { data: householdMember } = await supabase
+          .from('household_members')
+          .select('household_id')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
 
-          console.log("Current household member:", householdMember);
-          if (householdMember) {
-            setCurrentHouseholdId(householdMember.household_id);
-            localStorage.setItem('currentHouseholdId', householdMember.household_id);
-          }
+        console.log("Current household member:", householdMember);
+        if (householdMember) {
+          setCurrentHouseholdId(householdMember.household_id);
         }
       }
     };
     
     checkUser();
   }, [navigate]);
-
-  // Add effect to refetch recipes when household changes
-  useEffect(() => {
-    if (currentHouseholdId) {
-      console.log("Refetching recipes for household:", currentHouseholdId);
-      refetch();
-    }
-  }, [currentHouseholdId, refetch]);
 
   return (
     <div className="min-h-screen bg-cream pb-16">
