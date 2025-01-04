@@ -120,7 +120,7 @@ const Recipes = () => {
         className="fixed bottom-14 left-1/2 transform -translate-x-1/2 rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-shadow"
         size="icon"
       >
-        <Plus className="h-12 w-12" />
+        <Plus className="h-14 w-14" />
       </Button>
       
       <Navigation />
