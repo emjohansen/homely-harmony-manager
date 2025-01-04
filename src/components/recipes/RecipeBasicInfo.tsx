@@ -43,14 +43,12 @@ export const RecipeBasicInfo = ({
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter recipe name"
           required
-          className="bg-mint"
         />
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe the recipe"
-          className="bg-mint"
         />
       </div>
 
@@ -77,7 +75,7 @@ export const RecipeBasicInfo = ({
               value={servings}
               onChange={(e) => setServings(Math.max(1, parseInt(e.target.value) || 1))}
               required
-              className="w-20 text-center bg-mint"
+              className="w-20 text-center"
             />
             <Button
               type="button"
@@ -102,7 +100,6 @@ export const RecipeBasicInfo = ({
             onChange={(e) => setPrepTime(parseInt(e.target.value))}
             required
             placeholder="Minutes"
-            className="bg-mint"
           />
         </div>
       </div>
