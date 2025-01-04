@@ -32,14 +32,14 @@ export const RecipeFilters = ({
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex-1 bg-[#e7f2e6] hover:bg-[#c0cfbe]"
+          className="flex-1 bg-[#e0f0dd] hover:bg-[#c0cfbe]"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           variant="outline"
           onClick={onRandomRecipe}
-          className="flex-1 bg-[#e7f2e6] hover:bg-[#c0cfbe]"
+          className="flex-1 bg-[#e0f0dd] hover:bg-[#c0cfbe]"
         >
           Random Recipe
         </Button>
@@ -59,7 +59,7 @@ export const RecipeFilters = ({
         <div className="mb-6">
           <Accordion type="single" collapsible className="w-full space-y-2">
             {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-              <AccordionItem key={key} value={key} className="border rounded-lg bg-[#e7f2e6] shadow-sm">
+              <AccordionItem key={key} value={key} className="border rounded-lg bg-[#e0f0dd] shadow-sm">
                 <AccordionTrigger className="px-4">
                   <span className="text-sm font-semibold text-[#1e251c]">{category.label}</span>
                 </AccordionTrigger>
@@ -93,7 +93,7 @@ export const RecipeFilters = ({
           {selectedTags.map(tag => (
             <span
               key={tag}
-              className="bg-[#e7f2e6] text-[#1e251c] px-2 py-1 rounded-full text-sm flex items-center"
+              className="bg-[#e0f0dd] text-[#1e251c] px-2 py-1 rounded-full text-sm flex items-center"
             >
               {tag}
               <button

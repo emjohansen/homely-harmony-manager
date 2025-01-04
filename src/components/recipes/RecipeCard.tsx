@@ -10,7 +10,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
 
   return (
     <div
-      className="bg-[#e7f2e6] rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
+      className="bg-[#e0f0dd] rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => navigate(`/recipes/${recipe.id}`)}
     >
       {recipe.image_url && (
