@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RecipeList } from "@/components/recipes/RecipeList";
 import { useRecipes } from "@/hooks/use-recipes";
-import type { Recipe } from "@/types/recipe";
 
 const Recipes = () => {
   const navigate = useNavigate();
@@ -63,8 +62,8 @@ const Recipes = () => {
             className="w-full"
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
-            <div className="flex justify-center items-center mb-4">
-              <TabsList className="relative z-10 grid w-full max-w-lg grid-cols-2 overflow-visible bg-mint [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:bg-mint [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
+            <div className="flex flex-col space-y-4">
+              <TabsList className="grid w-full grid-cols-2 overflow-visible bg-mint [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:bg-mint [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
                 <TabsTrigger value="private" className="text-forest font-dongle text-[22px] h-[42px]">My Recipes</TabsTrigger>
                 <TabsTrigger value="public" className="text-forest font-dongle text-[22px] h-[42px]">All Recipes</TabsTrigger>
               </TabsList>
