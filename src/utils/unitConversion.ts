@@ -1,200 +1,167 @@
-type ConversionMap = {
-  [key: string]: {
-    to: { [key: string]: number };
-    type: 'volume' | 'weight';
-  };
+export type Unit = 'g' | 'kg' | 'oz' | 'lb' | 'ml' | 'l' | 'tsp' | 'tbsp' | 'cup' | 'floz' | 'pint' | 'quart' | 'gallon';
+
+export type UnitType = 'mass' | 'volume';
+
+export const unitTypes: Record<Unit, UnitType> = {
+  g: 'mass',
+  kg: 'mass',
+  oz: 'mass',
+  lb: 'mass',
+  ml: 'volume',
+  l: 'volume',
+  tsp: 'volume',
+  tbsp: 'volume',
+  cup: 'volume',
+  floz: 'volume',
+  pint: 'volume',
+  quart: 'volume',
+  gallon: 'volume'
 };
 
-const conversionMap: ConversionMap = {
-  // Volume conversions
-  'cup': { 
-    to: { 
-      'dl': 2.37,
-      'ml': 237,
-      'l': 0.237,
-      'tbsp': 16,
-      'tsp': 48,
-      'fl oz': 8,
-      'pt': 0.5,
-      'qt': 0.25,
-      'gal': 0.0625,
-    },
-    type: 'volume'
+const massConversions = {
+  g: {
+    g: 1,
+    kg: 0.001,
+    oz: 0.035274,
+    lb: 0.002205
   },
-  'tbsp': { 
-    to: { 
-      'ml': 14.79,
-      'tsp': 3,
-      'cup': 0.0625,
-    },
-    type: 'volume'
+  kg: {
+    g: 1000,
+    kg: 1,
+    oz: 35.274,
+    lb: 2.20462
   },
-  'tsp': { 
-    to: { 
-      'ml': 4.93,
-      'tbsp': 0.333,
-    },
-    type: 'volume'
+  oz: {
+    g: 28.3495,
+    kg: 0.0283495,
+    oz: 1,
+    lb: 0.0625
   },
-  'dl': {
-    to: {
-      'cup': 0.422,
-      'ml': 100,
-      'l': 0.1,
-      'fl oz': 3.381,
-      'pt': 0.211,
-      'qt': 0.106,
-      'gal': 0.026,
-    },
-    type: 'volume'
-  },
-  'l': {
-    to: {
-      'ml': 1000,
-      'dl': 10,
-      'cup': 4.227,
-      'fl oz': 33.814,
-      'pt': 2.113,
-      'qt': 1.057,
-      'gal': 0.264,
-    },
-    type: 'volume'
-  },
-  'pt': {
-    to: {
-      'cup': 2,
-      'fl oz': 16,
-      'qt': 0.5,
-      'gal': 0.125,
-      'l': 0.473,
-      'dl': 4.73,
-      'ml': 473,
-    },
-    type: 'volume'
-  },
-  'qt': {
-    to: {
-      'pt': 2,
-      'cup': 4,
-      'fl oz': 32,
-      'gal': 0.25,
-      'l': 0.946,
-      'dl': 9.46,
-      'ml': 946,
-    },
-    type: 'volume'
-  },
-  'gal': {
-    to: {
-      'qt': 4,
-      'pt': 8,
-      'cup': 16,
-      'fl oz': 128,
-      'l': 3.785,
-      'dl': 37.85,
-      'ml': 3785,
-    },
-    type: 'volume'
-  },
-  'fl oz': {
-    to: {
-      'ml': 29.574,
-      'dl': 0.296,
-      'l': 0.0296,
-      'cup': 0.125,
-      'pt': 0.063,
-      'qt': 0.031,
-      'gal': 0.0078,
-    },
-    type: 'volume'
-  },
-  // Weight conversions
-  'g': {
-    to: {
-      'oz': 0.035,
-      'lb': 0.0022,
-      'kg': 0.001,
-    },
-    type: 'weight'
-  },
-  'kg': {
-    to: {
-      'g': 1000,
-      'oz': 35.274,
-      'lb': 2.205,
-    },
-    type: 'weight'
-  },
-  'oz': {
-    to: {
-      'g': 28.35,
-      'kg': 0.0283,
-      'lb': 0.0625,
-    },
-    type: 'weight'
-  },
-  'lb': {
-    to: {
-      'g': 453.59,
-      'kg': 0.4536,
-      'oz': 16,
-    },
-    type: 'weight'
-  },
-};
-
-const metricUnits = ['g', 'kg', 'ml', 'dl', 'l', 'tbsp', 'tsp'];
-const imperialUnits = ['oz', 'lb', 'cup', 'tbsp', 'tsp', 'fl oz', 'pt', 'qt', 'gal'];
-
-export const isMetricUnit = (unit: string): boolean => {
-  return metricUnits.includes(unit.toLowerCase());
-};
-
-export const isImperialUnit = (unit: string): boolean => {
-  return imperialUnits.includes(unit.toLowerCase());
-};
-
-export const convertUnit = (amount: number, fromUnit: string, toUnit: string): number | null => {
-  const from = fromUnit.toLowerCase();
-  const to = toUnit.toLowerCase();
-
-  if (from === to) return amount;
-  
-  if (conversionMap[from] && conversionMap[from].to[to]) {
-    return amount * conversionMap[from].to[to];
+  lb: {
+    g: 453.592,
+    kg: 0.453592,
+    oz: 16,
+    lb: 1
   }
-
-  // Try reverse conversion if direct conversion not found
-  if (conversionMap[to] && conversionMap[to].to[from]) {
-    return amount / conversionMap[to].to[from];
-  }
-
-  return null;
 };
 
-export const getAlternativeUnit = (unit: string): string | null => {
-  const lowerUnit = unit.toLowerCase();
-  
-  // Common metric to US conversions
-  const alternatives: { [key: string]: string } = {
-    'g': 'oz',
-    'kg': 'lb',
-    'ml': 'fl oz',
-    'dl': 'cup',
-    'l': 'qt',
-    'tbsp': 'tbsp',
-    'tsp': 'tsp',
-    // US to metric
-    'oz': 'g',
-    'lb': 'kg',
-    'cup': 'dl',
-    'tbsp': 'tbsp',
-    'tsp': 'tsp',
-    'fl oz': 'ml',
-    'qt': 'l',
-    'pt': 'l',
-    'gal': 'l',
-  };
+const volumeConversions = {
+  ml: {
+    ml: 1,
+    l: 0.001,
+    tsp: 0.202884,
+    tbsp: 0.067628,
+    cup: 0.004227,
+    floz: 0.033814,
+    pint: 0.002113,
+    quart: 0.001057,
+    gallon: 0.000264
+  },
+  l: {
+    ml: 1000,
+    l: 1,
+    tsp: 202.884,
+    tbsp: 67.628,
+    cup: 4.22675,
+    floz: 33.814,
+    pint: 2.11338,
+    quart: 1.05669,
+    gallon: 0.264172
+  },
+  tsp: {
+    ml: 4.92892,
+    l: 0.00492892,
+    tsp: 1,
+    tbsp: 0.333333,
+    cup: 0.0208333,
+    floz: 0.166667,
+    pint: 0.0104167,
+    quart: 0.00520833,
+    gallon: 0.00130208
+  },
+  tbsp: {
+    ml: 14.7868,
+    l: 0.0147868,
+    tsp: 3,
+    tbsp: 1,
+    cup: 0.0625,
+    floz: 0.5,
+    pint: 0.03125,
+    quart: 0.015625,
+    gallon: 0.00390625
+  },
+  cup: {
+    ml: 236.588,
+    l: 0.236588,
+    tsp: 48,
+    tbsp: 16,
+    cup: 1,
+    floz: 8,
+    pint: 0.5,
+    quart: 0.25,
+    gallon: 0.0625
+  },
+  floz: {
+    ml: 29.5735,
+    l: 0.0295735,
+    tsp: 6,
+    tbsp: 2,
+    cup: 0.125,
+    floz: 1,
+    pint: 0.0625,
+    quart: 0.03125,
+    gallon: 0.0078125
+  },
+  pint: {
+    ml: 473.176,
+    l: 0.473176,
+    tsp: 96,
+    tbsp: 32,
+    cup: 2,
+    floz: 16,
+    pint: 1,
+    quart: 0.5,
+    gallon: 0.125
+  },
+  quart: {
+    ml: 946.353,
+    l: 0.946353,
+    tsp: 192,
+    tbsp: 64,
+    cup: 4,
+    floz: 32,
+    pint: 2,
+    quart: 1,
+    gallon: 0.25
+  },
+  gallon: {
+    ml: 3785.41,
+    l: 3.78541,
+    tsp: 768,
+    tbsp: 256,
+    cup: 16,
+    floz: 128,
+    pint: 8,
+    quart: 4,
+    gallon: 1
+  }
+};
 
-  return alternatives[lowerUnit] || null;
+export const convertUnits = (value: number, fromUnit: Unit, toUnit: Unit): number => {
+  if (fromUnit === toUnit) return value;
+  
+  const fromType = unitTypes[fromUnit];
+  const toType = unitTypes[toUnit];
+  
+  if (fromType !== toType) {
+    throw new Error(`Cannot convert between different unit types: ${fromType} and ${toType}`);
+  }
+  
+  const conversions = fromType === 'mass' ? massConversions : volumeConversions;
+  
+  if (!conversions[fromUnit] || !conversions[fromUnit][toUnit]) {
+    throw new Error(`Conversion not supported from ${fromUnit} to ${toUnit}`);
+  }
+  
+  return value * conversions[fromUnit][toUnit];
 };
