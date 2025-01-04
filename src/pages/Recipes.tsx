@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, CookingPot } from "lucide-react";
+import { Plus, Utensils } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -62,8 +62,8 @@ const Recipes = () => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              fill="#8B5CF6"
-              d="M45.7,-58.9C59.9,-48.8,72.4,-35.2,77.9,-18.5C83.4,-1.8,81.9,17.9,73.1,33.5C64.3,49.1,48.2,60.5,31,67.1C13.8,73.7,-4.5,75.5,-22.9,71.3C-41.3,67.2,-59.8,57.2,-70.6,41.5C-81.4,25.8,-84.5,4.4,-79.7,-14.2C-74.9,-32.8,-62.2,-48.6,-47,-59.1C-31.8,-69.6,-15.9,-74.8,0.6,-75.6C17.1,-76.4,31.5,-69,45.7,-58.9Z"
+              fill="#FFA94D"
+              d="M44.2,-30.9C57.9,-11.9,69.7,8.1,64.6,22.5C59.5,36.8,37.6,45.5,15.5,51.2C-6.6,56.9,-28.9,59.6,-42.4,49.8C-55.9,40,-60.6,17.8,-56.2,-1.8C-51.8,-21.4,-38.3,-38.3,-22.4,-56C-6.5,-73.7,11.8,-92.2,23.8,-84.8C35.8,-77.4,41.5,-44.2,44.2,-30.9Z"
               transform="translate(100 100)"
             />
           </svg>
@@ -71,7 +71,7 @@ const Recipes = () => {
         
         {/* Icon */}
         <div className="relative mb-6">
-          <CookingPot className="w-24 h-24 text-white" strokeWidth={1.5} />
+          <Utensils className="w-24 h-24 text-white" strokeWidth={1.5} />
         </div>
         
         {/* Heading */}
