@@ -62,9 +62,20 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
       console.log('Formatted households:', formattedHouseholds);
       setHouseholds(formattedHouseholds);
       
-      // If no current household is selected and we have households, select the first one
-      if (!currentHousehold && formattedHouseholds.length > 0) {
+      // Get the stored household ID
+      const storedHouseholdId = localStorage.getItem('currentHouseholdId');
+      
+      // If there's a stored ID and it exists in the households list, use it
+      const storedHousehold = formattedHouseholds.find(h => h.id === storedHouseholdId);
+      if (storedHouseholdId && storedHousehold) {
+        console.log('Setting stored household as current:', storedHousehold);
+        setCurrentHousehold(storedHousehold);
+      } 
+      // Otherwise, if we have households but no current one, select the first one
+      else if (!currentHousehold && formattedHouseholds.length > 0) {
+        console.log('Setting first household as current:', formattedHouseholds[0]);
         setCurrentHousehold(formattedHouseholds[0]);
+        localStorage.setItem('currentHouseholdId', formattedHouseholds[0].id);
       }
     } catch (error) {
       console.error('Error fetching households:', error);
@@ -123,6 +134,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
   const handleHouseholdSwitch = (household: any) => {
     console.log('Switching to household:', household);
     setCurrentHousehold(household);
+    localStorage.setItem('currentHouseholdId', household.id);
   };
 
   const handleAcceptInvite = async (inviteId: string) => {
