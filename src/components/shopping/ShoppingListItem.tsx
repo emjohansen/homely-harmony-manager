@@ -70,10 +70,13 @@ export const ShoppingListItem = ({
 
   return (
     <div className="flex items-center gap-4 p-2 bg-background rounded-lg border">
-      <Checkbox
-        checked={item.is_checked}
-        onCheckedChange={(checked) => onToggle(item.id, checked as boolean)}
-      />
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={item.is_checked}
+          onCheckedChange={(checked) => onToggle(item.id, checked as boolean)}
+          className="bg-mint border border-sage data-[state=checked]:bg-sage data-[state=unchecked]:bg-mint"
+        />
+      </div>
       <div className="flex-1">
         <div className="flex items-center gap-2">
           <span className={item.is_checked ? "line-through text-gray-500" : ""}>
@@ -98,7 +101,7 @@ export const ShoppingListItem = ({
           <SelectTrigger className="w-[140px]">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-[100]">
             {STORES.map((store) => (
               <SelectItem key={store} value={store}>
                 {store}
@@ -140,7 +143,7 @@ export const ShoppingListItem = ({
               <Trash2 className="h-4 w-4" />
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="z-[100]">
             <AlertDialogHeader>
               <AlertDialogTitle>Delete item?</AlertDialogTitle>
               <AlertDialogDescription>
