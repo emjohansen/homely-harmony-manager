@@ -97,7 +97,7 @@ const Recipes = () => {
         className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
-        <span className="font-dongle font-bold text-4xl text-cream group-hover:text-forest leading-none">+</span>
+        <span className="font-dongle font-bold text-[80px] text-cream group-hover:text-forest leading-none flex items-center justify-center h-full w-full -mt-2">+</span>
       </Button>
       
       <Navigation />
