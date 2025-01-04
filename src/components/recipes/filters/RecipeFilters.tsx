@@ -28,17 +28,16 @@ export const RecipeFilters = ({
 
   return (
     <div className="space-y-2">
-
       <div className="grid grid-cols-2 gap-0 w-full max-w-lg mx-auto">
         <Button
           onClick={() => setShowFilters(!showFilters)}
-          className="bg-mint hover:bg-sage text-forest hover:text-cream text-base h-[36px] border border-sage rounded-r-none"
+          className="bg-mint hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-sage rounded-r-none"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           onClick={onRandomRecipe}
-          className="bg-mint hover:bg-sage text-forest hover:text-cream text-base h-[36px] border border-sage rounded-l-none border-l-0"
+          className="bg-mint hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-sage rounded-l-none border-l-0"
         >
           Random Recipe
         </Button>
