@@ -30,6 +30,12 @@ export default {
 			fontFamily: {
 				'averia': ['Averia Serif Libre', 'serif'],
 			},
+			fontSize: {
+				'recipe-title': '18px',
+				'recipe-desc': '14px',
+				'recipe-meta': '11px',
+				'recipe-tag': '8px',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
