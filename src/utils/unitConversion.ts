@@ -181,17 +181,62 @@ export const UNIT_CONVERSIONS: { [key: string]: { [key: string]: number } } = {
   }
 };
 
-export const convertUnit = (value: number, fromUnit: string, toUnit: string): number => {
+export const convertUnit = (value: number, fromUnit: string, toUnit: string): number | null => {
   if (fromUnit === toUnit) return value;
   
   if (UNIT_CONVERSIONS[fromUnit] && UNIT_CONVERSIONS[fromUnit][toUnit]) {
     return value * UNIT_CONVERSIONS[fromUnit][toUnit];
   }
   
-  throw new Error(`Cannot convert from ${fromUnit} to ${toUnit}`);
+  return null;
 };
 
 export const isCompatibleUnit = (fromUnit: string, toUnit: string): boolean => {
   if (fromUnit === toUnit) return true;
   return !!(UNIT_CONVERSIONS[fromUnit] && UNIT_CONVERSIONS[fromUnit][toUnit]);
+};
+
+// Add the missing functions
+export const isMetricUnit = (unit: string): boolean => {
+  const metricUnits = ['ml', 'l', 'dl', 'cl', 'g', 'kg', 'mg'];
+  return metricUnits.includes(unit);
+};
+
+export const isImperialUnit = (unit: string): boolean => {
+  const imperialUnits = ['oz', 'lb', 'cup', 'floz', 'pint', 'quart', 'gallon', 'tsp', 'tbsp'];
+  return imperialUnits.includes(unit);
+};
+
+export const getAlternativeUnit = (unit: string): string | null => {
+  // Metric to Imperial conversions
+  const metricToImperial: { [key: string]: string } = {
+    'ml': 'floz',
+    'l': 'gallon',
+    'dl': 'cup',
+    'g': 'oz',
+    'kg': 'lb'
+  };
+
+  // Imperial to Metric conversions
+  const imperialToMetric: { [key: string]: string } = {
+    'floz': 'ml',
+    'gallon': 'l',
+    'cup': 'dl',
+    'oz': 'g',
+    'lb': 'kg',
+    'pint': 'ml',
+    'quart': 'l',
+    'tsp': 'ml',
+    'tbsp': 'ml'
+  };
+
+  if (isMetricUnit(unit)) {
+    return metricToImperial[unit] || null;
+  }
+  
+  if (isImperialUnit(unit)) {
+    return imperialToMetric[unit] || null;
+  }
+
+  return null;
 };
