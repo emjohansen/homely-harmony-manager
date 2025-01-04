@@ -28,7 +28,7 @@ export const RecipeFilters = ({
 
   return (
     <div className="space-y-2">
-      <div className="grid grid-cols-2 gap-0 w-full max-w-lg mx-auto -mt-4">
+      <div className="grid grid-cols-2 gap-0 w-full max-w-lg mx-auto -mt-3">
         <Button
           onClick={() => setShowFilters(!showFilters)}
           className="bg-mint hover:bg-sage text-forest hover:text-cream font-dongle text-[22px] h-[36px] border border-sage rounded-r-none"
