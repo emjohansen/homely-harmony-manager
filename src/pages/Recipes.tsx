@@ -68,7 +68,7 @@ const Recipes = () => {
 
       <div className="max-w-lg mx-auto px-4">
         {loading ? (
-          <div className="text-center py-8">Loading recipes...</div>
+          <div className="text-center py-8 text-[#1e251c]">Loading recipes...</div>
         ) : (
           <Tabs 
             defaultValue="private" 
@@ -76,9 +76,9 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <div className="flex justify-center items-center mb-4">
-              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#9dbc98] [&_[data-state=active]]:text-white">
-                <TabsTrigger value="private">My Recipes</TabsTrigger>
-                <TabsTrigger value="public">All Recipes</TabsTrigger>
+              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#9dbc98] [&_[data-state=active]]:text-[#efffed]">
+                <TabsTrigger value="private" className="text-[#1e251c]">My Recipes</TabsTrigger>
+                <TabsTrigger value="public" className="text-[#1e251c]">All Recipes</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="private">
@@ -112,7 +112,7 @@ const Recipes = () => {
         className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#9dbc98] hover:bg-[#c0cfbe] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
-        <Plus className="h-12 w-12 text-white" />
+        <Plus className="h-12 w-12 text-[#efffed]" />
       </Button>
       
       <Navigation />
