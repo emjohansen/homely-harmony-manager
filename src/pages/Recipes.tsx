@@ -44,7 +44,7 @@ const Recipes = () => {
       <div 
         className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
-          backgroundImage: 'url("/lovable-uploads/a644aa15-cdb7-4b95-963b-67805fd90fb0.png")',
+          backgroundImage: 'url("/lovable-uploads/7e24e64e-7cc7-4287-8a2e-41e46382fd65.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}

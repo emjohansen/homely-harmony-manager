@@ -7,7 +7,7 @@ const Shopping = () => {
       <div 
         className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
-          backgroundImage: 'url("/lovable-uploads/6b59476d-57d4-4c95-ba13-ce0bd5d76b90.png")',
+          backgroundImage: 'url("/lovable-uploads/7e24e64e-7cc7-4287-8a2e-41e46382fd65.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
