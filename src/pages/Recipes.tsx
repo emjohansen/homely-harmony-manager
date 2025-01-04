@@ -53,11 +53,11 @@ const Recipes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
+    <div className="min-h-screen bg-[#f3efe8] pb-16">
       <div 
         className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
-          backgroundImage: 'url("/lovable-uploads/8ad0b81e-3379-42fa-92d2-0055f8884fbc.png")',
+          backgroundImage: 'url("/lovable-uploads/6b59476d-57d4-4c95-ba13-ce0bd5d76b90.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
@@ -76,18 +76,18 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <div className="flex justify-center items-center mb-4">
-              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#99c58b] [&_[data-state=active]]:text-white">
+              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#336659] [&_[data-state=active]]:text-white">
                 <TabsTrigger value="private">My Recipes</TabsTrigger>
                 <TabsTrigger value="public">All Recipes</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="private">
               {!currentHouseholdId ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-[#3d3d3d]">
                   Join a household to start adding your own recipes!
                 </div>
               ) : privateRecipes.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-[#3d3d3d]">
                   No recipes yet. Add your first recipe!
                 </div>
               ) : (
@@ -96,7 +96,7 @@ const Recipes = () => {
             </TabsContent>
             <TabsContent value="public">
               {publicRecipes.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-[#3d3d3d]">
                   No public recipes available.
                 </div>
               ) : (
@@ -109,7 +109,7 @@ const Recipes = () => {
 
       <Button
         onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#99c58b] hover:bg-[#99c58b]/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#336659] hover:bg-[#1f493d] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
         <Plus className="h-12 w-12 text-white" />
