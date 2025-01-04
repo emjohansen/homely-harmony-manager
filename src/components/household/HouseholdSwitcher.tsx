@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import CreateHousehold from "./CreateHousehold";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Household {
   id: string;
@@ -40,8 +41,8 @@ const HouseholdSwitcher = ({
   currentHousehold, 
   onHouseholdSelect 
 }: HouseholdSwitcherProps) => {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(currentHousehold?.id || "");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   
   // Early return if no households
@@ -53,16 +54,40 @@ const HouseholdSwitcher = ({
     console.log("Switching to household:", household);
     
     try {
-      // Store the selected household ID in localStorage
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('No authenticated user found');
+      }
+
+      // Update the user's current household in the profiles table
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ current_household: household.id })
+        .eq('id', user.id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // Store in localStorage as backup
       localStorage.setItem('currentHouseholdId', household.id);
       
       // Call the parent component's handler
       onHouseholdSelect(household);
       
-      setValue(household.id);
+      toast({
+        title: "Household switched",
+        description: `Switched to ${household.name}`,
+      });
+
       setOpen(false);
     } catch (error) {
       console.error('Error switching household:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not switch household. Please try again.",
+      });
     }
   };
 
@@ -87,8 +112,6 @@ const HouseholdSwitcher = ({
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command 
-            value={value} 
-            onValueChange={setValue} 
             className="bg-[#efffed]"
           >
             <CommandInput placeholder="Search households..." className="bg-[#efffed]" />
