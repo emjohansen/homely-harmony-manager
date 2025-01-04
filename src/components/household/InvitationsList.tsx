@@ -46,8 +46,13 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       console.log('Fetched memberships:', memberships);
 
-      // Ensure memberships is an array before mapping
-      const formattedHouseholds = (memberships || []).map(membership => ({
+      if (!Array.isArray(memberships)) {
+        console.log('No memberships found or invalid data');
+        setHouseholds([]);
+        return;
+      }
+
+      const formattedHouseholds = memberships.map(membership => ({
         id: membership.households.id,
         name: membership.households.name,
         role: membership.role,
@@ -113,7 +118,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
   useEffect(() => {
     fetchInvitations();
-  }, [toast]);
+  }, []);
 
   const handleHouseholdSwitch = (household: any) => {
     console.log('Switching to household:', household);
