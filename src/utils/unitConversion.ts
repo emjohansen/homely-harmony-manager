@@ -1,200 +1,104 @@
-type ConversionMap = {
-  [key: string]: {
-    to: { [key: string]: number };
-    type: 'volume' | 'weight';
+export const convertTemperature = (value: number, from: 'C' | 'F', to: 'C' | 'F'): number => {
+  if (from === to) return value;
+  if (from === 'C' && to === 'F') {
+    return (value * 9/5) + 32;
+  }
+  return (value - 32) * 5/9;
+};
+
+export const convertVolume = (value: number, from: string, to: string): number => {
+  const mlConversions: { [key: string]: number } = {
+    'ml': 1,
+    'l': 1000,
+    'dl': 100,
+    'cup': 236.588,
+    'tbsp': 14.787,
+    'tsp': 4.929
   };
-};
 
-const conversionMap: ConversionMap = {
-  // Volume conversions
-  'cup': { 
-    to: { 
-      'dl': 2.37,
-      'ml': 237,
-      'l': 0.237,
-      'tbsp': 16,
-      'tsp': 48,
-      'fl oz': 8,
-      'pt': 0.5,
-      'qt': 0.25,
-      'gal': 0.0625,
-    },
-    type: 'volume'
-  },
-  'tbsp': { 
-    to: { 
-      'ml': 14.79,
-      'tsp': 3,
-      'cup': 0.0625,
-    },
-    type: 'volume'
-  },
-  'tsp': { 
-    to: { 
-      'ml': 4.93,
-      'tbsp': 0.333,
-    },
-    type: 'volume'
-  },
-  'dl': {
-    to: {
-      'cup': 0.422,
-      'ml': 100,
-      'l': 0.1,
-      'fl oz': 3.381,
-      'pt': 0.211,
-      'qt': 0.106,
-      'gal': 0.026,
-    },
-    type: 'volume'
-  },
-  'l': {
-    to: {
-      'ml': 1000,
-      'dl': 10,
-      'cup': 4.227,
-      'fl oz': 33.814,
-      'pt': 2.113,
-      'qt': 1.057,
-      'gal': 0.264,
-    },
-    type: 'volume'
-  },
-  'pt': {
-    to: {
-      'cup': 2,
-      'fl oz': 16,
-      'qt': 0.5,
-      'gal': 0.125,
-      'l': 0.473,
-      'dl': 4.73,
-      'ml': 473,
-    },
-    type: 'volume'
-  },
-  'qt': {
-    to: {
-      'pt': 2,
-      'cup': 4,
-      'fl oz': 32,
-      'gal': 0.25,
-      'l': 0.946,
-      'dl': 9.46,
-      'ml': 946,
-    },
-    type: 'volume'
-  },
-  'gal': {
-    to: {
-      'qt': 4,
-      'pt': 8,
-      'cup': 16,
-      'fl oz': 128,
-      'l': 3.785,
-      'dl': 37.85,
-      'ml': 3785,
-    },
-    type: 'volume'
-  },
-  'fl oz': {
-    to: {
-      'ml': 29.574,
-      'dl': 0.296,
-      'l': 0.0296,
-      'cup': 0.125,
-      'pt': 0.063,
-      'qt': 0.031,
-      'gal': 0.0078,
-    },
-    type: 'volume'
-  },
-  // Weight conversions
-  'g': {
-    to: {
-      'oz': 0.035,
-      'lb': 0.0022,
-      'kg': 0.001,
-    },
-    type: 'weight'
-  },
-  'kg': {
-    to: {
-      'g': 1000,
-      'oz': 35.274,
-      'lb': 2.205,
-    },
-    type: 'weight'
-  },
-  'oz': {
-    to: {
-      'g': 28.35,
-      'kg': 0.0283,
-      'lb': 0.0625,
-    },
-    type: 'weight'
-  },
-  'lb': {
-    to: {
-      'g': 453.59,
-      'kg': 0.4536,
-      'oz': 16,
-    },
-    type: 'weight'
-  },
-};
-
-const metricUnits = ['g', 'kg', 'ml', 'dl', 'l', 'tbsp', 'tsp'];
-const imperialUnits = ['oz', 'lb', 'cup', 'tbsp', 'tsp', 'fl oz', 'pt', 'qt', 'gal'];
-
-export const isMetricUnit = (unit: string): boolean => {
-  return metricUnits.includes(unit.toLowerCase());
-};
-
-export const isImperialUnit = (unit: string): boolean => {
-  return imperialUnits.includes(unit.toLowerCase());
-};
-
-export const convertUnit = (amount: number, fromUnit: string, toUnit: string): number | null => {
-  const from = fromUnit.toLowerCase();
-  const to = toUnit.toLowerCase();
-
-  if (from === to) return amount;
-  
-  if (conversionMap[from] && conversionMap[from].to[to]) {
-    return amount * conversionMap[from].to[to];
+  if (!(from in mlConversions) || !(to in mlConversions)) {
+    throw new Error('Invalid volume unit');
   }
 
-  // Try reverse conversion if direct conversion not found
-  if (conversionMap[to] && conversionMap[to].to[from]) {
-    return amount / conversionMap[to].to[from];
+  const mlValue = value * mlConversions[from];
+  return mlValue / mlConversions[to];
+};
+
+export const convertWeight = (value: number, from: string, to: string): number => {
+  const gConversions: { [key: string]: number } = {
+    'g': 1,
+    'kg': 1000,
+    'oz': 28.3495,
+    'lb': 453.592
+  };
+
+  if (!(from in gConversions) || !(to in gConversions)) {
+    throw new Error('Invalid weight unit');
   }
 
+  const gValue = value * gConversions[from];
+  return gValue / gConversions[to];
+};
+
+export const convertPieces = (value: number, from: string, to: string): number => {
+  if (from !== 'piece' && from !== 'pieces') throw new Error('Invalid piece unit');
+  if (to !== 'piece' && to !== 'pieces') throw new Error('Invalid piece unit');
+  return value;
+};
+
+export const convert = (value: number, from: string, to: string): number => {
+  const fromUnit = from.toLowerCase();
+  const toUnit = to.toLowerCase();
+
+  if (fromUnit === toUnit) return value;
+
+  for (const [type, units] of Object.entries(unitGroups)) {
+    if (units.includes(fromUnit as any) && units.includes(toUnit as any)) {
+      switch (type) {
+        case 'volume':
+          return convertVolume(value, fromUnit, toUnit);
+        case 'weight':
+          return convertWeight(value, fromUnit, toUnit);
+        case 'piece':
+          return convertPieces(value, fromUnit, toUnit);
+        case 'temperature':
+          return convertTemperature(value, fromUnit as 'C' | 'F', toUnit as 'C' | 'F');
+      }
+    }
+  }
+
+  throw new Error('Incompatible units');
+};
+
+export const roundToDecimalPlaces = (value: number, places: number): number => {
+  const multiplier = Math.pow(10, places);
+  return Math.round(value * multiplier) / multiplier;
+};
+
+const unitGroups = {
+  volume: ['ml', 'l', 'cup', 'tbsp', 'tsp', 'dl'],
+  weight: ['g', 'kg', 'oz', 'lb'],
+  piece: ['piece', 'pieces'],
+  temperature: ['C', 'F']
+} as const;
+
+export const getUnitType = (unit: string): string | null => {
+  const normalizedUnit = unit.toLowerCase();
+  for (const [type, units] of Object.entries(unitGroups)) {
+    if (units.includes(normalizedUnit as any)) {
+      return type;
+    }
+  }
   return null;
 };
 
-export const getAlternativeUnit = (unit: string): string | null => {
-  const lowerUnit = unit.toLowerCase();
-  
-  // Common metric to US conversions
-  const alternatives: { [key: string]: string } = {
-    'g': 'oz',
-    'kg': 'lb',
-    'ml': 'fl oz',
-    'dl': 'cup',
-    'l': 'qt',
-    'tbsp': 'tbsp',
-    'tsp': 'tsp',
-    // US to metric
-    'oz': 'g',
-    'lb': 'kg',
-    'cup': 'dl',
-    'tbsp': 'tbsp',
-    'tsp': 'tsp',
-    'fl oz': 'ml',
-    'qt': 'l',
-    'pt': 'l',
-    'gal': 'l',
-  };
+export const canConvert = (from: string, to: string): boolean => {
+  const fromType = getUnitType(from);
+  const toType = getUnitType(to);
+  return fromType !== null && fromType === toType;
+};
 
-  return alternatives[lowerUnit] || null;
+export const formatValue = (value: number, unit: string): string => {
+  const roundedValue = roundToDecimalPlaces(value, 2);
+  return `${roundedValue} ${unit}`;
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, CookingPot } from "lucide-react";
+import { Plus } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -53,26 +53,30 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="relative h-[50vh] flex flex-col items-center justify-center bg-gradient-to-b from-[#E5DEFF] to-gray-50 overflow-hidden">
-        {/* Decorative blob SVG */}
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 200 200"
-          xmlns="http://www.w3.org/2000/svg"
-          style={{ opacity: 0.3 }}
-        >
-          <path
-            fill="#D3E4FD"
-            d="M45.7,-58.9C59.9,-48.8,72.4,-35.2,77.9,-18.5C83.4,-1.8,81.9,17.9,73.1,33.5C64.3,49.1,48.2,60.5,31,67.1C13.8,73.7,-4.5,75.5,-22.9,71.3C-41.3,67.2,-59.8,57.2,-70.6,41.5C-81.4,25.8,-84.5,4.4,-79.7,-14.2C-74.9,-32.8,-62.2,-48.6,-47,-59.1C-31.8,-69.6,-15.9,-74.8,0.6,-75.6C17.1,-76.4,31.5,-69,45.7,-58.9Z"
-            transform="translate(100 100)"
-          />
-        </svg>
+      <div className="relative h-[50vh] flex flex-col items-center justify-center overflow-hidden">
+        {/* Background gradient and blob */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FDE1D3] to-gray-50">
+          <svg
+            className="absolute inset-0 w-full h-full"
+            viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ opacity: 0.6 }}
+          >
+            <path
+              fill="#FFDEE2"
+              d="M45.7,-58.9C59.9,-48.8,72.4,-35.2,77.9,-18.5C83.4,-1.8,81.9,17.9,73.1,33.5C64.3,49.1,48.2,60.5,31,67.1C13.8,73.7,-4.5,75.5,-22.9,71.3C-41.3,67.2,-59.8,57.2,-70.6,41.5C-81.4,25.8,-84.5,4.4,-79.7,-14.2C-74.9,-32.8,-62.2,-48.6,-47,-59.1C-31.8,-69.6,-15.9,-74.8,0.6,-75.6C17.1,-76.4,31.5,-69,45.7,-58.9Z"
+              transform="translate(100 100)"
+            />
+          </svg>
+        </div>
         
-        {/* Icon */}
+        {/* Illustration */}
         <div className="relative mb-6">
-          <div className="p-4 bg-white rounded-full shadow-lg">
-            <CookingPot className="h-12 w-12 text-[#0f172ae6]" />
-          </div>
+          <img 
+            src="/placeholder.svg" 
+            alt="Recipe illustration" 
+            className="w-32 h-32"
+          />
         </div>
         
         {/* Heading */}
@@ -82,7 +86,7 @@ const Recipes = () => {
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
-          className="relative"
+          className="relative hover:bg-[#FDE1D3] transition-colors"
         >
           <Plus className="h-4 w-4 mr-2" />
           New Recipe
