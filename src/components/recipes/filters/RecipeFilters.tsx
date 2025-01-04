@@ -31,13 +31,13 @@ export const RecipeFilters = ({
       <div className="flex items-center justify-center gap-2 mt-4 w-[300px] mx-auto">
         <Button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex-1 bg-[#e0f0dd] hover:bg-[#9dbc98] text-[#1e251c] hover:text-[#efffed]"
+          className="flex-1 bg-mint hover:bg-sage text-forest hover:text-cream"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           onClick={onRandomRecipe}
-          className="flex-1 bg-[#e0f0dd] hover:bg-[#9dbc98] text-[#1e251c] hover:text-[#efffed]"
+          className="flex-1 bg-mint hover:bg-sage text-forest hover:text-cream"
         >
           Random Recipe
         </Button>
@@ -47,7 +47,7 @@ export const RecipeFilters = ({
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="text-sm text-[#1e251c]"
+          className="text-sm text-forest"
         >
           Reset Filters
         </Button>
@@ -57,9 +57,9 @@ export const RecipeFilters = ({
         <div className="mb-6">
           <Accordion type="single" collapsible className="w-full space-y-2">
             {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-              <AccordionItem key={key} value={key} className="border rounded-lg bg-[#e0f0dd] shadow-sm">
+              <AccordionItem key={key} value={key} className="border rounded-lg bg-mint shadow-sm">
                 <AccordionTrigger className="px-4">
-                  <span className="text-sm font-semibold text-[#1e251c]">{category.label}</span>
+                  <span className="text-sm font-semibold text-forest">{category.label}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <div className="grid grid-cols-2 gap-2">
@@ -72,7 +72,7 @@ export const RecipeFilters = ({
                         />
                         <label
                           htmlFor={`filter-${key}-${option}`}
-                          className="text-sm cursor-pointer text-[#1e251c]"
+                          className="text-sm cursor-pointer text-forest"
                         >
                           {option}
                         </label>
@@ -91,12 +91,12 @@ export const RecipeFilters = ({
           {selectedTags.map(tag => (
             <span
               key={tag}
-              className="bg-[#e0f0dd] text-[#1e251c] px-2 py-1 rounded-full text-sm flex items-center"
+              className="bg-mint text-forest px-2 py-1 rounded-full text-sm flex items-center"
             >
               {tag}
               <button
                 onClick={() => onTagToggle(tag)}
-                className="ml-1 text-[#1e251c] hover:text-[#9dbc98]"
+                className="ml-1 text-forest hover:text-sage"
               >
                 <X className="h-3 w-3" />
               </button>

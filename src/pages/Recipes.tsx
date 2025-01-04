@@ -40,20 +40,8 @@ const Recipes = () => {
     checkUser();
   }, [navigate]);
 
-  const getRandomRecipe = (recipes: Recipe[]) => {
-    if (recipes.length === 0) {
-      toast({
-        title: "No recipes",
-        description: "No recipes available in this category!",
-      });
-      return;
-    }
-    const randomIndex = Math.floor(Math.random() * recipes.length);
-    navigate(`/recipes/${recipes[randomIndex].id}`);
-  };
-
   return (
-    <div className="min-h-screen bg-[#efffed] pb-16">
+    <div className="min-h-screen bg-cream pb-16">
       <div 
         className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
@@ -62,13 +50,13 @@ const Recipes = () => {
           backgroundPosition: 'center'
         }}
       >
-        <Utensils className="absolute opacity-10 h-64 w-64 text-[#efffed] transform -translate-y-8" />
-        <h1 className="relative text-7xl font-bold mb-4 text-[#efffed] uppercase tracking-wider font-dongle">RECIPES</h1>
+        <Utensils className="absolute opacity-10 h-64 w-64 text-cream transform -translate-y-8" />
+        <h1 className="relative text-7xl font-bold mb-4 text-cream uppercase tracking-wider font-dongle">RECIPES</h1>
       </div>
 
       <div className="max-w-lg mx-auto px-4">
         {loading ? (
-          <div className="text-center py-8 text-[#1e251c]">Loading recipes...</div>
+          <div className="text-center py-8 text-forest">Loading recipes...</div>
         ) : (
           <Tabs 
             defaultValue="private" 
@@ -76,18 +64,18 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <div className="flex justify-center items-center mb-4">
-              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-[#9dbc98] [&_[data-state=active]]:text-[#efffed]">
-                <TabsTrigger value="private" className="text-[#1e251c]">My Recipes</TabsTrigger>
-                <TabsTrigger value="public" className="text-[#1e251c]">All Recipes</TabsTrigger>
+              <TabsList className="grid w-[300px] grid-cols-2 [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream">
+                <TabsTrigger value="private" className="text-forest">My Recipes</TabsTrigger>
+                <TabsTrigger value="public" className="text-forest">All Recipes</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="private">
               {!currentHouseholdId ? (
-                <div className="text-center py-8 text-[#1e251c]">
+                <div className="text-center py-8 text-forest">
                   Join a household to start adding your own recipes!
                 </div>
               ) : privateRecipes.length === 0 ? (
-                <div className="text-center py-8 text-[#1e251c]">
+                <div className="text-center py-8 text-forest">
                   No recipes yet. Add your first recipe!
                 </div>
               ) : (
@@ -96,7 +84,7 @@ const Recipes = () => {
             </TabsContent>
             <TabsContent value="public">
               {publicRecipes.length === 0 ? (
-                <div className="text-center py-8 text-[#1e251c]">
+                <div className="text-center py-8 text-forest">
                   No public recipes available.
                 </div>
               ) : (
@@ -109,10 +97,10 @@ const Recipes = () => {
 
       <Button
         onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#9dbc98] hover:bg-[#e0f0dd] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
-        <Plus className="h-12 w-12 text-[#efffed] group-hover:text-[#1e251c]" />
+        <Plus className="h-12 w-12 text-cream group-hover:text-forest" />
       </Button>
       
       <Navigation />
