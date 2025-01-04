@@ -85,11 +85,11 @@ const Recipes = () => {
               </TabsList>
             </div>
             
-            <div className="flex gap-4 w-[300px] mx-auto mb-6">
+            <div className="flex justify-between w-[300px] mx-auto mb-6">
               <Button
                 onClick={() => getRandomRecipe(privateRecipes)}
                 variant="outline"
-                className="w-full"
+                className="flex-1 mx-1"
               >
                 <Shuffle className="h-4 w-4 mr-2" />
                 Random
