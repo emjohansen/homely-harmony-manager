@@ -30,7 +30,7 @@ function App() {
         <Route path="/storage" element={<Storage />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
-      <Toaster />
+      <Toaster position="bottom-right" />
     </Router>
   );
 }
