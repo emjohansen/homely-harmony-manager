@@ -1,5 +1,5 @@
 import Navigation from "@/components/Navigation";
-import { ShoppingBasket } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
 const Shopping = () => {
   return (
@@ -12,7 +12,7 @@ const Shopping = () => {
           backgroundPosition: 'center'
         }}
       >
-        <ShoppingBasket className="absolute opacity-10 h-64 w-64 text-cream transform -translate-y-8" />
+        <ShoppingCart className="absolute opacity-10 h-64 w-64 text-cream transform -translate-y-8" />
         <h1 className="relative text-5xl font-bold mb-4 text-cream uppercase tracking-wider">SHOPPING</h1>
       </div>
 
