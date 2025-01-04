@@ -32,14 +32,14 @@ export const RecipeFilters = ({
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex-1"
+          className="flex-1 bg-[#dee5dd] hover:bg-[#c0cfbe]"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           variant="outline"
           onClick={onRandomRecipe}
-          className="flex-1"
+          className="flex-1 bg-[#dee5dd] hover:bg-[#c0cfbe]"
         >
           Random Recipe
         </Button>
@@ -49,7 +49,7 @@ export const RecipeFilters = ({
         <Button
           variant="ghost"
           onClick={onClearFilters}
-          className="text-sm text-gray-500"
+          className="text-sm text-[#1e251c]"
         >
           Reset Filters
         </Button>
@@ -59,9 +59,9 @@ export const RecipeFilters = ({
         <div className="mb-6">
           <Accordion type="single" collapsible className="w-full space-y-2">
             {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-              <AccordionItem key={key} value={key} className="border rounded-lg bg-white shadow-sm">
+              <AccordionItem key={key} value={key} className="border rounded-lg bg-[#dee5dd] shadow-sm">
                 <AccordionTrigger className="px-4">
-                  <span className="text-sm font-semibold">{category.label}</span>
+                  <span className="text-sm font-semibold text-[#1e251c]">{category.label}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   <div className="grid grid-cols-2 gap-2">
@@ -74,7 +74,7 @@ export const RecipeFilters = ({
                         />
                         <label
                           htmlFor={`filter-${key}-${option}`}
-                          className="text-sm cursor-pointer"
+                          className="text-sm cursor-pointer text-[#1e251c]"
                         >
                           {option}
                         </label>
@@ -93,12 +93,12 @@ export const RecipeFilters = ({
           {selectedTags.map(tag => (
             <span
               key={tag}
-              className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm flex items-center"
+              className="bg-[#dee5dd] text-[#1e251c] px-2 py-1 rounded-full text-sm flex items-center"
             >
               {tag}
               <button
                 onClick={() => onTagToggle(tag)}
-                className="ml-1 text-gray-500 hover:text-gray-700"
+                className="ml-1 text-[#1e251c] hover:text-[#9dbc98]"
               >
                 <X className="h-3 w-3" />
               </button>
