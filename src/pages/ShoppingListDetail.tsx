@@ -38,7 +38,6 @@ const ShoppingListDetail = () => {
       return;
     }
 
-    console.log('Fetched list:', data);
     setList(data);
   };
 
@@ -66,7 +65,7 @@ const ShoppingListDetail = () => {
     setItems(data);
   };
 
-  const handleAddItem = async (item: string, quantity: string, unit: string) => {
+  const handleAddItem = async (item: string, quantity: string, store: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -76,7 +75,7 @@ const ShoppingListDetail = () => {
         shopping_list_id: id,
         item,
         quantity: quantity ? parseFloat(quantity) : null,
-        unit: unit || null,
+        store,
         added_by: user.id,
       });
 
@@ -172,8 +171,8 @@ const ShoppingListDetail = () => {
   const totalPrice = items.reduce((sum, item) => sum + (item.price || 0), 0);
 
   return (
-    <div className="min-h-screen bg-cream pb-16">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-cream pb-20">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         <ShoppingListHeader list={list} totalPrice={totalPrice} />
         
         <AddShoppingListItem onAddItem={handleAddItem} />

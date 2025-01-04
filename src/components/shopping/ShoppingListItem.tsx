@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -28,7 +27,6 @@ interface ShoppingListItemProps {
     id: string;
     item: string;
     quantity?: number;
-    unit?: string;
     is_checked: boolean;
     store?: string;
     price?: number;
@@ -69,39 +67,39 @@ export const ShoppingListItem = ({
   };
 
   return (
-    <div className="flex items-center gap-4 p-2 bg-background rounded-lg border">
-      <div className="flex items-center justify-center">
+    <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border">
+      <div className="flex items-start gap-3">
         <Checkbox
           checked={item.is_checked}
           onCheckedChange={(checked) => onToggle(item.id, checked as boolean)}
-          className="bg-mint border border-sage data-[state=checked]:bg-sage data-[state=unchecked]:bg-mint"
+          className="mt-1 bg-mint border border-sage data-[state=checked]:bg-sage data-[state=unchecked]:bg-mint"
         />
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <span className={item.is_checked ? "line-through text-gray-500" : ""}>
-            {item.item}
-          </span>
-          {item.quantity && (
-            <span className="text-sm text-gray-500">
-              ({item.quantity} {item.unit})
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline gap-2">
+            <span className={`${item.is_checked ? "line-through text-gray-500" : ""} break-words`}>
+              {item.item}
             </span>
-          )}
-        </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <span>Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago</span>
+            {item.quantity && (
+              <span className="text-sm text-gray-500 shrink-0">
+                ({item.quantity})
+              </span>
+            )}
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            Added {formatDistanceToNow(new Date(item.added_at))} ago
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mt-1">
         <Select
           value={item.store || "unspecified"}
           onValueChange={(value) => onUpdateStore(item.id, value)}
         >
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger className="flex-1">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="z-[100]">
+          <SelectContent>
             {STORES.map((store) => (
               <SelectItem key={store} value={store}>
                 {store}
@@ -110,40 +108,26 @@ export const ShoppingListItem = ({
           </SelectContent>
         </Select>
 
-        {showPriceInput ? (
-          <div className="flex items-center gap-1">
-            <Input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="w-20"
-              placeholder="Price"
-            />
-            <Button size="sm" onClick={handlePriceSubmit}>
-              Save
-            </Button>
-          </div>
-        ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowPriceInput(true)}
-          >
-            {item.price ? (
-              <span className="text-sm">{item.price} kr</span>
-            ) : (
-              <DollarSign className="h-4 w-4" />
-            )}
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowPriceInput(true)}
+          className="shrink-0"
+        >
+          {item.price ? (
+            <span className="text-sm">{item.price} kr</span>
+          ) : (
+            <DollarSign className="h-4 w-4" />
+          )}
+        </Button>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive">
+            <Button variant="ghost" size="sm" className="text-destructive shrink-0">
               <Trash2 className="h-4 w-4" />
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="z-[100]">
+          <AlertDialogContent className="max-w-[90vw]">
             <AlertDialogHeader>
               <AlertDialogTitle>Delete item?</AlertDialogTitle>
               <AlertDialogDescription>
