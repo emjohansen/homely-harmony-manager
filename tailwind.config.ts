@@ -28,7 +28,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'averia': ['Averia Serif Libre', 'serif'],
+				'playpen': ['Playpen Sans', 'cursive'],
 			},
 		}
 	},
