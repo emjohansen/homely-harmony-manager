@@ -34,16 +34,22 @@ const Shopping = () => {
 
   const fetchShoppingLists = async (householdId: string) => {
     try {
+      console.log('Fetching shopping lists for household:', householdId);
       const { data, error } = await supabase
         .from('shopping_lists')
         .select(`
           *,
-          profiles:created_by (username)
+          creator:profiles!shopping_lists_created_by_fkey (username)
         `)
         .eq('household_id', householdId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error details:', error);
+        throw error;
+      }
+      
+      console.log('Fetched shopping lists:', data);
       setLists(data || []);
     } catch (error) {
       console.error('Error fetching shopping lists:', error);
