@@ -80,6 +80,10 @@ export default {
         'slide-in-up': {
           '0%': { transform: 'translateY(100%)' },
           '100%': { transform: 'translateY(0)' }
+        },
+        'gradient': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' }
         }
       },
       animation: {

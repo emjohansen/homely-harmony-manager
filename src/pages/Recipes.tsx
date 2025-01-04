@@ -123,13 +123,13 @@ const Recipes = () => {
       </div>
       
       {/* Add Recipe Button */}
-      <div className="fixed bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-blue-500 to-blue-600 flex items-center justify-center">
+      <div className="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-500 to-blue-600 flex items-center justify-center before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-500 before:via-transparent before:to-blue-500 before:animate-[gradient_1s_ease-in-out]">
         <Button
           onClick={handleAddRecipe}
-          className="absolute -top-8 w-16 h-16 rounded-full bg-white text-blue-500 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center border-2 border-blue-500"
+          className="absolute -top-12 w-24 h-24 rounded-full bg-white text-blue-500 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center border-4 border-blue-500"
           size="icon"
         >
-          <Plus className="h-14 w-14" />
+          <Plus className="h-16 w-16" />
         </Button>
       </div>
       
