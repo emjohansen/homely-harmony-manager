@@ -33,6 +33,7 @@ const HouseholdSwitcher = ({
   onHouseholdSelect 
 }: HouseholdSwitcherProps) => {
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(currentHousehold?.id || "");
   
   // Early return if no households
   if (!Array.isArray(households) || households.length === 0) {
@@ -53,7 +54,7 @@ const HouseholdSwitcher = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command>
+        <Command value={value} onValueChange={setValue}>
           <CommandInput placeholder="Search households..." />
           <CommandEmpty>No household found.</CommandEmpty>
           <CommandGroup>
@@ -62,6 +63,7 @@ const HouseholdSwitcher = ({
                 key={household.id}
                 value={household.id}
                 onSelect={() => {
+                  setValue(household.id);
                   onHouseholdSelect(household);
                   setOpen(false);
                 }}
