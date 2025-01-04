@@ -62,8 +62,8 @@ const Recipes = () => {
           backgroundPosition: 'center'
         }}
       >
-        <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
-        <h1 className="relative text-7xl font-bold mb-4 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
+        <Utensils className="absolute opacity-10 h-64 w-64 text-[#efffed] transform -translate-y-8" />
+        <h1 className="relative text-7xl font-bold mb-4 text-[#efffed] uppercase tracking-wider font-dongle">RECIPES</h1>
       </div>
 
       <div className="max-w-lg mx-auto px-4">
@@ -109,10 +109,10 @@ const Recipes = () => {
 
       <Button
         onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#9dbc98] hover:bg-[#c0cfbe] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+        className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-[#9dbc98] hover:bg-[#e0f0dd] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
-        <Plus className="h-12 w-12 text-[#efffed]" />
+        <Plus className="h-12 w-12 text-[#efffed] group-hover:text-[#1e251c]" />
       </Button>
       
       <Navigation />
