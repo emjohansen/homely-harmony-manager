@@ -50,7 +50,7 @@ const Recipes = () => {
         }}
       >
         <Utensils className="absolute opacity-10 h-64 w-64 text-cream transform -translate-y-8" />
-        <h1 className="relative text-7xl font-bold mb-4 text-cream uppercase tracking-wider font-dongle">RECIPES</h1>
+        <h1 className="relative text-7xl font-bold mb-4 text-cream uppercase tracking-wider font-averia">RECIPES</h1>
       </div>
 
       <div className="max-w-lg mx-auto px-4 pb-24">
@@ -63,8 +63,8 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <TabsList className="grid w-full grid-cols-2 overflow-visible bg-cream p-0 [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:bg-mint [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
-              <TabsTrigger value="private" className="text-forest font-dongle text-[22px] h-[42px]">My Recipes</TabsTrigger>
-              <TabsTrigger value="public" className="text-forest font-dongle text-[22px] h-[42px]">All Recipes</TabsTrigger>
+              <TabsTrigger value="private" className="text-forest font-averia text-[22px] h-[42px]">My Recipes</TabsTrigger>
+              <TabsTrigger value="public" className="text-forest font-averia text-[22px] h-[42px]">All Recipes</TabsTrigger>
             </TabsList>
             <TabsContent value="private" className="w-full">
               {!currentHouseholdId ? (
@@ -97,7 +97,7 @@ const Recipes = () => {
         className="fixed bottom-[5%] right-[-2rem] w-32 h-32 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
-        <p className="font-dongle font-bold text-[140px] text-cream group-hover:text-forest leading-none flex items-center justify-center translate-x-[-1rem]">+</p>
+        <p className="font-averia font-bold text-[140px] text-cream group-hover:text-forest leading-none flex items-center justify-center translate-x-[-1rem]">+</p>
       </Button>
       
       <Navigation />

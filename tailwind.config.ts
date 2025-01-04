@@ -28,7 +28,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				dongle: ['Dongle', 'sans-serif'],
+				'averia': ['Averia Serif Libre', 'serif'],
 			},
 		}
 	},
