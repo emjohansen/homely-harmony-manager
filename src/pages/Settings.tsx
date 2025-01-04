@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import CreateHousehold from "@/components/household/CreateHousehold";
 import InviteMember from "@/components/household/InviteMember";
 import InvitationsList from "@/components/household/InvitationsList";
+import HouseholdMembers from "@/components/household/HouseholdMembers";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -23,21 +24,44 @@ const Settings = () => {
         }
 
         setUserEmail(session.user.email);
+        console.log("Fetching household data for user:", session.user.id);
 
-        const { data: householdMember } = await supabase
+        // First get the household member entry for the current user
+        const { data: householdMember, error: memberError } = await supabase
           .from('household_members')
           .select('household_id')
           .eq('user_id', session.user.id)
           .maybeSingle();
 
+        if (memberError) {
+          console.error('Error fetching household member:', memberError);
+          throw memberError;
+        }
+
         if (householdMember) {
-          const { data: household } = await supabase
+          console.log("Found household membership:", householdMember);
+          // Then fetch the full household details
+          const { data: household, error: householdError } = await supabase
             .from('households')
-            .select('*')
+            .select(`
+              *,
+              household_members!inner (
+                user_id,
+                role
+              )
+            `)
             .eq('id', householdMember.household_id)
             .single();
 
+          if (householdError) {
+            console.error('Error fetching household:', householdError);
+            throw householdError;
+          }
+
+          console.log("Fetched household details:", household);
           setCurrentHousehold(household);
+        } else {
+          console.log("User is not a member of any household");
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -54,6 +78,11 @@ const Settings = () => {
     navigate("/");
   };
 
+  const handleHouseholdCreated = async (household: any) => {
+    console.log("Household created:", household);
+    setCurrentHousehold(household);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
@@ -68,10 +97,11 @@ const Settings = () => {
               <div className="space-y-4">
                 <p>Your household: {currentHousehold.name}</p>
                 <InviteMember householdId={currentHousehold.id} />
+                <HouseholdMembers householdId={currentHousehold.id} />
                 <InvitationsList />
               </div>
             ) : (
-              <CreateHousehold onCreated={setCurrentHousehold} />
+              <CreateHousehold onCreated={handleHouseholdCreated} />
             )}
           </div>
 
