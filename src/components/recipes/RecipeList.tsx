@@ -29,8 +29,8 @@ export const RecipeList = ({ recipes }: RecipeListProps) => {
   const handleRandomRecipe = () => {
     if (filteredRecipes.length === 0) {
       toast({
-        title: "Ingen oppskrifter",
-        description: "Ingen oppskrifter funnet med valgte filter",
+        title: "No recipes found",
+        description: "No recipes found with selected filters",
         variant: "destructive",
       });
       return;
@@ -63,7 +63,7 @@ export const RecipeList = ({ recipes }: RecipeListProps) => {
 
       {filteredRecipes.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          Ingen oppskrifter funnet med valgte filter
+          No recipes found with selected filters
         </div>
       )}
     </div>

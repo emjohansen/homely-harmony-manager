@@ -14,6 +14,7 @@ const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"private" | "public">("private");
   
   const { privateRecipes, publicRecipes, loading, refetch } = useRecipes(currentHouseholdId);
 
@@ -79,7 +80,11 @@ const Recipes = () => {
         {loading ? (
           <div className="text-center py-8">Loading recipes...</div>
         ) : (
-          <Tabs defaultValue="private" className="w-full">
+          <Tabs 
+            defaultValue="private" 
+            className="w-full"
+            onValueChange={(value) => setActiveTab(value as "private" | "public")}
+          >
             <div className="flex justify-center items-center mb-4">
               <TabsList className="grid w-[300px] grid-cols-2">
                 <TabsTrigger value="private">My Recipes</TabsTrigger>
