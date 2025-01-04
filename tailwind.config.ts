@@ -26,11 +26,7 @@ export default {
 			'cream': '#efffed',
 			'mint': '#e0f0dd',
 		},
-		extend: {
-			fontFamily: {
-				dongle: ['Dongle', 'sans-serif'],
-			},
-		}
+		extend: {}
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
