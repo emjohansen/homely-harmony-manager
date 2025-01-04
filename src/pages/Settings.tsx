@@ -14,63 +14,63 @@ const Settings = () => {
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          navigate("/");
-          return;
-        }
-
-        setUserEmail(session.user.email);
-        console.log("Fetching household data for user:", session.user.id);
-
-        // First get the household member entry for the current user
-        const { data: householdMember, error: memberError } = await supabase
-          .from('household_members')
-          .select('household_id')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-
-        if (memberError) {
-          console.error('Error fetching household member:', memberError);
-          throw memberError;
-        }
-
-        if (householdMember) {
-          console.log("Found household membership:", householdMember);
-          // Then fetch the full household details
-          const { data: household, error: householdError } = await supabase
-            .from('households')
-            .select(`
-              *,
-              household_members!inner (
-                user_id,
-                role
-              )
-            `)
-            .eq('id', householdMember.household_id)
-            .single();
-
-          if (householdError) {
-            console.error('Error fetching household:', householdError);
-            throw householdError;
-          }
-
-          console.log("Fetched household details:", household);
-          setCurrentHousehold(household);
-        } else {
-          console.log("User is not a member of any household");
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+  const fetchHouseholdData = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/");
+        return;
       }
-    };
 
-    fetchData();
+      setUserEmail(session.user.email);
+      console.log("Fetching household data for user:", session.user.id);
+
+      // First get the household member entry for the current user
+      const { data: householdMember, error: memberError } = await supabase
+        .from('household_members')
+        .select('household_id')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (memberError) {
+        console.error('Error fetching household member:', memberError);
+        throw memberError;
+      }
+
+      if (householdMember) {
+        console.log("Found household membership:", householdMember);
+        // Then fetch the full household details
+        const { data: household, error: householdError } = await supabase
+          .from('households')
+          .select(`
+            *,
+            household_members!inner (
+              user_id,
+              role
+            )
+          `)
+          .eq('id', householdMember.household_id)
+          .single();
+
+        if (householdError) {
+          console.error('Error fetching household:', householdError);
+          throw householdError;
+        }
+
+        console.log("Fetched household details:", household);
+        setCurrentHousehold(household);
+      } else {
+        console.log("User is not a member of any household");
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHouseholdData();
   }, [navigate]);
 
   const handleSignOut = async () => {
@@ -82,6 +82,13 @@ const Settings = () => {
     console.log("Household created:", household);
     setCurrentHousehold(household);
   };
+
+  const handleMembershipChange = () => {
+    console.log("Membership changed, refreshing household data...");
+    fetchHouseholdData();
+  };
+
+  const isCreator = currentHousehold?.created_by === (supabase.auth.getUser())?.data?.user?.id;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
@@ -97,7 +104,11 @@ const Settings = () => {
               <div className="space-y-4">
                 <p>Your household: {currentHousehold.name}</p>
                 <InviteMember householdId={currentHousehold.id} />
-                <HouseholdMembers householdId={currentHousehold.id} />
+                <HouseholdMembers 
+                  householdId={currentHousehold.id}
+                  isCreator={isCreator}
+                  onMembershipChange={handleMembershipChange}
+                />
                 <InvitationsList />
               </div>
             ) : (
