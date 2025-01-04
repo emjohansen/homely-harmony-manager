@@ -22,17 +22,22 @@ interface Household {
 }
 
 interface HouseholdSwitcherProps {
-  households: Household[];
+  households?: Household[];
   currentHousehold: Household | null;
   onHouseholdSelect: (household: Household) => void;
 }
 
 const HouseholdSwitcher = ({ 
-  households, 
+  households = [], // Provide default empty array
   currentHousehold, 
   onHouseholdSelect 
 }: HouseholdSwitcherProps) => {
   const [open, setOpen] = useState(false);
+
+  // Don't render if there are no households
+  if (!households || households.length === 0) {
+    return null;
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
