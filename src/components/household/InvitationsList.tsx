@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import HouseholdMembers from "./HouseholdMembers";
+import PendingInvitation from "./PendingInvitation";
 
 interface InvitationsListProps {
   onInviteAccepted?: () => void;
@@ -113,7 +113,6 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
         description: "You have joined the household",
       });
 
-      // Call the callback if provided
       if (onInviteAccepted) {
         onInviteAccepted();
       }
@@ -187,40 +186,13 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
             <AccordionContent>
               <div className="space-y-3">
                 {pendingInvitations.map((invite) => (
-                  <div
+                  <PendingInvitation
                     key={invite.id}
-                    className="p-4 bg-cream rounded-lg border border-sage/20"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">
-                          {invite.households?.name || 'Unknown Household'}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {invite.invited_by === currentUser?.id
-                            ? `Sent to: ${invite.email}`
-                            : `From: ${invite.inviter?.username || 'Unknown'}`}
-                        </p>
-                      </div>
-                      {invite.email === currentUser?.email && (
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => handleAcceptInvite(invite.id)}
-                            className="bg-sage hover:bg-sage/90 text-forest text-sm"
-                          >
-                            Accept
-                          </Button>
-                          <Button
-                            onClick={() => handleDeclineInvite(invite.id)}
-                            variant="outline"
-                            className="border-sage text-forest text-sm"
-                          >
-                            Decline
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                    invite={invite}
+                    currentUser={currentUser}
+                    onAccept={handleAcceptInvite}
+                    onDecline={handleDeclineInvite}
+                  />
                 ))}
               </div>
             </AccordionContent>

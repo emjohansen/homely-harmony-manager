@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import CreateHousehold from "@/components/household/CreateHousehold";
 import InviteMember from "@/components/household/InviteMember";
 import InvitationsList from "@/components/household/InvitationsList";
-import HouseholdMembers from "@/components/household/HouseholdMembers";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -100,8 +99,6 @@ const Settings = () => {
     fetchHouseholdData();
   };
 
-  const isCreator = currentHousehold?.created_by === currentUserId;
-
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
@@ -123,14 +120,8 @@ const Settings = () => {
                 )}
 
                 {currentHousehold && (
-                  <div className="space-y-4 mt-4">
-                    <p>Your household: {currentHousehold.name}</p>
+                  <div className="mt-4">
                     <InviteMember householdId={currentHousehold.id} />
-                    <HouseholdMembers 
-                      householdId={currentHousehold.id}
-                      isCreator={isCreator}
-                      onMembershipChange={handleMembershipChange}
-                    />
                   </div>
                 )}
               </>
