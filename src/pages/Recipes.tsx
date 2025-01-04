@@ -64,12 +64,12 @@ const Recipes = () => {
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
             <div className="flex justify-center items-center mb-4">
-              <TabsList className="relative z-10 grid w-[300px] grid-cols-2 overflow-visible rounded-md [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:bg-cream [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
+              <TabsList className="relative z-10 grid w-full max-w-lg grid-cols-2 overflow-visible rounded-md [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:bg-cream [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
                 <TabsTrigger value="private" className="text-forest font-dongle text-[26px] py-2">My Recipes</TabsTrigger>
                 <TabsTrigger value="public" className="text-forest font-dongle text-[26px] py-2">All Recipes</TabsTrigger>
               </TabsList>
             </div>
-            <TabsContent value="private">
+            <TabsContent value="private" className="w-full">
               {!currentHouseholdId ? (
                 <div className="text-center py-8 text-forest">
                   Join a household to start adding your own recipes!
@@ -82,7 +82,7 @@ const Recipes = () => {
                 <RecipeList recipes={privateRecipes} />
               )}
             </TabsContent>
-            <TabsContent value="public">
+            <TabsContent value="public" className="w-full">
               {publicRecipes.length === 0 ? (
                 <div className="text-center py-8 text-forest">
                   No public recipes available.
