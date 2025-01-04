@@ -6,11 +6,9 @@ import { useNavigate } from "react-router-dom";
 import CreateHousehold from "@/components/household/CreateHousehold";
 import InviteMember from "@/components/household/InviteMember";
 import InvitationsList from "@/components/household/InvitationsList";
-import { useTranslation } from "react-i18next";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
   const [currentHousehold, setCurrentHousehold] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -59,7 +57,7 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Settings</h1>
+        <h1 className="text-2xl font-bold mb-6">Profile and Settings</h1>
 
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg shadow">
@@ -84,7 +82,11 @@ const Settings = () => {
                 Signed in as: {userEmail}
               </p>
             )}
-            <Button variant="destructive" onClick={handleSignOut}>
+            <Button 
+              variant="destructive" 
+              onClick={handleSignOut}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
               Sign out
             </Button>
           </div>

@@ -3,11 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useTranslation } from "react-i18next";
 
 const InviteMember = ({ householdId }: { householdId: string }) => {
   const { toast } = useToast();
-  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,8 +28,8 @@ const InviteMember = ({ householdId }: { householdId: string }) => {
       if (error) throw error;
 
       toast({
-        title: t('household.inviteSuccess'),
-        description: t('household.inviteSent'),
+        title: "Invitation sent",
+        description: "An invitation has been sent to the provided email address",
       });
       
       setEmail("");
@@ -39,8 +37,8 @@ const InviteMember = ({ householdId }: { householdId: string }) => {
       console.error("Error inviting member:", error);
       toast({
         variant: "destructive",
-        title: t('common.error'),
-        description: t('household.inviteError'),
+        title: "Error",
+        description: "Could not send invitation. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -51,7 +49,7 @@ const InviteMember = ({ householdId }: { householdId: string }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <label className="text-sm font-medium">
-          {t('household.inviteEmail')}
+          Email address to invite
         </label>
         <Input
           type="email"
@@ -67,7 +65,7 @@ const InviteMember = ({ householdId }: { householdId: string }) => {
         disabled={isLoading}
         className="w-full bg-sage hover:bg-sage/90 text-forest"
       >
-        {t('household.sendInvite')}
+        Send Invitation
       </Button>
     </form>
   );
