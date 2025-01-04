@@ -54,7 +54,7 @@ const Recipes = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       {/* Header Section */}
-      <section className="h-[50vh] flex items-center justify-center bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400">
+      <section className="h-[50vh] flex items-center justify-center bg-[#8B5CF6]">
         <div className="max-w-lg mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6 text-white">Recipes</h1>
           <Button
