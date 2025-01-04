@@ -65,7 +65,7 @@ const Recipes = () => {
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
         
         {/* Heading */}
-        <h1 className="relative text-5xl font-bold mb-8 text-white uppercase tracking-wider">RECIPES</h1>
+        <h1 className="relative text-5xl font-bold mb-8 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
         
         {/* Add Recipe Button */}
         <Button
