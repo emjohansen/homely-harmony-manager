@@ -28,7 +28,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'dosis': ['Dosis', 'sans-serif'],
+				'open-sans': ['Open Sans', 'sans-serif'],
 			},
 			fontSize: {
 				'recipe-title': '18px',
