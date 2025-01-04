@@ -28,7 +28,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'averia': ['Averia Serif Libre', 'serif'],
+				'oswald': ['Oswald', 'sans-serif'],
 			},
 			fontSize: {
 				'recipe-title': '18px',
