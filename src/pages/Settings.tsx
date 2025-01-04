@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 import CreateHousehold from "@/components/household/CreateHousehold";
 import InviteMember from "@/components/household/InviteMember";
 import InvitationsList from "@/components/household/InvitationsList";
+import { useTranslation } from "react-i18next";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [currentHousehold, setCurrentHousehold] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -57,16 +59,16 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Innstillinger</h1>
+        <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">Husholdning</h2>
+            <h2 className="text-lg font-semibold mb-4">Household</h2>
             {loading ? (
-              <p>Laster...</p>
+              <p>Loading...</p>
             ) : currentHousehold ? (
               <div className="space-y-4">
-                <p>Din husholdning: {currentHousehold.name}</p>
+                <p>Your household: {currentHousehold.name}</p>
                 <InviteMember householdId={currentHousehold.id} />
                 <InvitationsList />
               </div>
@@ -76,14 +78,14 @@ const Settings = () => {
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">Konto</h2>
+            <h2 className="text-lg font-semibold mb-4">Account</h2>
             {userEmail && (
               <p className="text-gray-600 mb-4">
-                Innlogget som: {userEmail}
+                Signed in as: {userEmail}
               </p>
             )}
             <Button variant="destructive" onClick={handleSignOut}>
-              Logg ut
+              Sign out
             </Button>
           </div>
         </div>
