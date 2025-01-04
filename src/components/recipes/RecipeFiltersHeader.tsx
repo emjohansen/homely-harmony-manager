@@ -15,13 +15,13 @@ export const RecipeFiltersHeader = ({
   clearFilters,
 }: RecipeFiltersHeaderProps) => {
   return (
-    <div className="grid grid-cols-2 gap-4 w-[300px] mx-auto mb-6">
+    <div className="flex gap-4 w-[300px] mx-auto mb-6">
       <Button
         variant="outline"
         onClick={() => setShowFilters(!showFilters)}
         className="w-full"
       >
-        {showFilters ? "Skjul filter" : "Filter"}
+        {showFilters ? "Hide filters" : "Filter"}
       </Button>
       <Button
         variant="outline"
@@ -29,7 +29,7 @@ export const RecipeFiltersHeader = ({
         className="w-full"
         disabled={selectedTags.length === 0}
       >
-        Nullstill
+        Reset
       </Button>
     </div>
   );

@@ -85,7 +85,7 @@ const Recipes = () => {
               </TabsList>
             </div>
             
-            <div className="grid grid-cols-1 gap-4 w-[300px] mx-auto mb-6">
+            <div className="flex gap-4 w-[300px] mx-auto mb-6">
               <Button
                 onClick={() => getRandomRecipe(privateRecipes)}
                 variant="outline"
