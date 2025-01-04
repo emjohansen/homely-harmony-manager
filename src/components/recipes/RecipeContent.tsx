@@ -1,7 +1,7 @@
 import { Recipe } from "@/types/recipe";
 import { RecipeVisibility } from "./RecipeVisibility";
 import { useState } from "react";
-import { convertUnit, getAlternativeUnit, isMetricUnit, isImperialUnit } from "@/utils/unitConversion";
+import { convertUnits, getAlternativeUnit, isMetricUnit, isImperialUnit } from "@/utils/unitConversion";
 import { RecipeMetrics } from "./recipe-details/RecipeMetrics";
 import { RecipeTagsDisplay } from "./recipe-details/RecipeTags";
 import { RecipeIngredientsList } from "./recipe-details/RecipeIngredients";
@@ -52,7 +52,7 @@ export const RecipeContent = ({
     const alternativeUnit = getAlternativeUnit(unit);
     if (!alternativeUnit) return `${formatNumber(adjustedAmount)} ${unit}`;
 
-    const convertedAmount = convertUnit(adjustedAmount, unit, alternativeUnit);
+    const convertedAmount = convertUnits(adjustedAmount, unit as any, alternativeUnit as any);
     if (convertedAmount === null) return `${formatNumber(adjustedAmount)} ${unit}`;
 
     return `${formatNumber(convertedAmount)} ${alternativeUnit}`;

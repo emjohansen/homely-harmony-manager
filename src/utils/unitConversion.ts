@@ -147,20 +147,42 @@ const volumeConversions = {
   }
 };
 
-export const convertUnits = (value: number, fromUnit: Unit, toUnit: Unit): number => {
+export const isMetricUnit = (unit: string): boolean => {
+  return ['g', 'kg', 'ml', 'l'].includes(unit);
+};
+
+export const isImperialUnit = (unit: string): boolean => {
+  return ['oz', 'lb', 'tsp', 'tbsp', 'cup', 'floz', 'pint', 'quart', 'gallon'].includes(unit);
+};
+
+export const getAlternativeUnit = (unit: string): string | null => {
+  const conversions: Record<string, string> = {
+    'g': 'oz',
+    'oz': 'g',
+    'kg': 'lb',
+    'lb': 'kg',
+    'ml': 'floz',
+    'floz': 'ml',
+    'l': 'quart',
+    'quart': 'l'
+  };
+  return conversions[unit] || null;
+};
+
+export const convertUnits = (value: number, fromUnit: Unit, toUnit: Unit): number | null => {
   if (fromUnit === toUnit) return value;
   
   const fromType = unitTypes[fromUnit];
   const toType = unitTypes[toUnit];
   
   if (fromType !== toType) {
-    throw new Error(`Cannot convert between different unit types: ${fromType} and ${toType}`);
+    return null;
   }
   
   const conversions = fromType === 'mass' ? massConversions : volumeConversions;
   
   if (!conversions[fromUnit] || !conversions[fromUnit][toUnit]) {
-    throw new Error(`Conversion not supported from ${fromUnit} to ${toUnit}`);
+    return null;
   }
   
   return value * conversions[fromUnit][toUnit];
