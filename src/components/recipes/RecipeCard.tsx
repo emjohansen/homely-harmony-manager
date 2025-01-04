@@ -26,21 +26,23 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
       {recipe.description && (
         <p className="text-sm text-forest mt-1 line-clamp-2">{recipe.description}</p>
       )}
-      <p className="text-sm text-forest mt-2">
-        {recipe.preparation_time} mins
-      </p>
-      {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {recipe.recipe_tags.map(({ tag }) => (
-            <span
-              key={tag}
-              className="text-xs bg-cream text-forest px-2 py-1 rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+      <div className="flex items-center gap-2 mt-2">
+        <p className="text-sm text-forest">
+          {recipe.preparation_time} mins
+        </p>
+        {recipe.recipe_tags && recipe.recipe_tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {recipe.recipe_tags.map(({ tag }) => (
+              <span
+                key={tag}
+                className="text-xs bg-cream text-forest px-2 py-1 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
