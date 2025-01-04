@@ -95,7 +95,7 @@ export const RecipeList = ({ recipes }: RecipeListProps) => {
 
       {filteredRecipes.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          Ingen oppskrifter funnet med valgte filter
+          No recipes found with selected filters
         </div>
       )}
     </div>

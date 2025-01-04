@@ -63,14 +63,24 @@ const Recipes = () => {
       >
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
         <h1 className="relative text-8xl font-bold mb-2 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
-        <Button
-          onClick={() => navigate("/recipes/new")}
-          variant="outline"
-          className="relative bg-white hover:bg-gray-100 text-2xl font-dongle h-12 px-6"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          New Recipe
-        </Button>
+        <div className="relative flex gap-2">
+          <Button
+            onClick={() => navigate("/recipes/new")}
+            variant="outline"
+            className="bg-white hover:bg-gray-100 text-2xl font-dongle h-12 px-6"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            New Recipe
+          </Button>
+          <Button
+            onClick={() => getRandomRecipe(privateRecipes)}
+            variant="outline"
+            className="bg-white hover:bg-gray-100 h-12 px-4"
+            title="Get random recipe"
+          >
+            <Shuffle className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       <div className="max-w-lg mx-auto px-4">
@@ -83,17 +93,6 @@ const Recipes = () => {
                 <TabsTrigger value="private">Mine</TabsTrigger>
                 <TabsTrigger value="public">All</TabsTrigger>
               </TabsList>
-            </div>
-            
-            <div className="flex justify-between w-[300px] mx-auto mb-6">
-              <Button
-                onClick={() => getRandomRecipe(privateRecipes)}
-                variant="outline"
-                className="flex-1 mx-1"
-              >
-                <Shuffle className="h-4 w-4 mr-2" />
-                Random
-              </Button>
             </div>
 
             <TabsContent value="private">
