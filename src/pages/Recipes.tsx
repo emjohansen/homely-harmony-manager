@@ -61,13 +61,10 @@ const Recipes = () => {
           backgroundPosition: 'center'
         }}
       >
-        {/* Background Icon */}
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
         
-        {/* Heading */}
         <h1 className="relative text-7xl font-bold mb-8 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
         
-        {/* Add Recipe Button */}
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
@@ -83,8 +80,8 @@ const Recipes = () => {
           <div className="text-center py-8">Loading recipes...</div>
         ) : (
           <Tabs defaultValue="private" className="w-full">
-            <div className="flex justify-between items-center mb-4">
-              <TabsList className="grid w-[200px] grid-cols-2">
+            <div className="flex justify-center items-center mb-4">
+              <TabsList className="grid w-[300px] grid-cols-2">
                 <TabsTrigger value="private">My Recipes</TabsTrigger>
                 <TabsTrigger value="public">All Recipes</TabsTrigger>
               </TabsList>
