@@ -13,7 +13,7 @@ export const RecipeHeader = ({ canEdit, recipeId, handleDelete, title }: RecipeH
   const navigate = useNavigate();
 
   return (
-    <div className="mb-4">
+    <div className="mb-2">
       <div className="flex items-center justify-between relative">
         <Button
           variant="ghost"
@@ -46,7 +46,7 @@ export const RecipeHeader = ({ canEdit, recipeId, handleDelete, title }: RecipeH
         )}
       </div>
       
-      <h1 className="text-center text-xl font-bold text-foreground mt-4">
+      <h1 className="text-center text-xl font-bold text-foreground mt-2">
         {title}
       </h1>
     </div>
