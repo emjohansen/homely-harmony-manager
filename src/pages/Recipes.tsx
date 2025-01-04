@@ -66,7 +66,7 @@ const Recipes = () => {
           <h1 className="text-4xl font-bold">Recipes</h1>
           <Button 
             onClick={handleAddRecipe}
-            className="bg-[#0f172ae6] hover:bg-[#0f172a]/90 text-white"
+            className="bg-[#0f172ae6] hover:bg-blue-600 text-white"
           >
             <Plus className="h-5 w-5 mr-2" />
             Add New Recipe
