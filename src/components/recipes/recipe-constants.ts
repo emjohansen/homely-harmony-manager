@@ -1,78 +1,78 @@
 export const TAG_CATEGORIES = {
   mealType: {
-    label: "Måltidstype",
-    options: ["Frokost", "Lunsj", "Middag", "Dessert", "Snacks", "Drikke"]
+    label: "Meal Type",
+    options: ["Breakfast", "Lunch", "Dinner", "Dessert", "Snacks", "Drinks"]
   },
   difficulty: {
-    label: "Vanskelighetsgrad",
-    options: ["Enkel", "Middels", "Avansert"]
+    label: "Difficulty",
+    options: ["Easy", "Medium", "Advanced"]
   },
   allergens: {
-    label: "Allergener",
+    label: "Allergens",
     options: [
-      "Glutenfri", 
-      "Laktosefri", 
-      "Nøttefri", 
-      "Eggfri", 
-      "Soyafri",
-      "Melkefri",
-      "Sesamfri",
-      "Skalldyrfri",
-      "Fiskefri",
-      "Sellerfri",
-      "Sennepfri",
-      "Sulfittfri"
+      "Gluten Free", 
+      "Lactose Free", 
+      "Nut Free", 
+      "Egg Free", 
+      "Soy Free",
+      "Dairy Free",
+      "Sesame Free",
+      "Shellfish Free",
+      "Fish Free",
+      "Celery Free",
+      "Mustard Free",
+      "Sulfite Free"
     ]
   },
   meatType: {
-    label: "Kjøtttype",
+    label: "Meat Type",
     options: [
-      "Kylling", 
-      "Kalkun",
-      "Storfe", 
-      "Svin", 
-      "Lam", 
-      "Fisk", 
-      "Skalldyr",
-      "Vilt",
-      "And"
+      "Chicken", 
+      "Turkey",
+      "Beef", 
+      "Pork", 
+      "Lamb", 
+      "Fish", 
+      "Shellfish",
+      "Game",
+      "Duck"
     ]
   },
   dietType: {
-    label: "Kosthold",
+    label: "Diet",
     options: [
-      "Vegansk",
-      "Vegetarisk",
-      "Pescetariansk",
-      "Ketogen",
-      "Lavkarbo",
+      "Vegan",
+      "Vegetarian",
+      "Pescatarian",
+      "Ketogenic",
+      "Low Carb",
       "Paleo"
     ]
   },
   misc: {
-    label: "Annet",
+    label: "Other",
     options: [
-      "Sunn", 
-      "Rask", 
-      "Budsjettvennlig", 
-      "Festmat", 
-      "Tradisjonell", 
-      "Internasjonal",
-      "Grillet",
-      "Bakt",
-      "Kokt",
-      "Stekt",
-      "Dampet",
-      "Fersk",
-      "Sesongbasert",
-      "Barnevennlig",
-      "Frossen",
-      "Matlaging i bulk",
-      "Lite oppvask",
-      "En-potte rett",
-      "Slow cooker",
-      "Airfryer",
-      "Matpakke"
+      "Healthy", 
+      "Quick", 
+      "Budget Friendly", 
+      "Party Food", 
+      "Traditional", 
+      "International",
+      "Grilled",
+      "Baked",
+      "Boiled",
+      "Fried",
+      "Steamed",
+      "Fresh",
+      "Seasonal",
+      "Kid Friendly",
+      "Frozen",
+      "Batch Cooking",
+      "Minimal Dishes",
+      "One Pot Meal",
+      "Slow Cooker",
+      "Air Fryer",
+      "Lunch Box"
     ]
   }
 };

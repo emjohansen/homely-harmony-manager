@@ -34,14 +34,14 @@ export const RecipeFilters = ({
           onClick={() => setShowFilters(!showFilters)}
           className="flex-1 max-w-[200px]"
         >
-          {showFilters ? "Skjul filter" : "Vis filter"}
+          {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           variant="outline"
           onClick={onRandomRecipe}
           className="flex-1 max-w-[200px]"
         >
-          Tilfeldig oppskrift
+          Random Recipe
         </Button>
       </div>
 
@@ -51,7 +51,7 @@ export const RecipeFilters = ({
           onClick={onClearFilters}
           className="text-sm text-gray-500"
         >
-          Nullstill filter
+          Reset Filters
         </Button>
       )}
 
