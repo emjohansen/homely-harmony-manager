@@ -94,7 +94,7 @@ const Recipes = () => {
 
       <Button
         onClick={() => navigate("/recipes/new")}
-        className="fixed bottom-[-6rem] right-[-3rem] w-48 h-48 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+        className="fixed bottom-16 right-[-3rem] w-48 h-48 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
         <p className="font-dongle font-bold text-[200px] text-cream group-hover:text-forest leading-none flex items-center justify-center translate-x-[-1.5rem]">+</p>
