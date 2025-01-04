@@ -1,111 +1,146 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
-interface Invitation {
-  id: string;
-  household_id: string;
-  email: string;
-  status: string;
-  created_at: string;
-}
+import { useToast } from "@/components/ui/use-toast";
 
 const InvitationsList = () => {
   const { toast } = useToast();
-  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [invitations, setInvitations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchInvitations = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        console.log('Fetching invitations...');
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          console.log('No user found');
+          return;
+        }
 
-      const { data, error } = await supabase
-        .from("household_invites")
-        .select("*")
-        .eq("email", user.email)
-        .eq("status", "pending");
+        // Fetch both sent and received invitations
+        const { data, error } = await supabase
+          .from('household_invites')
+          .select(`
+            *,
+            households:household_id (name),
+            inviter:invited_by (username)
+          `)
+          .or(`email.eq.${user.email},invited_by.eq.${user.id}`);
 
-      if (error) {
-        console.error("Error fetching invitations:", error);
-        return;
+        if (error) {
+          console.error('Error fetching invitations:', error);
+          throw error;
+        }
+
+        console.log('Fetched invitations:', data);
+        setInvitations(data || []);
+      } catch (error) {
+        console.error('Error:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not fetch invitations",
+        });
+      } finally {
+        setLoading(false);
       }
-
-      setInvitations(data);
     };
 
     fetchInvitations();
-  }, []);
+  }, [toast]);
 
-  const handleInvitation = async (invitationId: string, accept: boolean) => {
+  const handleAcceptInvite = async (inviteId: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Ingen bruker funnet");
+      if (!user) return;
 
-      const invitation = invitations.find(inv => inv.id === invitationId);
-      if (!invitation) return;
+      const { data: invite } = await supabase
+        .from('household_invites')
+        .select('household_id')
+        .eq('id', inviteId)
+        .single();
 
-      if (accept) {
-        const { error: memberError } = await supabase
-          .from("household_members")
-          .insert([{
-            household_id: invitation.household_id,
-            user_id: user.id,
-            role: "member"
-          }]);
+      if (!invite) return;
 
-        if (memberError) throw memberError;
-      }
+      // Add user to household_members
+      const { error: memberError } = await supabase
+        .from('household_members')
+        .insert({
+          household_id: invite.household_id,
+          user_id: user.id,
+          role: 'member'
+        });
 
-      const { error: inviteError } = await supabase
-        .from("household_invites")
-        .update({ status: accept ? "accepted" : "declined" })
-        .eq("id", invitationId);
+      if (memberError) throw memberError;
 
-      if (inviteError) throw inviteError;
+      // Update invitation status
+      const { error: updateError } = await supabase
+        .from('household_invites')
+        .update({ status: 'accepted' })
+        .eq('id', inviteId);
 
-      setInvitations(invitations.filter(inv => inv.id !== invitationId));
+      if (updateError) throw updateError;
 
       toast({
-        title: accept ? "Invitasjon akseptert" : "Invitasjon avslått",
-        description: accept ? "Du har blitt med i husholdningen" : "Du avslo invitasjonen",
+        title: "Success",
+        description: "You have joined the household",
       });
+
+      // Refresh invitations list
+      window.location.reload();
     } catch (error) {
-      console.error("Error handling invitation:", error);
+      console.error('Error accepting invite:', error);
       toast({
         variant: "destructive",
-        title: "Feil",
-        description: "Kunne ikke håndtere invitasjonen. Vennligst prøv igjen.",
+        title: "Error",
+        description: "Could not accept invitation",
       });
     }
   };
 
-  if (invitations.length === 0) return null;
+  if (loading) {
+    return <div>Loading invitations...</div>;
+  }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium">Ventende invitasjoner</h3>
-      <div className="space-y-4">
-        {invitations.map((invitation) => (
-          <div key={invitation.id} className="flex items-center justify-between p-4 border rounded-lg">
-            <span>Du har mottatt en invitasjon til en husholdning</span>
-            <div className="space-x-2">
-              <Button
-                variant="default"
-                onClick={() => handleInvitation(invitation.id, true)}
-              >
-                Aksepter
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => handleInvitation(invitation.id, false)}
-              >
-                Avslå
-              </Button>
+      <h3 className="text-lg font-semibold">Invitations</h3>
+      {invitations.length === 0 ? (
+        <p className="text-gray-500">No invitations found</p>
+      ) : (
+        <div className="space-y-3">
+          {invitations.map((invite) => (
+            <div
+              key={invite.id}
+              className="p-4 bg-cream rounded-lg border border-sage/20"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-medium">
+                    {invite.households?.name || 'Unknown Household'}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {invite.invited_by === invite.user?.id
+                      ? `Sent to: ${invite.email}`
+                      : `From: ${invite.inviter?.username || 'Unknown'}`}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Status: {invite.status}
+                  </p>
+                </div>
+                {invite.status === 'pending' && invite.email === invite.user?.email && (
+                  <button
+                    onClick={() => handleAcceptInvite(invite.id)}
+                    className="px-3 py-1 bg-sage text-forest rounded hover:bg-sage/90 text-sm"
+                  >
+                    Accept
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
