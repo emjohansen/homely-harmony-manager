@@ -65,15 +65,15 @@ const Recipes = () => {
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
         
         {/* Heading */}
-        <h1 className="relative text-8xl font-bold mb-8 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
+        <h1 className="relative text-8xl font-bold mb-2 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
         
         {/* Add Recipe Button */}
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
-          className="relative bg-white hover:bg-gray-100"
+          className="relative bg-white hover:bg-gray-100 text-xl font-dongle h-12 px-6"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-5 w-5 mr-2" />
           New Recipe
         </Button>
       </div>
