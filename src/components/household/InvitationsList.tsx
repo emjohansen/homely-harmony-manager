@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 
 const InvitationsList = () => {
   const { toast } = useToast();
@@ -98,6 +99,32 @@ const InvitationsList = () => {
     }
   };
 
+  const handleDeclineInvite = async (inviteId: string) => {
+    try {
+      const { error } = await supabase
+        .from('household_invites')
+        .update({ status: 'declined' })
+        .eq('id', inviteId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Invitation declined",
+      });
+
+      // Refresh invitations list
+      window.location.reload();
+    } catch (error) {
+      console.error('Error declining invite:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not decline invitation",
+      });
+    }
+  };
+
   if (loading) {
     return <div>Loading invitations...</div>;
   }
@@ -128,13 +155,22 @@ const InvitationsList = () => {
                     Status: {invite.status}
                   </p>
                 </div>
-                {invite.status === 'pending' && invite.email === invite.user?.email && (
-                  <button
-                    onClick={() => handleAcceptInvite(invite.id)}
-                    className="px-3 py-1 bg-sage text-forest rounded hover:bg-sage/90 text-sm"
-                  >
-                    Accept
-                  </button>
+                {invite.status === 'pending' && invite.email === user?.email && (
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleAcceptInvite(invite.id)}
+                      className="bg-sage hover:bg-sage/90 text-forest text-sm"
+                    >
+                      Accept
+                    </Button>
+                    <Button
+                      onClick={() => handleDeclineInvite(invite.id)}
+                      variant="outline"
+                      className="border-sage text-forest text-sm"
+                    >
+                      Decline
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>
