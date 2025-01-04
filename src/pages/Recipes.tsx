@@ -64,7 +64,7 @@ const Recipes = () => {
       >
         <Utensils className="absolute opacity-10 h-64 w-64 text-white transform -translate-y-8" />
         
-        <h1 className="relative text-7xl font-bold mb-8 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
+        <h1 className="relative text-7xl font-bold mb-4 text-white uppercase tracking-wider font-dongle">RECIPES</h1>
         
         <Button
           onClick={() => navigate("/recipes/new")}
@@ -116,6 +116,7 @@ const Recipes = () => {
           </Tabs>
         )}
       </div>
+      
       <Navigation />
     </div>
   );
