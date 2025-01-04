@@ -31,13 +31,13 @@ export const RecipeFilters = ({
       <div className="flex items-center justify-center gap-2 mt-4 w-[300px] mx-auto">
         <Button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex-1 bg-mint hover:bg-sage text-forest hover:text-cream font-dongle text-[14px]"
+          className="flex-1 bg-mint hover:bg-sage text-forest hover:text-cream font-dongle text-[22px]"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           onClick={onRandomRecipe}
-          className="flex-1 bg-mint hover:bg-sage text-forest hover:text-cream font-dongle text-[14px]"
+          className="flex-1 bg-mint hover:bg-sage text-forest hover:text-cream font-dongle text-[22px]"
         >
           Random Recipe
         </Button>
