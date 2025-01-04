@@ -28,18 +28,18 @@ export const RecipeFilters = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-center gap-2 mt-4">
+      <div className="flex items-center justify-center gap-2 mt-4 w-[300px] mx-auto">
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex-1 max-w-[200px]"
+          className="flex-1"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           variant="outline"
           onClick={onRandomRecipe}
-          className="flex-1 max-w-[200px]"
+          className="flex-1"
         >
           Random Recipe
         </Button>
