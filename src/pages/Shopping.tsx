@@ -132,50 +132,62 @@ const Shopping = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Tabs defaultValue="active" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="active">Active Lists</TabsTrigger>
-            <TabsTrigger value="archived">Archived Lists</TabsTrigger>
-          </TabsList>
+        <div className="flex items-center justify-start mb-6">
+          <Tabs defaultValue="active" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+              <TabsTrigger 
+                value="active" 
+                className="text-forest text-sm h-[42px]"
+              >
+                Active Lists
+              </TabsTrigger>
+              <TabsTrigger 
+                value="archived"
+                className="text-forest text-sm h-[42px]"
+              >
+                Archived Lists
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="active" className="space-y-4">
-            {lists
-              .filter(list => list.status === 'active')
-              .map(list => (
-                <ShoppingListCard
-                  key={list.id}
-                  list={list}
-                  onArchive={handleArchiveList}
-                  onDelete={handleDeleteList}
-                  onViewList={handleViewList}
-                />
-              ))}
-            {lists.filter(list => list.status === 'active').length === 0 && (
-              <p className="text-center text-gray-500 py-8">
-                No active shopping lists
-              </p>
-            )}
-          </TabsContent>
+            <TabsContent value="active" className="space-y-4 mt-6">
+              {lists
+                .filter(list => list.status === 'active')
+                .map(list => (
+                  <ShoppingListCard
+                    key={list.id}
+                    list={list}
+                    onArchive={handleArchiveList}
+                    onDelete={handleDeleteList}
+                    onViewList={handleViewList}
+                  />
+                ))}
+              {lists.filter(list => list.status === 'active').length === 0 && (
+                <p className="text-center text-gray-500 py-8">
+                  No active shopping lists
+                </p>
+              )}
+            </TabsContent>
 
-          <TabsContent value="archived" className="space-y-4">
-            {lists
-              .filter(list => list.status === 'archived')
-              .map(list => (
-                <ShoppingListCard
-                  key={list.id}
-                  list={list}
-                  onArchive={handleArchiveList}
-                  onDelete={handleDeleteList}
-                  onViewList={handleViewList}
-                />
-              ))}
-            {lists.filter(list => list.status === 'archived').length === 0 && (
-              <p className="text-center text-gray-500 py-8">
-                No archived shopping lists
-              </p>
-            )}
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="archived" className="space-y-4 mt-6">
+              {lists
+                .filter(list => list.status === 'archived')
+                .map(list => (
+                  <ShoppingListCard
+                    key={list.id}
+                    list={list}
+                    onArchive={handleArchiveList}
+                    onDelete={handleDeleteList}
+                    onViewList={handleViewList}
+                  />
+                ))}
+              {lists.filter(list => list.status === 'archived').length === 0 && (
+                <p className="text-center text-gray-500 py-8">
+                  No archived shopping lists
+                </p>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
 
       <NewShoppingList onCreateList={handleCreateList} />
