@@ -131,10 +131,13 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
     fetchInvitations();
   }, []);
 
-  const handleHouseholdSwitch = (household: any) => {
+  const handleHouseholdSwitch = async (household: any) => {
     console.log('Switching to household:', household);
     setCurrentHousehold(household);
     localStorage.setItem('currentHouseholdId', household.id);
+    
+    // Force a page reload to ensure all components update with the new household
+    window.location.reload();
   };
 
   const handleAcceptInvite = async (inviteId: string) => {
