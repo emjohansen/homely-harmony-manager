@@ -53,28 +53,9 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="relative h-[50vh] flex flex-col items-center justify-center overflow-hidden">
-        {/* Background image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
-            backgroundImage: 'url("/lovable-uploads/e5cb2452-51e8-40f1-a22e-77651e6b17b2.png")',
-          }}
-        />
-        
-        {/* Wave mask */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 120"
-            className="w-full h-[60px] fill-gray-50 transform translate-y-1"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,53.3C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" />
-          </svg>
-        </div>
-        
+      <div className="relative h-[50vh] flex flex-col items-center justify-center">
         {/* Illustration */}
-        <div className="relative mb-6 w-64">
+        <div className="relative mb-6 w-96">
           <img 
             src="/lovable-uploads/3f8a2cc2-2c9d-4361-acdf-74a97a56225c.png" 
             alt="Cooking illustration" 
