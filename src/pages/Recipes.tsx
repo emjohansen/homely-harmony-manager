@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, Shuffle } from "lucide-react";
+import { Plus, CookingPot } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,8 +42,8 @@ const Recipes = () => {
   const getRandomRecipe = (recipes: Recipe[]) => {
     if (recipes.length === 0) {
       toast({
-        title: "Ingen oppskrifter",
-        description: "Ingen oppskrifter tilgjengelig i denne kategorien!",
+        title: "No recipes",
+        description: "No recipes available in this category!",
       });
       return;
     }
@@ -53,17 +53,43 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="max-w-lg mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Recipes</h1>
-          <div className="flex gap-2">
-            <Button onClick={() => navigate("/recipes/new")}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Recipe
-            </Button>
+      <div className="relative h-[50vh] flex flex-col items-center justify-center bg-gradient-to-b from-[#E5DEFF] to-gray-50 overflow-hidden">
+        {/* Decorative blob SVG */}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          viewBox="0 0 200 200"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ opacity: 0.3 }}
+        >
+          <path
+            fill="#D3E4FD"
+            d="M45.7,-58.9C59.9,-48.8,72.4,-35.2,77.9,-18.5C83.4,-1.8,81.9,17.9,73.1,33.5C64.3,49.1,48.2,60.5,31,67.1C13.8,73.7,-4.5,75.5,-22.9,71.3C-41.3,67.2,-59.8,57.2,-70.6,41.5C-81.4,25.8,-84.5,4.4,-79.7,-14.2C-74.9,-32.8,-62.2,-48.6,-47,-59.1C-31.8,-69.6,-15.9,-74.8,0.6,-75.6C17.1,-76.4,31.5,-69,45.7,-58.9Z"
+            transform="translate(100 100)"
+          />
+        </svg>
+        
+        {/* Icon */}
+        <div className="relative mb-6">
+          <div className="p-4 bg-white rounded-full shadow-lg">
+            <CookingPot className="h-12 w-12 text-[#0f172ae6]" />
           </div>
         </div>
+        
+        {/* Heading */}
+        <h1 className="relative text-4xl font-bold mb-8 text-[#1A1F2C]">Recipes</h1>
+        
+        {/* Add Recipe Button */}
+        <Button
+          onClick={() => navigate("/recipes/new")}
+          variant="outline"
+          className="relative"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          New Recipe
+        </Button>
+      </div>
 
+      <div className="max-w-lg mx-auto px-4">
         {loading ? (
           <div className="text-center py-8">Loading recipes...</div>
         ) : (
@@ -73,17 +99,6 @@ const Recipes = () => {
                 <TabsTrigger value="private">Mine</TabsTrigger>
                 <TabsTrigger value="public">All</TabsTrigger>
               </TabsList>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => getRandomRecipe(privateRecipes)}
-                  title="Random Recipe"
-                >
-                  <Shuffle className="h-4 w-4 mr-2" />
-                  Random
-                </Button>
-              </div>
             </div>
             <TabsContent value="private">
               {!currentHouseholdId ? (
@@ -99,17 +114,6 @@ const Recipes = () => {
               )}
             </TabsContent>
             <TabsContent value="public">
-              <div className="flex justify-end items-center gap-2 mb-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => getRandomRecipe(publicRecipes)}
-                  title="Random Recipe"
-                >
-                  <Shuffle className="h-4 w-4 mr-2" />
-                  Random
-                </Button>
-              </div>
               {publicRecipes.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   No public recipes available.
