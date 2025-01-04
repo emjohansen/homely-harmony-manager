@@ -53,7 +53,14 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="relative h-[50vh] flex flex-col items-center justify-center bg-gradient-to-b from-[#F97316] via-[#F2FCE2] to-white overflow-hidden">
+      <div 
+        className="relative h-[50vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
+        style={{
+          backgroundImage: 'url("/lovable-uploads/b8d6ce75-df7c-4b02-badd-bb81b88790a0.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
         {/* Icon */}
         <div className="relative mb-6">
           <div className="p-4 bg-white rounded-full shadow-lg">
@@ -62,13 +69,13 @@ const Recipes = () => {
         </div>
         
         {/* Heading */}
-        <h1 className="relative text-4xl font-bold mb-8 text-[#1A1F2C]">Recipes</h1>
+        <h1 className="relative text-4xl font-bold mb-8 text-white">Recipes</h1>
         
         {/* Add Recipe Button */}
         <Button
           onClick={() => navigate("/recipes/new")}
           variant="outline"
-          className="relative"
+          className="relative bg-white hover:bg-gray-100"
         >
           <Plus className="h-4 w-4 mr-2" />
           New Recipe
