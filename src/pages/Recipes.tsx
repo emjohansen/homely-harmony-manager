@@ -53,7 +53,7 @@ const Recipes = () => {
         <h1 className="relative text-7xl font-bold mb-4 text-cream uppercase tracking-wider font-dongle">RECIPES</h1>
       </div>
 
-      <div className="max-w-lg mx-auto px-4">
+      <div className="max-w-lg mx-auto px-4 pb-24">
         {loading ? (
           <div className="text-center py-8 text-forest">Loading recipes...</div>
         ) : (
