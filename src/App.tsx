@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Index from "@/pages/Index";
-import { Recipes } from "@/pages/Recipes";
+import Recipes from "@/pages/Recipes";
 import NewRecipe from "@/pages/NewRecipe";
 import RecipeDetails from "@/pages/RecipeDetails";
 import EditRecipe from "@/pages/EditRecipe";

@@ -1,42 +1,42 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const navigate = useNavigate();
 
-  const handleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/recipes");
+      }
+    };
+
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        navigate("/recipes");
       }
     });
 
-    if (error) {
-      console.error('Error signing in:', error.message);
-    }
-  };
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="text-center space-y-8 max-w-2xl">
-        <h1 className="font-dongle text-8xl font-bold text-gray-900">
-          Welcome to Lovable
-        </h1>
-        
-        <p className="font-dongle text-4xl text-gray-600">
-          Your all-in-one solution for managing your household tasks, recipes, and more.
-        </p>
-
-        <div className="pt-8">
-          <Button 
-            onClick={handleSignIn}
-            size="lg"
-            className="text-xl px-8 py-6"
-          >
-            Sign in with Google
-          </Button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Velkommen til Heimen</h1>
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <Auth
+            supabaseClient={supabase}
+            appearance={{ theme: ThemeSupa }}
+            theme="light"
+            providers={[]}
+          />
         </div>
       </div>
     </div>
