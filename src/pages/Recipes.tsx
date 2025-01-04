@@ -97,7 +97,7 @@ const Recipes = () => {
         className="fixed bottom-20 right-4 w-16 h-16 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
         size="icon"
       >
-        <Plus className="h-12 w-12 text-cream group-hover:text-forest" />
+        <Plus className="h-8 w-8 text-cream group-hover:text-forest" />
       </Button>
       
       <Navigation />
