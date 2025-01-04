@@ -14,6 +14,7 @@ const Settings = () => {
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [hasPendingInvites, setHasPendingInvites] = useState(false);
 
   const fetchHouseholdData = async () => {
     try {
@@ -26,6 +27,15 @@ const Settings = () => {
       setUserEmail(session.user.email);
       setCurrentUserId(session.user.id);
       console.log("Fetching household data for user:", session.user.id);
+
+      // Check for pending invites
+      const { data: pendingInvites } = await supabase
+        .from('household_invites')
+        .select('*')
+        .eq('email', session.user.email)
+        .eq('status', 'pending');
+
+      setHasPendingInvites(pendingInvites && pendingInvites.length > 0);
 
       // First get the household member entry for the current user
       const { data: householdMember, error: memberError } = await supabase
@@ -102,19 +112,28 @@ const Settings = () => {
             <h2 className="text-lg font-semibold mb-4">Household</h2>
             {loading ? (
               <p>Loading...</p>
-            ) : currentHousehold ? (
-              <div className="space-y-4">
-                <p>Your household: {currentHousehold.name}</p>
-                <InviteMember householdId={currentHousehold.id} />
-                <HouseholdMembers 
-                  householdId={currentHousehold.id}
-                  isCreator={isCreator}
-                  onMembershipChange={handleMembershipChange}
-                />
-                <InvitationsList />
-              </div>
             ) : (
-              <CreateHousehold onCreated={handleHouseholdCreated} />
+              <>
+                <InvitationsList onInviteAccepted={handleMembershipChange} />
+                
+                {!currentHousehold && !hasPendingInvites && (
+                  <div className="mt-4">
+                    <CreateHousehold onCreated={handleHouseholdCreated} />
+                  </div>
+                )}
+
+                {currentHousehold && (
+                  <div className="space-y-4 mt-4">
+                    <p>Your household: {currentHousehold.name}</p>
+                    <InviteMember householdId={currentHousehold.id} />
+                    <HouseholdMembers 
+                      householdId={currentHousehold.id}
+                      isCreator={isCreator}
+                      onMembershipChange={handleMembershipChange}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
 

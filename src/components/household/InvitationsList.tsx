@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/accordion";
 import HouseholdMembers from "./HouseholdMembers";
 
-const InvitationsList = () => {
+interface InvitationsListProps {
+  onInviteAccepted?: () => void;
+}
+
+const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
   const { toast } = useToast();
   const [invitations, setInvitations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,6 +112,11 @@ const InvitationsList = () => {
         title: "Success",
         description: "You have joined the household",
       });
+
+      // Call the callback if provided
+      if (onInviteAccepted) {
+        onInviteAccepted();
+      }
 
       fetchInvitations();
     } catch (error) {
