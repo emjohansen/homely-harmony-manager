@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { NewShoppingList } from "@/components/shopping/NewShoppingList";
@@ -132,10 +132,6 @@ const Shopping = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex justify-end mb-6">
-          <NewShoppingList onCreateList={handleCreateList} />
-        </div>
-
         <Tabs defaultValue="active" className="space-y-4">
           <TabsList>
             <TabsTrigger value="active">Active Lists</TabsTrigger>
@@ -182,6 +178,7 @@ const Shopping = () => {
         </Tabs>
       </div>
 
+      <NewShoppingList onCreateList={handleCreateList} />
       <Navigation />
     </div>
   );

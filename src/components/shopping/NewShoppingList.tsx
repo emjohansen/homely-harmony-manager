@@ -51,9 +51,11 @@ export const NewShoppingList = ({ onCreateList }: NewShoppingListProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-sage hover:bg-sage/90">
-          <Plus className="h-4 w-4 mr-2" />
-          New List
+        <Button
+          className="fixed bottom-[5%] right-[-2rem] w-32 h-32 rounded-full bg-sage hover:bg-mint transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center border-none"
+          size="icon"
+        >
+          <p className="font-bold text-[95px] text-cream group-hover:text-forest leading-none flex items-center justify-center translate-y-[-1.5rem] translate-x-[-0.625rem]">+</p>
         </Button>
       </DialogTrigger>
       <DialogContent>
