@@ -54,6 +54,9 @@ const Recipes = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="relative h-[50vh] flex flex-col items-center justify-center bg-[#8B5CF6]">
+        {/* Heading */}
+        <h1 className="text-4xl font-bold text-white mb-8">Recipes</h1>
+
         {/* Wave mask */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg
