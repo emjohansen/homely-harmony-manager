@@ -20,6 +20,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 import CreateHousehold from "./CreateHousehold";
 
 interface Household {
@@ -48,9 +49,26 @@ const HouseholdSwitcher = ({
     return null;
   }
 
+  const handleHouseholdSelect = async (household: Household) => {
+    console.log("Switching to household:", household);
+    
+    try {
+      // Store the selected household ID in localStorage
+      localStorage.setItem('currentHouseholdId', household.id);
+      
+      // Call the parent component's handler
+      onHouseholdSelect(household);
+      
+      setValue(household.id);
+      setOpen(false);
+    } catch (error) {
+      console.error('Error switching household:', error);
+    }
+  };
+
   const handleCreateSuccess = (newHousehold: any) => {
     setShowCreateDialog(false);
-    onHouseholdSelect(newHousehold);
+    handleHouseholdSelect(newHousehold);
   };
 
   return (
@@ -68,20 +86,20 @@ const HouseholdSwitcher = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
-          <Command value={value} onValueChange={setValue} className="bg-cream">
-            <CommandInput placeholder="Search households..." className="bg-cream" />
+          <Command 
+            value={value} 
+            onValueChange={setValue} 
+            className="bg-[#efffed]"
+          >
+            <CommandInput placeholder="Search households..." className="bg-[#efffed]" />
             <CommandEmpty>No household found.</CommandEmpty>
             <CommandGroup>
               {households.map((household) => (
                 <CommandItem
                   key={household.id}
                   value={household.id}
-                  onSelect={() => {
-                    setValue(household.id);
-                    onHouseholdSelect(household);
-                    setOpen(false);
-                  }}
-                  className="bg-cream hover:bg-mint"
+                  onSelect={() => handleHouseholdSelect(household)}
+                  className="bg-[#efffed] hover:bg-mint"
                 >
                   <Check
                     className={cn(
@@ -106,7 +124,7 @@ const HouseholdSwitcher = ({
                     setOpen(false);
                     setShowCreateDialog(true);
                   }}
-                  className="bg-cream hover:bg-mint"
+                  className="bg-[#efffed] hover:bg-mint"
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Create New Household
