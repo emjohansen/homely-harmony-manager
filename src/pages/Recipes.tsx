@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, CookingPot } from "lucide-react";
+import { Plus } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -61,13 +61,6 @@ const Recipes = () => {
           backgroundPosition: 'center'
         }}
       >
-        {/* Icon */}
-        <div className="relative mb-6">
-          <div className="p-4 bg-white rounded-full shadow-lg">
-            <CookingPot className="h-12 w-12 text-[#0f172ae6]" />
-          </div>
-        </div>
-        
         {/* Heading */}
         <h1 className="relative text-4xl font-bold mb-8 text-white">Recipes</h1>
         
