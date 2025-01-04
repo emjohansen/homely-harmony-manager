@@ -3,97 +3,19 @@ import { RecipeCard } from "./RecipeCard";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
+import { RecipeFiltersHeader } from "./RecipeFiltersHeader";
+import { RecipeSelectedTags } from "./RecipeSelectedTags";
+import { TAG_CATEGORIES } from "@/constants/tags";
 
 interface RecipeListProps {
   recipes: Recipe[];
 }
-
-const TAG_CATEGORIES = {
-  mealType: {
-    label: "Måltidstype",
-    options: ["Frokost", "Lunsj", "Middag", "Dessert", "Snacks", "Drikke"]
-  },
-  difficulty: {
-    label: "Vanskelighetsgrad",
-    options: ["Enkel", "Middels", "Avansert"]
-  },
-  allergens: {
-    label: "Allergener",
-    options: [
-      "Glutenfri", 
-      "Laktosefri", 
-      "Nøttefri", 
-      "Eggfri", 
-      "Soyafri",
-      "Melkefri",
-      "Sesamfri",
-      "Skalldyrfri",
-      "Fiskefri",
-      "Sellerfri",
-      "Sennepfri",
-      "Sulfittfri"
-    ]
-  },
-  meatType: {
-    label: "Kjøtttype",
-    options: [
-      "Kylling", 
-      "Kalkun",
-      "Storfe", 
-      "Svin", 
-      "Lam", 
-      "Fisk", 
-      "Skalldyr",
-      "Vilt",
-      "And"
-    ]
-  },
-  dietType: {
-    label: "Kosthold",
-    options: [
-      "Vegansk",
-      "Vegetarisk",
-      "Pescetariansk",
-      "Ketogen",
-      "Lavkarbo",
-      "Paleo"
-    ]
-  },
-  misc: {
-    label: "Annet",
-    options: [
-      "Sunn", 
-      "Rask", 
-      "Budsjettvennlig", 
-      "Festmat", 
-      "Tradisjonell", 
-      "Internasjonal",
-      "Grillet",
-      "Bakt",
-      "Kokt",
-      "Stekt",
-      "Dampet",
-      "Fersk",
-      "Sesongbasert",
-      "Barnevennlig",
-      "Frossen",
-      "Matlaging i bulk",
-      "Lite oppvask",
-      "En-potte rett",
-      "Slow cooker",
-      "Airfryer",
-      "Matpakke"
-    ]
-  }
-};
 
 export const RecipeList = ({ recipes }: RecipeListProps) => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -120,24 +42,12 @@ export const RecipeList = ({ recipes }: RecipeListProps) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="mb-4"
-        >
-          {showFilters ? "Skjul filter" : "Vis filter"}
-        </Button>
-        {selectedTags.length > 0 && (
-          <Button
-            variant="ghost"
-            onClick={clearFilters}
-            className="text-sm text-gray-500"
-          >
-            Nullstill filter
-          </Button>
-        )}
-      </div>
+      <RecipeFiltersHeader
+        showFilters={showFilters}
+        setShowFilters={setShowFilters}
+        selectedTags={selectedTags}
+        clearFilters={clearFilters}
+      />
 
       {showFilters && (
         <div className="mb-6">
@@ -172,24 +82,10 @@ export const RecipeList = ({ recipes }: RecipeListProps) => {
         </div>
       )}
 
-      {selectedTags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {selectedTags.map(tag => (
-            <span
-              key={tag}
-              className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm flex items-center"
-            >
-              {tag}
-              <button
-                onClick={() => toggleTag(tag)}
-                className="ml-1 text-gray-500 hover:text-gray-700"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
+      <RecipeSelectedTags
+        selectedTags={selectedTags}
+        toggleTag={toggleTag}
+      />
 
       <div className="grid gap-4">
         {filteredRecipes.map((recipe) => (
