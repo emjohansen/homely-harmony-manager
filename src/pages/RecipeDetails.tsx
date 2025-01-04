@@ -146,7 +146,7 @@ const RecipeDetails = () => {
     <div className="min-h-screen bg-cream pb-16">
       <div className="max-w-lg mx-auto px-4 py-8 relative">
         <img 
-          src="/lovable-uploads/737eab7d-66ba-4392-90a9-c83d1f4994cc.png"
+          src="/lovable-uploads/59ad08b1-98b6-45c5-bf8e-d582829cdc0c.png"
           alt=""
           className="absolute top-0 -left-4 -right-4 w-[calc(100%+2rem)] h-32 object-cover z-0"
         />
