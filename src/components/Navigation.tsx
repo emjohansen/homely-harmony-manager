@@ -16,7 +16,7 @@ const Navigation = () => {
     { path: "/reminders", icon: CalendarClock, label: "Reminders" },
     { path: "/chores", icon: ClipboardList, label: "Chores" },
     { path: "/storage", icon: Refrigerator, label: "Storage" },
-    { path: "/settings", icon: Settings, label: "Settings" },
+    { path: "/settings", icon: Settings, label: "Profile and Settings" },
   ];
 
   const mainItems = navigationItems.slice(0, 4);
@@ -52,11 +52,11 @@ const Navigation = () => {
                 <span className="text-xs mt-1 whitespace-nowrap">More</span>
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[200px] bg-cream">
+            <SheetContent side="right" className="w-[180px] bg-cream">
               <SheetHeader>
                 <SheetTitle className="text-forest">Menu</SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-4 mt-4">
+              <div className="flex flex-col gap-3 mt-3">
                 {menuItems.map(({ path, icon: Icon, label }) => (
                   <NavigationButton key={path} path={path} Icon={Icon} label={label} />
                 ))}
