@@ -22,9 +22,9 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
           />
         </div>
       )}
-      <h3 className="font-oswald text-recipe-title text-forest">{recipe.title}</h3>
+      <h3 className="font-dosis text-recipe-title text-forest">{recipe.title}</h3>
       {recipe.description && (
-        <p className="font-oswald text-recipe-desc text-forest mt-1 line-clamp-2 leading-[1] font-thin">{recipe.description}</p>
+        <p className="font-dosis text-recipe-desc text-forest mt-1 line-clamp-2 leading-[1] font-thin">{recipe.description}</p>
       )}
       <p className="text-recipe-meta text-forest mt-2 font-thin">
         {recipe.preparation_time} mins • {recipe.servings} servings

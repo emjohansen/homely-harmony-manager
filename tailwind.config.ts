@@ -28,7 +28,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'oswald': ['Oswald', 'sans-serif'],
+				'dosis': ['Dosis', 'sans-serif'],
 			},
 			fontSize: {
 				'recipe-title': '18px',
