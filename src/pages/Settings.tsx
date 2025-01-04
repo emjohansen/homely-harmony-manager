@@ -14,6 +14,7 @@ const Settings = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [hasPendingInvites, setHasPendingInvites] = useState(false);
+  const [hasHousehold, setHasHousehold] = useState(false);
 
   const fetchHouseholdData = async () => {
     try {
@@ -25,7 +26,14 @@ const Settings = () => {
 
       setUserEmail(session.user.email);
       setCurrentUserId(session.user.id);
-      console.log("Fetching household data for user:", session.user.id);
+
+      // Check for household memberships
+      const { data: memberships } = await supabase
+        .from('household_members')
+        .select('household_id')
+        .eq('user_id', session.user.id);
+
+      setHasHousehold(memberships && memberships.length > 0);
 
       // Check for pending invites
       const { data: pendingInvites } = await supabase
@@ -36,43 +44,6 @@ const Settings = () => {
 
       setHasPendingInvites(pendingInvites && pendingInvites.length > 0);
 
-      // First get the household member entry for the current user
-      const { data: householdMember, error: memberError } = await supabase
-        .from('household_members')
-        .select('household_id')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (memberError) {
-        console.error('Error fetching household member:', memberError);
-        throw memberError;
-      }
-
-      if (householdMember) {
-        console.log("Found household membership:", householdMember);
-        // Then fetch the full household details
-        const { data: household, error: householdError } = await supabase
-          .from('households')
-          .select(`
-            *,
-            household_members!inner (
-              user_id,
-              role
-            )
-          `)
-          .eq('id', householdMember.household_id)
-          .single();
-
-        if (householdError) {
-          console.error('Error fetching household:', householdError);
-          throw householdError;
-        }
-
-        console.log("Fetched household details:", household);
-        setCurrentHousehold(household);
-      } else {
-        console.log("User is not a member of any household");
-      }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -89,13 +60,11 @@ const Settings = () => {
     navigate("/");
   };
 
-  const handleHouseholdCreated = async (household: any) => {
-    console.log("Household created:", household);
-    setCurrentHousehold(household);
+  const handleHouseholdCreated = async () => {
+    await fetchHouseholdData();
   };
 
   const handleMembershipChange = () => {
-    console.log("Membership changed, refreshing household data...");
     fetchHouseholdData();
   };
 
@@ -106,22 +75,16 @@ const Settings = () => {
 
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">Household</h2>
+            <h2 className="text-lg font-semibold mb-4">Households</h2>
             {loading ? (
               <p>Loading...</p>
             ) : (
               <>
                 <InvitationsList onInviteAccepted={handleMembershipChange} />
                 
-                {!currentHousehold && !hasPendingInvites && (
+                {!hasHousehold && !hasPendingInvites && (
                   <div className="mt-4">
                     <CreateHousehold onCreated={handleHouseholdCreated} />
-                  </div>
-                )}
-
-                {currentHousehold && (
-                  <div className="mt-4">
-                    <InviteMember householdId={currentHousehold.id} />
                   </div>
                 )}
               </>

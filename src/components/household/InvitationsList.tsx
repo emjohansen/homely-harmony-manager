@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import HouseholdMembers from "./HouseholdMembers";
 import PendingInvitation from "./PendingInvitation";
+import HouseholdSwitcher from "./HouseholdSwitcher";
 
 interface InvitationsListProps {
   onInviteAccepted?: () => void;
@@ -20,6 +21,47 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [currentHousehold, setCurrentHousehold] = useState<any>(null);
+  const [households, setHouseholds] = useState<any[]>([]);
+
+  const fetchHouseholds = async (userId: string) => {
+    try {
+      const { data: memberships, error } = await supabase
+        .from('household_members')
+        .select(`
+          household_id,
+          role,
+          households (
+            id,
+            name,
+            created_by
+          )
+        `)
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      const formattedHouseholds = memberships?.map(membership => ({
+        id: membership.households.id,
+        name: membership.households.name,
+        role: membership.role,
+        isCreator: membership.households.created_by === userId
+      })) || [];
+
+      setHouseholds(formattedHouseholds);
+      
+      // If no current household is selected, select the first one
+      if (!currentHousehold && formattedHouseholds.length > 0) {
+        setCurrentHousehold(formattedHouseholds[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching households:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not fetch households",
+      });
+    }
+  };
 
   const fetchInvitations = async () => {
     try {
@@ -31,17 +73,8 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
       }
 
       setCurrentUser(user);
+      await fetchHouseholds(user.id);
 
-      // Fetch current household membership
-      const { data: memberData } = await supabase
-        .from('household_members')
-        .select('household_id, households(*)')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      setCurrentHousehold(memberData?.households || null);
-
-      // Fetch both sent and received invitations
       const { data, error } = await supabase
         .from('household_invites')
         .select(`
@@ -54,10 +87,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
         `)
         .or(`email.eq.${user.email},invited_by.eq.${user.id}`);
 
-      if (error) {
-        console.error('Error fetching invitations:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       console.log('Fetched invitations:', data);
       setInvitations(data || []);
@@ -77,6 +107,10 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
     fetchInvitations();
   }, [toast]);
 
+  const handleHouseholdSwitch = (household: any) => {
+    setCurrentHousehold(household);
+  };
+
   const handleAcceptInvite = async (inviteId: string) => {
     try {
       if (!currentUser) return;
@@ -89,7 +123,6 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       if (!invite) return;
 
-      // Add user to household_members
       const { error: memberError } = await supabase
         .from('household_members')
         .insert({
@@ -100,7 +133,6 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       if (memberError) throw memberError;
 
-      // Update invitation status
       const { error: updateError } = await supabase
         .from('household_invites')
         .update({ status: 'accepted' })
@@ -154,24 +186,31 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
   };
 
   if (loading) {
-    return <div>Loading invitations...</div>;
+    return <div>Loading...</div>;
   }
 
   const pendingInvitations = invitations.filter(invite => invite.status === 'pending');
-  const isHouseholdCreator = currentHousehold?.created_by === currentUser?.id;
 
   return (
     <div className="space-y-4">
+      {households.length > 0 && (
+        <HouseholdSwitcher
+          households={households}
+          currentHousehold={currentHousehold}
+          onHouseholdSelect={handleHouseholdSwitch}
+        />
+      )}
+
       <Accordion type="single" collapsible className="w-full">
         {currentHousehold && (
           <AccordionItem value="current-household">
             <AccordionTrigger className="text-lg font-semibold">
-              Current Household: {currentHousehold.name}
+              Household Members
             </AccordionTrigger>
             <AccordionContent>
               <HouseholdMembers
                 householdId={currentHousehold.id}
-                isCreator={isHouseholdCreator}
+                isCreator={currentHousehold.isCreator}
                 onMembershipChange={fetchInvitations}
               />
             </AccordionContent>
