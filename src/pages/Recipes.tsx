@@ -42,8 +42,8 @@ const Recipes = () => {
   const getRandomRecipe = (recipes: Recipe[]) => {
     if (recipes.length === 0) {
       toast({
-        title: "Ingen oppskrifter",
-        description: "Ingen oppskrifter tilgjengelig i denne kategorien!",
+        title: "No recipes",
+        description: "No recipes available in this category!",
       });
       return;
     }
@@ -52,16 +52,10 @@ const Recipes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
+    <div className="min-h-screen bg-gray-50 pb-24">
       <div className="max-w-lg mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-bold">Recipes</h1>
-          <div className="flex gap-2">
-            <Button onClick={() => navigate("/recipes/new")}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Recipe
-            </Button>
-          </div>
         </div>
 
         {loading ? (
@@ -73,17 +67,15 @@ const Recipes = () => {
                 <TabsTrigger value="private">Mine</TabsTrigger>
                 <TabsTrigger value="public">All</TabsTrigger>
               </TabsList>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => getRandomRecipe(privateRecipes)}
-                  title="Random Recipe"
-                >
-                  <Shuffle className="h-4 w-4 mr-2" />
-                  Random
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => getRandomRecipe(privateRecipes)}
+                title="Random Recipe"
+              >
+                <Shuffle className="h-4 w-4 mr-2" />
+                Random
+              </Button>
             </div>
             <TabsContent value="private">
               {!currentHouseholdId ? (
@@ -121,6 +113,16 @@ const Recipes = () => {
           </Tabs>
         )}
       </div>
+      
+      {/* Floating Action Button */}
+      <Button
+        onClick={() => navigate("/recipes/new")}
+        className="fixed bottom-14 left-1/2 transform -translate-x-1/2 rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-shadow"
+        size="icon"
+      >
+        <Plus className="h-8 w-8" />
+      </Button>
+      
       <Navigation />
     </div>
   );
