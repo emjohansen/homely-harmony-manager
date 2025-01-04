@@ -52,8 +52,9 @@ const Navigation = () => {
                 <span className="text-xs mt-1 whitespace-nowrap">More</span>
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[200px] bg-cream">
-              <div className="flex flex-col gap-4 py-4">
+            <SheetContent side="right" className="w-[150px] bg-cream">
+              <h2 className="text-xl font-bold text-forest mb-4">Menu</h2>
+              <div className="flex flex-col gap-4">
                 {menuItems.map(({ path, icon: Icon, label }) => (
                   <NavigationButton key={path} path={path} Icon={Icon} label={label} />
                 ))}
