@@ -79,7 +79,7 @@ export const RecipeContent = ({
         </div>
       )}
       
-      <div className="space-y-2 text-center">
+      <div className="space-y-0 text-center">
         <p className="text-sm text-foreground">
           {recipe.description}
         </p>
