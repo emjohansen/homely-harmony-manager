@@ -53,41 +53,47 @@ const Recipes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
-      {/* Header Section */}
-      <section className="relative h-[50vh] bg-gray-50">
-        <div className="absolute inset-0 bg-[#8B5CF6]">
-          <div className="max-w-lg mx-auto px-4 text-center h-full flex items-center justify-center">
-            <div>
-              <h1 className="text-5xl font-bold mb-6 text-white">Recipes</h1>
-              <Button
-                onClick={() => navigate("/recipes/new")}
-                variant="outline"
-                className="bg-white hover:bg-gray-50 transition-colors"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Recipe
-              </Button>
-            </div>
-          </div>
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden">
-            <svg
-              className="relative block w-full"
-              style={{ height: '70px' }}
-              viewBox="0 0 1200 120"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
-                className="fill-gray-50"
-                opacity="1"
-              />
-            </svg>
-          </div>
+      <div className="relative h-[50vh] flex flex-col items-center justify-center overflow-hidden">
+        {/* Background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: 'url("/lovable-uploads/e5cb2452-51e8-40f1-a22e-77651e6b17b2.png")',
+          }}
+        />
+        
+        {/* Wave mask */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg
+            viewBox="0 0 1440 120"
+            className="w-full h-[60px] fill-gray-50 transform translate-y-1"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,58.7C672,53,768,43,864,42.7C960,43,1056,53,1152,53.3C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" />
+          </svg>
         </div>
-      </section>
+        
+        {/* Illustration */}
+        <div className="relative mb-6 w-64">
+          <img 
+            src="/lovable-uploads/3f8a2cc2-2c9d-4361-acdf-74a97a56225c.png" 
+            alt="Cooking illustration" 
+            className="w-full h-auto"
+          />
+        </div>
+        
+        {/* Add Recipe Button */}
+        <Button
+          onClick={() => navigate("/recipes/new")}
+          variant="outline"
+          className="relative bg-white hover:bg-gray-50 transition-colors"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          New Recipe
+        </Button>
+      </div>
 
-      {/* Recipe List Section */}
-      <div className="max-w-lg mx-auto px-4 -mt-8">
+      <div className="max-w-lg mx-auto px-4">
         {loading ? (
           <div className="text-center py-8">Loading recipes...</div>
         ) : (
