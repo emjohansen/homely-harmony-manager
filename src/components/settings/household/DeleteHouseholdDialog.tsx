@@ -36,12 +36,31 @@ export const DeleteHouseholdDialog = ({ household, onDelete }: DeleteHouseholdDi
     }
 
     try {
-      const { error } = await supabase
+      console.log('Starting household deletion process for:', household.id);
+
+      // First, clear the current_household reference from all profiles
+      const { error: profileUpdateError } = await supabase
+        .from('profiles')
+        .update({ current_household: null })
+        .eq('current_household', household.id);
+
+      if (profileUpdateError) {
+        console.error('Error updating profiles:', profileUpdateError);
+        throw profileUpdateError;
+      }
+
+      console.log('Successfully cleared current_household references');
+
+      // Then delete the household
+      const { error: deleteError } = await supabase
         .from('households')
         .delete()
         .eq('id', household.id);
 
-      if (error) throw error;
+      if (deleteError) {
+        console.error('Error deleting household:', deleteError);
+        throw deleteError;
+      }
 
       setIsOpen(false);
       setDeleteConfirmation("");
@@ -52,7 +71,7 @@ export const DeleteHouseholdDialog = ({ household, onDelete }: DeleteHouseholdDi
         description: "Household deleted successfully.",
       });
     } catch (error) {
-      console.error('Error deleting household:', error);
+      console.error('Error in deletion process:', error);
       toast({
         title: "Error",
         description: "Failed to delete household. Please try again.",
@@ -73,7 +92,7 @@ export const DeleteHouseholdDialog = ({ household, onDelete }: DeleteHouseholdDi
       </Button>
 
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-        <AlertDialogContent className="bg-cream">
+        <AlertDialogContent className="bg-[#efffed]">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Household</AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
