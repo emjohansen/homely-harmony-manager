@@ -137,7 +137,6 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
   const handleHouseholdSwitch = (household: any) => {
     console.log('Switching to household:', household);
     setCurrentHousehold(household);
-    localStorage.setItem('currentHouseholdId', household.id);
     // Refresh the page to reset all states
     window.location.reload();
   };
@@ -145,6 +144,16 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
   const handleAcceptInvite = async (inviteId: string) => {
     try {
       if (!currentUser) return;
+
+      // Check if user has reached the household limit
+      if (households.length >= 3) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "You can only be a member of up to 3 households",
+        });
+        return;
+      }
 
       const { data: invite } = await supabase
         .from('household_invites')

@@ -72,9 +72,6 @@ const HouseholdSwitcher = ({
       if (updateError) {
         throw updateError;
       }
-
-      // Store in localStorage as backup
-      localStorage.setItem('currentHouseholdId', household.id);
       
       // Call the parent component's handler
       onHouseholdSelect(household);
