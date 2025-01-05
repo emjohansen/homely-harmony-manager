@@ -64,6 +64,9 @@ export default function CreateHouseholdDialog() {
       
       setOpen(false);
       setName("");
+      
+      // Refresh the page to reset all states
+      window.location.reload();
     } catch (error) {
       console.error("Error creating household:", error);
       toast({
