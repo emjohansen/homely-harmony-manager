@@ -26,7 +26,6 @@ export default function CreateHouseholdDialog() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No authenticated user");
 
-      // Create household
       const { data: household, error: householdError } = await supabase
         .from("households")
         .insert([{ name, created_by: user.id }])
@@ -35,7 +34,6 @@ export default function CreateHouseholdDialog() {
 
       if (householdError) throw householdError;
 
-      // Add creator as admin member
       const { error: memberError } = await supabase
         .from("household_members")
         .insert([{
@@ -46,7 +44,6 @@ export default function CreateHouseholdDialog() {
 
       if (memberError) throw memberError;
 
-      // Update user's current household
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ 
@@ -87,7 +84,7 @@ export default function CreateHouseholdDialog() {
           Create New Household
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-[#efffed]">
         <DialogHeader>
           <DialogTitle>Create New Household</DialogTitle>
         </DialogHeader>

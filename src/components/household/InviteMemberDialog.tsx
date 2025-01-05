@@ -30,7 +30,6 @@ export default function InviteMemberDialog({ householdId }: InviteMemberDialogPr
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No authenticated user");
 
-      // Check for existing invitation
       const { data: existingInvite } = await supabase
         .from("household_invites")
         .select()
@@ -48,7 +47,6 @@ export default function InviteMemberDialog({ householdId }: InviteMemberDialogPr
         return;
       }
 
-      // Create invitation
       const { error: inviteError } = await supabase
         .from("household_invites")
         .insert([{
@@ -80,13 +78,15 @@ export default function InviteMemberDialog({ householdId }: InviteMemberDialogPr
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <UserPlus className="mr-2 h-4 w-4" />
-          Invite Member
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+      <div className="flex justify-end mt-4">
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Invite Member
+          </Button>
+        </DialogTrigger>
+      </div>
+      <DialogContent className="bg-[#efffed]">
         <DialogHeader>
           <DialogTitle>Invite New Member</DialogTitle>
         </DialogHeader>

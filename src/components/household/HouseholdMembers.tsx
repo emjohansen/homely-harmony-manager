@@ -2,24 +2,12 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { MemberListItem } from "./MemberListItem";
+import { LeaveHouseholdDialog } from "./LeaveHouseholdDialog";
 
 interface Member {
   id: string;
   username: string | null;
-  avatar_url: string | null;
   role: string;
 }
 
@@ -59,8 +47,7 @@ export default function HouseholdMembers({
           user_id,
           role,
           profiles:user_id (
-            username,
-            avatar_url
+            username
           )
         `)
         .eq("household_id", householdId);
@@ -70,7 +57,6 @@ export default function HouseholdMembers({
       const formattedMembers = data.map((member: any) => ({
         id: member.user_id,
         username: member.profiles.username,
-        avatar_url: member.profiles.avatar_url,
         role: member.role,
       }));
 
@@ -86,7 +72,6 @@ export default function HouseholdMembers({
     try {
       if (!currentUserId) return;
 
-      // Remove from household_members
       const { error } = await supabase
         .from("household_members")
         .delete()
@@ -95,7 +80,6 @@ export default function HouseholdMembers({
 
       if (error) throw error;
 
-      // Clear current_household in profiles
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ 
@@ -106,7 +90,6 @@ export default function HouseholdMembers({
 
       if (updateError) throw updateError;
 
-      // Clear localStorage
       localStorage.removeItem('currentHouseholdId');
 
       toast({
@@ -118,7 +101,6 @@ export default function HouseholdMembers({
         onMembershipChange();
       }
 
-      // Refresh the page to reset the state
       window.location.reload();
     } catch (error) {
       console.error("Error leaving household:", error);
@@ -167,60 +149,18 @@ export default function HouseholdMembers({
     <div className="space-y-4">
       <div className="space-y-2">
         {members.map((member) => (
-          <div
+          <MemberListItem
             key={member.id}
-            className="flex items-center justify-between p-2 rounded-lg bg-gray-50"
-          >
-            <div className="flex items-center space-x-3">
-              <Avatar>
-                <AvatarImage src={member.avatar_url || undefined} />
-                <AvatarFallback>
-                  {member.username?.[0]?.toUpperCase() || "U"}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{member.username}</p>
-                <p className="text-sm text-gray-500 capitalize">{member.role}</p>
-              </div>
-            </div>
-            {isAdmin && member.id !== currentUserId && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => removeMember(member.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
+            username={member.username}
+            role={member.role}
+            canDelete={isAdmin && member.id !== currentUserId}
+            onDelete={() => removeMember(member.id)}
+          />
         ))}
       </div>
 
       {currentUserId && (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              className="w-full"
-            >
-              Leave Household
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. You will need to be invited back to rejoin this household.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={leaveHousehold}>
-                Leave Household
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <LeaveHouseholdDialog onLeave={leaveHousehold} />
       )}
     </div>
   );
