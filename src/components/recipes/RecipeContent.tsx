@@ -80,8 +80,8 @@ export const RecipeContent = ({
       )}
       
       <div className="space-y-0 text-center">
-        <h1 className="text-xl font-bold text-foreground">
-          {recipe.title}
+        <h1 className="text-xl font-bold text-foreground break-words whitespace-pre-wrap">
+          {recipe.title.length > 30 ? `${recipe.title.slice(0, 30)}\n${recipe.title.slice(30)}` : recipe.title}
         </h1>
         <p className="text-sm text-foreground">
           {recipe.description}
