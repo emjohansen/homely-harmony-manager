@@ -99,7 +99,7 @@ export const ShoppingListItem = ({
           <SelectTrigger className="flex-1">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="bg-cream">
+          <SelectContent className="bg-[#efffed]">
             {STORES.map((store) => (
               <SelectItem key={store} value={store}>
                 {store}
@@ -127,7 +127,7 @@ export const ShoppingListItem = ({
               <Trash2 className="h-4 w-4" />
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="max-w-[90vw] bg-cream">
+          <AlertDialogContent className="max-w-[90vw] bg-[#efffed]">
             <AlertDialogHeader>
               <AlertDialogTitle>Delete item?</AlertDialogTitle>
               <AlertDialogDescription>
@@ -135,7 +135,7 @@ export const ShoppingListItem = ({
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-cream">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="bg-[#efffed]">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => onDelete(item.id)}
                 className="bg-destructive text-destructive-foreground"
