@@ -23,6 +23,8 @@ interface HouseholdMembersProps {
 
 export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMembersProps) => {
   const [members, setMembers] = useState<Member[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,40 +36,63 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
   const fetchMembers = async () => {
     if (!householdId) return;
 
-    const { data, error } = await supabase
-      .from('household_members')
-      .select(`
-        user_id,
-        role,
-        profiles:user_id (
-          username
-        )
-      `)
-      .eq('household_id', householdId);
+    try {
+      setIsLoading(true);
+      setError(null);
+      console.log('Fetching members for household:', householdId);
 
-    if (error) {
-      console.error('Error fetching members:', error);
-      return;
+      const { data, error } = await supabase
+        .from('household_members')
+        .select(`
+          user_id,
+          role,
+          profiles:user_id (
+            username
+          )
+        `)
+        .eq('household_id', householdId);
+
+      if (error) {
+        console.error('Supabase error fetching members:', error);
+        throw error;
+      }
+
+      console.log('Fetched members data:', data);
+
+      const formattedMembers = data.map(member => ({
+        id: member.user_id,
+        username: member.profiles?.username || 'Unknown User',
+        role: member.role
+      }));
+
+      setMembers(formattedMembers);
+    } catch (err) {
+      console.error('Error fetching members:', err);
+      setError('Failed to load household members. Please try again later.');
+      toast({
+        title: "Error",
+        description: "Failed to load household members. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    const formattedMembers = data.map(member => ({
-      id: member.user_id,
-      username: member.profiles.username,
-      role: member.role
-    }));
-
-    setMembers(formattedMembers);
   };
 
   const handleRemoveMember = async (memberId: string) => {
     try {
+      console.log('Removing member:', memberId, 'from household:', householdId);
+      
       const { error } = await supabase
         .from('household_members')
         .delete()
         .eq('household_id', householdId)
         .eq('user_id', memberId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error removing member:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -91,28 +116,38 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
   return (
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem value="members">
-        <AccordionTrigger>Household Members ({members.length})</AccordionTrigger>
+        <AccordionTrigger>
+          Household Members ({isLoading ? '...' : members.length})
+        </AccordionTrigger>
         <AccordionContent>
-          <div className="space-y-2">
-            {members.map((member) => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between p-2 bg-mint rounded-lg"
-              >
-                <div>
-                  <span className="font-medium">{member.username}</span>
-                  <span className="ml-2 text-sm text-forest/70">({member.role})</span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleRemoveMember(member.id)}
+          {isLoading ? (
+            <div className="text-center py-4 text-gray-500">Loading members...</div>
+          ) : error ? (
+            <div className="text-center py-4 text-red-500">{error}</div>
+          ) : members.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">No members found</div>
+          ) : (
+            <div className="space-y-2">
+              {members.map((member) => (
+                <div
+                  key={member.id}
+                  className="flex items-center justify-between p-2 bg-mint rounded-lg"
                 >
-                  <UserMinus className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
+                  <div>
+                    <span className="font-medium">{member.username}</span>
+                    <span className="ml-2 text-sm text-forest/70">({member.role})</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemoveMember(member.id)}
+                  >
+                    <UserMinus className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </AccordionContent>
       </AccordionItem>
     </Accordion>
