@@ -569,6 +569,7 @@ export type Database = {
       shopping_lists: {
         Row: {
           archived_at: string | null
+          archived_by: string | null
           created_at: string
           created_by: string | null
           household_id: string | null
@@ -578,6 +579,7 @@ export type Database = {
         }
         Insert: {
           archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           created_by?: string | null
           household_id?: string | null
@@ -587,6 +589,7 @@ export type Database = {
         }
         Update: {
           archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           created_by?: string | null
           household_id?: string | null
@@ -595,6 +598,13 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "shopping_lists_archived_by_fkey"
+            columns: ["archived_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "shopping_lists_created_by_fkey"
             columns: ["created_by"]
