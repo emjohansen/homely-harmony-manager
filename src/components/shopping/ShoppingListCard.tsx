@@ -53,11 +53,11 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
   };
 
   return (
-    <Card className="p-4 space-y-4">
+    <Card className="bg-sage p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{list.name}</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="text-lg font-semibold text-cream">{list.name}</h3>
+          <p className="text-sm text-cream/80">
             Created {formatDistanceToNow(new Date(list.created_at))} ago
           </p>
         </div>
@@ -66,6 +66,7 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
             variant="outline"
             size="sm"
             onClick={() => onViewList(list.id)}
+            className="bg-cream hover:bg-cream/90"
           >
             View List
           </Button>
@@ -74,6 +75,7 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
               variant="outline"
               size="sm"
               onClick={() => onArchive(list.id)}
+              className="bg-cream hover:bg-cream/90"
             >
               <Archive className="h-4 w-4" />
             </Button>
@@ -83,7 +85,7 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
               <Button
                 variant="outline"
                 size="sm"
-                className="text-destructive"
+                className="bg-cream hover:bg-cream/90 text-destructive"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
