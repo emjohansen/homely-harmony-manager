@@ -15,7 +15,11 @@ interface Invite {
   };
 }
 
-export default function HouseholdInvites() {
+interface HouseholdInvitesProps {
+  onInviteAccepted?: () => void;
+}
+
+export default function HouseholdInvites({ onInviteAccepted }: HouseholdInvitesProps) {
   const { toast } = useToast();
   const [invites, setInvites] = useState<Invite[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,6 +98,9 @@ export default function HouseholdInvites() {
       });
 
       fetchInvites();
+      if (accept && onInviteAccepted) {
+        onInviteAccepted();
+      }
     } catch (error) {
       console.error("Error handling invite:", error);
       toast({
