@@ -77,7 +77,10 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
         // Update profile with new current household
         await supabase
           .from('profiles')
-          .update({ current_household: formattedHouseholds[0].id })
+          .update({ 
+            current_household: formattedHouseholds[0].id,
+            updated_at: new Date().toISOString()
+          })
           .eq('id', userId);
       }
     } catch (error) {
@@ -134,11 +137,39 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
     fetchInvitations();
   }, []);
 
-  const handleHouseholdSwitch = (household: any) => {
+  const handleHouseholdSwitch = async (household: any) => {
     console.log('Switching to household:', household);
-    setCurrentHousehold(household);
-    // Refresh the page to reset all states
-    window.location.reload();
+    try {
+      setCurrentHousehold(household);
+      
+      // Update the current household in the database
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ 
+          current_household: household.id,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', currentUser.id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      toast({
+        title: "Success",
+        description: `Switched to ${household.name}`,
+      });
+
+      // Refresh the page to reset all states
+      window.location.reload();
+    } catch (error) {
+      console.error('Error switching household:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not switch household. Please try again.",
+      });
+    }
   };
 
   const handleAcceptInvite = async (inviteId: string) => {
@@ -198,8 +229,8 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
         description: "You have joined the household",
       });
 
-      // Refresh the page to update all states
-      window.location.reload();
+      // Refresh data instead of page reload
+      await fetchInvitations();
 
       if (onInviteAccepted) {
         onInviteAccepted();
