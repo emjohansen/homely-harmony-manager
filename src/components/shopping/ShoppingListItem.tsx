@@ -78,7 +78,7 @@ export const ShoppingListItem = ({
             )}
           </div>
           <div className="text-xs text-gray-500 mt-1">
-            Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
+            Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago ({new Date(item.added_at).toLocaleString()})
           </div>
         </div>
       </div>
