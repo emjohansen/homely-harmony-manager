@@ -12,6 +12,7 @@ import Chores from "@/pages/Chores";
 import Reminders from "@/pages/Reminders";
 import Storage from "@/pages/Storage";
 import Settings from "@/pages/Settings";
+import MealPlanner from "@/pages/MealPlanner";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/reminders" element={<Reminders />} />
         <Route path="/storage" element={<Storage />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/meal-planner" element={<MealPlanner />} />
       </Routes>
       <Toaster position="bottom-right" />
     </Router>
