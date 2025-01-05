@@ -15,9 +15,14 @@ interface Member {
 interface HouseholdMembersProps {
   householdId: string;
   isAdmin: boolean;
+  onMembershipChange?: () => void;
 }
 
-export default function HouseholdMembers({ householdId, isAdmin }: HouseholdMembersProps) {
+export default function HouseholdMembers({ 
+  householdId, 
+  isAdmin,
+  onMembershipChange 
+}: HouseholdMembersProps) {
   const { toast } = useToast();
   const [members, setMembers] = useState<Member[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -67,6 +72,9 @@ export default function HouseholdMembers({ householdId, isAdmin }: HouseholdMemb
       });
 
       fetchMembers();
+      if (onMembershipChange) {
+        onMembershipChange();
+      }
     } catch (error) {
       console.error("Error removing member:", error);
       toast({
@@ -91,6 +99,10 @@ export default function HouseholdMembers({ householdId, isAdmin }: HouseholdMemb
         title: "Success",
         description: "You have left the household",
       });
+
+      if (onMembershipChange) {
+        onMembershipChange();
+      }
 
       // Refresh the page to update the UI
       window.location.reload();

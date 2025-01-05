@@ -236,7 +236,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
             <AccordionContent>
               <HouseholdMembers
                 householdId={currentHousehold.id}
-                isCreator={currentHousehold.isCreator}
+                isAdmin={currentHousehold.isCreator}
                 onMembershipChange={fetchInvitations}
               />
             </AccordionContent>
