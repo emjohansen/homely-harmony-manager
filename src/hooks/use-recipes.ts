@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Recipe } from "@/types/recipe";
 import { useToast } from "./use-toast";
 
-export const useRecipes = (householdId: string | null) => {
+export const useRecipes = () => {
   const { toast } = useToast();
   const [privateRecipes, setPrivateRecipes] = useState<Recipe[]>([]);
   const [publicRecipes, setPublicRecipes] = useState<Recipe[]>([]);
@@ -11,9 +11,25 @@ export const useRecipes = (householdId: string | null) => {
 
   const fetchRecipes = async () => {
     try {
-      console.log("Fetching recipes for household:", householdId);
+      // First get the user's current household
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        setPrivateRecipes([]);
+        setPublicRecipes([]);
+        setLoading(false);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', session.user.id)
+        .single();
+
+      console.log("User profile with current household:", profile);
+      const currentHouseholdId = profile?.current_household;
       
-      if (householdId) {
+      if (currentHouseholdId) {
         // Fetch all household recipes
         const { data: householdRecipes, error: privateError } = await supabase
           .from('recipes')
@@ -23,7 +39,7 @@ export const useRecipes = (householdId: string | null) => {
             recipe_ingredients (id, ingredient, amount, unit),
             recipe_steps (id, step_number, description)
           `)
-          .eq('household_id', householdId)
+          .eq('household_id', currentHouseholdId)
           .order('created_at', { ascending: false });
 
         if (privateError) {
@@ -32,50 +48,34 @@ export const useRecipes = (householdId: string | null) => {
         }
         console.log("Household recipes fetched:", householdRecipes);
         setPrivateRecipes(householdRecipes || []);
-
-        // Set public recipes - include all public recipes from any household
-        const { data: allPublicRecipes, error: publicError } = await supabase
-          .from('recipes')
-          .select(`
-            *,
-            recipe_tags (tag),
-            recipe_ingredients (id, ingredient, amount, unit),
-            recipe_steps (id, step_number, description)
-          `)
-          .eq('is_public', true)
-          .order('created_at', { ascending: false });
-
-        if (publicError) {
-          console.error('Error fetching public recipes:', publicError);
-          throw publicError;
-        }
-        console.log("Public recipes fetched:", allPublicRecipes);
-        setPublicRecipes(allPublicRecipes || []);
       } else {
-        // If no household, only show public recipes
-        const { data: publicRecipesData, error: publicError } = await supabase
-          .from('recipes')
-          .select(`
-            *,
-            recipe_tags (tag),
-            recipe_ingredients (id, ingredient, amount, unit),
-            recipe_steps (id, step_number, description)
-          `)
-          .eq('is_public', true)
-          .order('created_at', { ascending: false });
-
-        if (publicError) {
-          console.error('Error fetching public recipes:', publicError);
-          throw publicError;
-        }
-        setPublicRecipes(publicRecipesData || []);
         setPrivateRecipes([]);
       }
+
+      // Fetch public recipes
+      const { data: allPublicRecipes, error: publicError } = await supabase
+        .from('recipes')
+        .select(`
+          *,
+          recipe_tags (tag),
+          recipe_ingredients (id, ingredient, amount, unit),
+          recipe_steps (id, step_number, description)
+        `)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
+
+      if (publicError) {
+        console.error('Error fetching public recipes:', publicError);
+        throw publicError;
+      }
+      console.log("Public recipes fetched:", allPublicRecipes);
+      setPublicRecipes(allPublicRecipes || []);
+      
     } catch (error) {
       console.error('Error fetching recipes:', error);
       toast({
         title: "Error",
-        description: "Kunne ikke laste oppskrifter. Vennligst prøv igjen.",
+        description: "Could not load recipes. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -85,7 +85,7 @@ export const useRecipes = (householdId: string | null) => {
 
   useEffect(() => {
     fetchRecipes();
-  }, [householdId]);
+  }, []);
 
   return {
     privateRecipes,

@@ -678,6 +678,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_user_household_access: {
+        Args: {
+          recipe_household_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

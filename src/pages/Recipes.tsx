@@ -12,32 +12,31 @@ import { useRecipes } from "@/hooks/use-recipes";
 const Recipes = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"private" | "public">("private");
-  
-  const { privateRecipes, publicRecipes, loading, refetch } = useRecipes(currentHouseholdId);
+  const { privateRecipes, publicRecipes, loading } = useRecipes();
+  const [hasHousehold, setHasHousehold] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkUser = async () => {
+    const checkHouseholdMembership = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/");
-      } else {
-        const { data: householdMember } = await supabase
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', session.user.id)
+          .single();
+
+        const { data: householdMemberships } = await supabase
           .from('household_members')
           .select('household_id')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
+          .eq('user_id', session.user.id);
 
-        console.log("Current household member:", householdMember);
-        if (householdMember) {
-          setCurrentHouseholdId(householdMember.household_id);
-        }
+        setHasHousehold(householdMemberships && householdMemberships.length > 0);
       }
     };
-    
-    checkUser();
-  }, [navigate]);
+
+    checkHouseholdMembership();
+  }, []);
 
   return (
     <div className="min-h-screen bg-cream pb-16">
@@ -67,9 +66,9 @@ const Recipes = () => {
               <TabsTrigger value="public" className="text-forest text-sm h-[42px]">All Recipes</TabsTrigger>
             </TabsList>
             <TabsContent value="private" className="w-full">
-              {!currentHouseholdId ? (
+              {!hasHousehold ? (
                 <div className="text-center py-8 text-forest">
-                  Join a household to start adding your own recipes!
+                  Join or select a household to start adding your own recipes!
                 </div>
               ) : privateRecipes.length === 0 ? (
                 <div className="text-center py-8 text-forest">
