@@ -59,11 +59,9 @@ export const ShoppingListItems = ({
       {/* Render unchecked items grouped by store */}
       {Object.entries(sortedGroups).map(([store, storeItems]) => (
         <div key={store} className="space-y-2">
-          {store !== 'Any Store' && (
-            <h3 className="text-sm font-medium text-forest/80 pl-2">
-              {store}
-            </h3>
-          )}
+          <h3 className="text-sm font-medium text-forest/80 pl-2">
+            {store}
+          </h3>
           {storeItems.map((item) => (
             <ShoppingListItem
               key={item.id}
