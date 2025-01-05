@@ -97,7 +97,7 @@ export const ShoppingListItem = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mt-1">
+      <div className="flex items-center gap-2 mt-1 justify-end">
         <Button
           variant="ghost"
           size="sm"
