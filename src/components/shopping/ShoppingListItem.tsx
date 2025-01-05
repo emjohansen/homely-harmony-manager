@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -98,18 +99,44 @@ export const ShoppingListItem = ({
       </div>
 
       <div className="flex items-center gap-2 mt-1 justify-end">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowPriceInput(true)}
-          className="shrink-0"
-        >
-          {item.price ? (
-            <span className="text-sm">{item.price} kr</span>
-          ) : (
-            <DollarSign className="h-4 w-4" />
-          )}
-        </Button>
+        {showPriceInput ? (
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-24 h-8"
+              placeholder="Price"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handlePriceSubmit();
+                }
+              }}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handlePriceSubmit}
+              className="h-8 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90 shrink-0"
+            >
+              Save
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowPriceInput(true)}
+            className="shrink-0 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+          >
+            {item.price ? (
+              <span className="text-sm">{item.price} kr</span>
+            ) : (
+              <DollarSign className="h-4 w-4" />
+            )}
+          </Button>
+        )}
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
