@@ -11,15 +11,16 @@ const Index = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const { data: householdMemberships } = await supabase
-          .from('household_members')
-          .select('household_id')
-          .eq('user_id', session.user.id);
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username, current_household')
+          .eq('id', session.user.id)
+          .single();
 
-        if (householdMemberships && householdMemberships.length > 0) {
+        if (profile?.username && profile?.current_household) {
           navigate("/recipes");
         } else {
-          navigate("/settings");
+          navigate("/onboarding");
         }
       }
     };
@@ -28,15 +29,16 @@ const Index = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        const { data: householdMemberships } = await supabase
-          .from('household_members')
-          .select('household_id')
-          .eq('user_id', session.user.id);
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username, current_household')
+          .eq('id', session.user.id)
+          .single();
 
-        if (householdMemberships && householdMemberships.length > 0) {
+        if (profile?.username && profile?.current_household) {
           navigate("/recipes");
         } else {
-          navigate("/settings");
+          navigate("/onboarding");
         }
       }
     });

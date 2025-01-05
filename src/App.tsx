@@ -13,6 +13,7 @@ import Reminders from "@/pages/Reminders";
 import Storage from "@/pages/Storage";
 import Settings from "@/pages/Settings";
 import MealPlanner from "@/pages/MealPlanner";
+import Onboarding from "@/pages/Onboarding";
 import RequireHousehold from "@/components/household/RequireHousehold";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route
           path="/dashboard"
           element={
