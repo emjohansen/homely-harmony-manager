@@ -53,11 +53,11 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
   };
 
   return (
-    <Card className="bg-sage p-4 space-y-4">
+    <Card className="border-2 border-sage p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-cream">{list.name}</h3>
-          <p className="text-sm text-cream/80">
+          <h3 className="text-lg font-semibold text-forest">{list.name}</h3>
+          <p className="text-sm text-forest/80">
             Created {formatDistanceToNow(new Date(list.created_at))} ago
           </p>
         </div>
