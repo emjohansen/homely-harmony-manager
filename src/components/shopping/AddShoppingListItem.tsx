@@ -32,6 +32,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   const [customStores, setCustomStores] = useState<string[]>([]);
   const [allStores, setAllStores] = useState<string[]>(DEFAULT_STORES);
   const [newCustomStore, setNewCustomStore] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -94,6 +95,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
       setCustomStores(updatedStores);
       setAllStores([...DEFAULT_STORES, ...updatedStores]);
       setNewCustomStore("");
+      setIsDialogOpen(false);
       toast({
         title: "Success",
         description: "Custom store added successfully",
@@ -144,12 +146,17 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
                 {store}
               </SelectItem>
             ))}
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
                   type="button"
                   variant="ghost" 
                   className="w-full justify-start text-left px-2 py-1.5 text-sm mt-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsDialogOpen(true);
+                  }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add store
