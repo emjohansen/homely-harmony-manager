@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
@@ -9,12 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AddShoppingListItemProps {
   onAddItem: (item: string, quantity: string, store: string) => void;
 }
 
-const STORES = [
+const DEFAULT_STORES = [
   "REMA 1000",
   "COOP",
   "KIWI",
@@ -27,6 +28,32 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   const [newItem, setNewItem] = useState("");
   const [newQuantity, setNewQuantity] = useState("1");
   const [newStore, setNewStore] = useState("Any Store");
+  const [customStores, setCustomStores] = useState<string[]>([]);
+  const [allStores, setAllStores] = useState<string[]>(DEFAULT_STORES);
+
+  useEffect(() => {
+    fetchCustomStores();
+  }, []);
+
+  const fetchCustomStores = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('custom_stores')
+      .eq('id', user.id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching custom stores:', error);
+      return;
+    }
+
+    const userCustomStores = data.custom_stores || [];
+    setCustomStores(userCustomStores);
+    setAllStores([...DEFAULT_STORES, ...userCustomStores]);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +86,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
             <SelectValue placeholder="Select store" />
           </SelectTrigger>
           <SelectContent className="bg-[#efffed]">
-            {STORES.map((store) => (
+            {allStores.map((store) => (
               <SelectItem key={store} value={store}>
                 {store}
               </SelectItem>
