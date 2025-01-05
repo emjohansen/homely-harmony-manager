@@ -59,7 +59,7 @@ export const RecipeContent = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-3 space-y-4 mx-auto max-w-2xl">
+    <div className="bg-mint rounded-lg p-4 space-y-4 mx-auto max-w-2xl">
       {canEdit && isEditing && (
         <div className="mb-2">
           <RecipeVisibility
@@ -70,7 +70,7 @@ export const RecipeContent = ({
       )}
 
       {recipe.image_url && (
-        <div className="relative w-full h-[250px] rounded-lg overflow-hidden -mt-1 -mx-3">
+        <div className="relative w-full h-[250px] rounded-lg overflow-hidden">
           <img
             src={recipe.image_url}
             alt={recipe.title}
@@ -79,11 +79,11 @@ export const RecipeContent = ({
         </div>
       )}
       
-      <div className="space-y-0 text-center">
-        <h1 className="text-xl font-bold text-foreground break-words whitespace-pre-wrap">
+      <div className="space-y-2">
+        <h1 className="text-xl font-semibold text-forest break-words whitespace-pre-wrap">
           {recipe.title.length > 30 ? `${recipe.title.slice(0, 30)}\n${recipe.title.slice(30)}` : recipe.title}
         </h1>
-        <p className="text-sm text-foreground">
+        <p className="text-sm text-forest">
           {recipe.description}
         </p>
         <RecipeTagsDisplay tags={recipe.recipe_tags || []} />
