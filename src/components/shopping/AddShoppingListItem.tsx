@@ -20,13 +20,13 @@ const STORES = [
   "KIWI",
   "SPAR",
   "EUROPRIS",
-  "Any Store"
+  "unspecified"
 ];
 
 export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => {
   const [newItem, setNewItem] = useState("");
   const [newQuantity, setNewQuantity] = useState("");
-  const [newStore, setNewStore] = useState("Any Store");
+  const [newStore, setNewStore] = useState("unspecified");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
     onAddItem(newItem, newQuantity, newStore);
     setNewItem("");
     setNewQuantity("");
-    setNewStore("Any Store");
+    setNewStore("unspecified");
   };
 
   return (
