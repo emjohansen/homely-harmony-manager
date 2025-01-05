@@ -57,7 +57,7 @@ export const RecipeFilters = ({
         <div className="mb-6">
           <Accordion type="single" collapsible className="w-full space-y-2">
             {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-              <AccordionItem key={key} value={key} className="border rounded-lg shadow-sm">
+              <AccordionItem key={key} value={key} className="border border-[#9dbc98] rounded-lg shadow-sm">
                 <AccordionTrigger className="px-4">
                   <span className="text-sm font-semibold text-forest">{category.label}</span>
                 </AccordionTrigger>
