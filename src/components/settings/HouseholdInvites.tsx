@@ -135,6 +135,16 @@ export const HouseholdInvites = () => {
         description: "Invitation accepted successfully",
       });
 
+      // Update current household in profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ current_household: householdId })
+        .eq('id', user.id);
+
+      if (profileError) {
+        console.error('Error updating current household:', profileError);
+      }
+
       // Refresh invites list
       fetchInvites();
     } catch (error: any) {
