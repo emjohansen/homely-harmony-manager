@@ -53,7 +53,7 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
   };
 
   return (
-    <Card className="border-2 border-sage p-4 space-y-4">
+    <Card className="border border-sage p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-forest">{list.name}</h3>
