@@ -1,4 +1,4 @@
-import { Utensils, ShoppingCart, Refrigerator, Menu, Calendar, Settings } from "lucide-react";
+import { Utensils, ShoppingCart, Refrigerator, Menu, Calendar, Settings, ClipboardList, Bell } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -18,7 +18,9 @@ const Navigation = () => {
   ];
 
   const menuItems = [
-    { path: "/settings", icon: Settings, label: "Settings" },
+    { path: "/chores", icon: ClipboardList, label: "Chores" },
+    { path: "/reminders", icon: Bell, label: "Reminders" },
+    { path: "/settings", icon: Settings, label: "Profile & Settings" },
   ];
 
   const NavigationButton = ({ path, Icon, label }: { path: string; Icon: any; label: string }) => (
