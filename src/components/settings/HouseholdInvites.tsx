@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { House } from "lucide-react";
+import { House, CheckCircle, AlertCircle } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -88,10 +88,9 @@ export const HouseholdInvites = () => {
         .select('household_id')
         .eq('household_id', householdId)
         .eq('user_id', user.id)
-        .maybeSingle(); // Changed from .single() to .maybeSingle()
+        .single();
 
-      if (memberCheckError) {
-        console.error('Error checking membership:', memberCheckError);
+      if (memberCheckError && memberCheckError.code !== 'PGRST116') {
         throw memberCheckError;
       }
 
@@ -129,16 +128,6 @@ export const HouseholdInvites = () => {
           .update({ status: 'pending' })
           .eq('id', inviteId);
         throw memberError;
-      }
-
-      // Update current household in profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ current_household: householdId })
-        .eq('id', user.id);
-
-      if (profileError) {
-        console.error('Error updating current household:', profileError);
       }
 
       toast({
