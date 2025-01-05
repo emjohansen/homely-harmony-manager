@@ -37,6 +37,25 @@ export default function HouseholdManager() {
         return;
       }
 
+      // Verify user is still a member of the household
+      const { data: membership } = await supabase
+        .from("household_members")
+        .select("household_id")
+        .eq("user_id", user.id)
+        .eq("household_id", profile.current_household)
+        .single();
+
+      if (!membership) {
+        console.log("User is no longer a member of their current household");
+        // Reset current_household in profile
+        await supabase
+          .from("profiles")
+          .update({ current_household: null })
+          .eq("id", user.id);
+        setIsLoading(false);
+        return;
+      }
+
       // Get household details
       const { data: household } = await supabase
         .from("households")

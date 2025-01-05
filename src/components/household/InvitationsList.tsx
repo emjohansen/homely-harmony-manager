@@ -54,21 +54,31 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       console.log('Formatted households:', formattedHouseholds);
       setHouseholds(formattedHouseholds);
+
+      // Get user's current household from profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', userId)
+        .single();
+
+      console.log('Current household from profile:', profile?.current_household);
       
-      // Get the stored household ID
-      const storedHouseholdId = localStorage.getItem('currentHouseholdId');
-      
-      // If there's a stored ID and it exists in the households list, use it
-      const storedHousehold = formattedHouseholds.find(h => h.id === storedHouseholdId);
-      if (storedHouseholdId && storedHousehold) {
-        console.log('Setting stored household as current:', storedHousehold);
-        setCurrentHousehold(storedHousehold);
+      // If there's a current household in profile and it exists in memberships
+      if (profile?.current_household && formattedHouseholds.some(h => h.id === profile.current_household)) {
+        const currentHouse = formattedHouseholds.find(h => h.id === profile.current_household);
+        console.log('Setting current household from profile:', currentHouse);
+        setCurrentHousehold(currentHouse);
       } 
-      // Otherwise, if we have households but no current one, select the first one
-      else if (!currentHousehold && formattedHouseholds.length > 0) {
+      // If no current household or invalid, set to first available household
+      else if (formattedHouseholds.length > 0) {
         console.log('Setting first household as current:', formattedHouseholds[0]);
         setCurrentHousehold(formattedHouseholds[0]);
-        localStorage.setItem('currentHouseholdId', formattedHouseholds[0].id);
+        // Update profile with new current household
+        await supabase
+          .from('profiles')
+          .update({ current_household: formattedHouseholds[0].id })
+          .eq('id', userId);
       }
     } catch (error) {
       console.error('Error fetching households:', error);
@@ -144,6 +154,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       if (!invite) return;
 
+      // Add user to household members
       const { error: memberError } = await supabase
         .from('household_members')
         .insert({
@@ -154,6 +165,7 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       if (memberError) throw memberError;
 
+      // Update invite status
       const { error: updateError } = await supabase
         .from('household_invites')
         .update({ status: 'accepted' })
@@ -161,16 +173,28 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
 
       if (updateError) throw updateError;
 
+      // Update user's current household
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ 
+          current_household: invite.household_id,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', currentUser.id);
+
+      if (profileError) throw profileError;
+
       toast({
         title: "Success",
         description: "You have joined the household",
       });
 
+      // Refresh the page to update all states
+      window.location.reload();
+
       if (onInviteAccepted) {
         onInviteAccepted();
       }
-
-      fetchInvitations();
     } catch (error) {
       console.error('Error accepting invite:', error);
       toast({
