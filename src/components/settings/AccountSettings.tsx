@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,25 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   const [nickname, setNickname] = useState(initialNickname);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchNickname = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.username) {
+        setNickname(profile.username);
+      }
+    };
+
+    fetchNickname();
+  }, []);
 
   const handleUpdateNickname = async () => {
     setIsLoading(true);
