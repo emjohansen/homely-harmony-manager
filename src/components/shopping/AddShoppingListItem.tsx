@@ -100,6 +100,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
         title: "Success",
         description: "Custom store added successfully",
       });
+      window.location.reload();
     } catch (error) {
       console.error('Error adding custom store:', error);
       toast({
@@ -151,7 +152,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
                 <Button 
                   type="button"
                   variant="ghost" 
-                  className="w-full justify-start text-left px-2 py-1.5 text-sm mt-2"
+                  className="w-full justify-start text-left px-2 py-1.5 text-sm"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -182,7 +183,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
           </SelectContent>
         </Select>
       </div>
-      <Button type="submit" className="w-full bg-sage hover:bg-sage/90 mt-2">
+      <Button type="submit" className="w-full bg-sage hover:bg-sage/90">
         <Plus className="h-4 w-4" />
       </Button>
     </form>
