@@ -15,7 +15,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2, DollarSign } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 
 interface ShoppingListItemProps {
   item: {
@@ -91,10 +90,7 @@ export const ShoppingListItem = ({
           </div>
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div>
-              Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
-              <div className="text-[10px] text-gray-400">
-                {formatDate(new Date(item.added_at))}
-              </div>
+              Added by {item.added_by} - {formatDate(new Date(item.added_at))}
             </div>
             <div className="flex items-center gap-2">
               {showPriceInput ? (
