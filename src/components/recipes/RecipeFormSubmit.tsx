@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRecipeOperations } from "@/hooks/use-recipe-operations";
 
 interface RecipeFormSubmitProps {
@@ -23,27 +23,7 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
   const recipeOperations = useRecipeOperations();
-
-  useEffect(() => {
-    const fetchHouseholdId = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data: householdMember } = await supabase
-          .from('household_members')
-          .select('household_id')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-
-        if (householdMember) {
-          setCurrentHouseholdId(householdMember.household_id);
-        }
-      }
-    };
-
-    fetchHouseholdId();
-  }, []);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,17 +56,24 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
         });
         return;
       }
-      
-      if (!currentHouseholdId) {
+
+      // Fetch user's current household from profile
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profileError || !profile?.current_household) {
         toast({
           title: "Feil",
-          description: "Du må være medlem av en husholdning for å opprette oppskrifter",
+          description: "Du må velge en aktiv husholdning for å opprette oppskrifter",
           variant: "destructive",
         });
         return;
       }
 
-      console.log("Submitting recipe with household:", currentHouseholdId);
+      console.log("Creating recipe with household:", profile.current_household);
 
       const recipeData = {
         title: formData.title,
@@ -95,7 +82,7 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
         preparation_time: formData.prepTime,
         is_public: formData.isPublic,
         created_by: session.user.id,
-        household_id: currentHouseholdId,
+        household_id: profile.current_household,
       };
 
       if (mode === 'create') {
