@@ -11,7 +11,11 @@ interface ShoppingList {
   created_at: string;
   created_by: string;
   archived_at?: string | null;
+  archived_by?: string | null;
   creator?: {
+    username: string | null;
+  };
+  archiver?: {
     username: string | null;
   };
 }
@@ -31,7 +35,8 @@ export const ShoppingLists = ({ lists, onListsChange }: ShoppingListsProps) => {
         .from('shopping_lists')
         .update({
           status: 'archived',
-          archived_at: new Date().toISOString()
+          archived_at: new Date().toISOString(),
+          archived_by: (await supabase.auth.getUser()).data.user?.id
         })
         .eq('id', id);
 

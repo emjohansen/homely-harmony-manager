@@ -12,7 +12,11 @@ interface ShoppingListCardProps {
     created_at: string;
     created_by: string;
     archived_at: string | null;
+    archived_by?: string | null;
     creator?: {
+      username: string | null;
+    };
+    archiver?: {
       username: string | null;
     };
   };
@@ -63,7 +67,9 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
             </div>
             {list.status === "archived" && list.archived_at && (
               <div>
-                <p className="text-sm text-forest/80">Archived</p>
+                <p className="text-sm text-forest/80">
+                  Archived by {list.archiver?.username || "Unknown"}
+                </p>
                 <p className="text-xs text-forest/60">({formatDate(list.archived_at)})</p>
               </div>
             )}
