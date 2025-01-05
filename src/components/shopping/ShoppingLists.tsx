@@ -10,7 +10,7 @@ interface ShoppingList {
   status: string;
   created_at: string;
   created_by: string;
-  archived_at?: string | null;
+  archived_at: string | null;
   archived_by?: string | null;
   creator?: {
     username: string | null;
