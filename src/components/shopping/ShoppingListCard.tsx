@@ -57,13 +57,15 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-forest">{list.name}</h3>
           <div className="space-y-1">
-            <p className="text-sm text-forest/80">
-              Created by {list.creator?.username || "Unknown"} on {formatDate(list.created_at)}
-            </p>
+            <div>
+              <p className="text-sm text-forest/80">Created by {list.creator?.username || "Unknown"}</p>
+              <p className="text-xs text-forest/60">({formatDate(list.created_at)})</p>
+            </div>
             {list.status === "archived" && list.archived_at && (
-              <p className="text-sm text-forest/80">
-                Archived on {formatDate(list.archived_at)}
-              </p>
+              <div>
+                <p className="text-sm text-forest/80">Archived</p>
+                <p className="text-xs text-forest/60">({formatDate(list.archived_at)})</p>
+              </div>
             )}
           </div>
         </div>
