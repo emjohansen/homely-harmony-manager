@@ -43,6 +43,8 @@ export const HouseholdManagement = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      console.log('Creating new household with name:', newHouseholdName);
+
       const { data: household, error: createError } = await supabase
         .from('households')
         .insert([{ name: newHouseholdName, created_by: user.id }])
@@ -50,6 +52,8 @@ export const HouseholdManagement = ({
         .single();
 
       if (createError) throw createError;
+
+      console.log('Created household:', household);
 
       const { error: memberError } = await supabase
         .from('household_members')
@@ -92,13 +96,17 @@ export const HouseholdManagement = ({
             currentHousehold={currentHousehold}
             onHouseholdSelect={onHouseholdSelect}
           />
-          <InviteMemberButton householdId={currentHousehold?.id || null} />
-          <div className="mt-4">
-            <HouseholdMembers 
-              householdId={currentHousehold?.id || null}
-              onMemberRemoved={onHouseholdsChange}
-            />
-          </div>
+          {currentHousehold && (
+            <>
+              <InviteMemberButton householdId={currentHousehold.id} />
+              <div className="mt-4">
+                <HouseholdMembers 
+                  householdId={currentHousehold.id}
+                  onMemberRemoved={onHouseholdsChange}
+                />
+              </div>
+            </>
+          )}
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

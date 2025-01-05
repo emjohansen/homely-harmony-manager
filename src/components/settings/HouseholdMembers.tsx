@@ -17,7 +17,7 @@ interface Member {
 }
 
 interface HouseholdMembersProps {
-  householdId: string | null;
+  householdId: string;
   onMemberRemoved: () => void;
 }
 
@@ -34,8 +34,6 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
   }, [householdId]);
 
   const fetchMembers = async () => {
-    if (!householdId) return;
-
     try {
       setIsLoading(true);
       setError(null);
@@ -58,6 +56,11 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
       }
 
       console.log('Fetched members data:', data);
+
+      if (!data) {
+        setMembers([]);
+        return;
+      }
 
       const formattedMembers = data.map(member => ({
         id: member.user_id,
@@ -110,8 +113,6 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
       });
     }
   };
-
-  if (!householdId) return null;
 
   return (
     <Accordion type="single" collapsible className="w-full">
