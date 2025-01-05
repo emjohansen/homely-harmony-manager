@@ -53,7 +53,7 @@ export const ShoppingListItem = ({
   return (
     <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
       <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
-        {item.store && item.store !== 'unspecified' && (
+        {item.store && item.store !== 'an' && (
           <Badge 
             variant="secondary" 
             className="bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"

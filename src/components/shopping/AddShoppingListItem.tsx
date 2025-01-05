@@ -20,7 +20,7 @@ const STORES = [
   "KIWI",
   "SPAR",
   "EUROPRIS",
-  "unspecified"
+  "an"
 ];
 
 export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => {
