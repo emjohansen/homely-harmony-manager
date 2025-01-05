@@ -45,7 +45,10 @@ const Recipes = () => {
         style={{
           backgroundImage: 'url("/lovable-uploads/7e24e64e-7cc7-4287-8a2e-41e46382fd65.png")',
           backgroundSize: 'cover',
-          backgroundPosition: 'bottom center'
+          backgroundPosition: 'bottom center',
+          '@media (min-width: 768px)': {
+            backgroundPosition: 'top center'
+          }
         }}
       >
         <Utensils className="absolute opacity-10 h-64 w-64 text-cream transform -translate-y-8" />
