@@ -27,7 +27,7 @@ const DEFAULT_STORES = ["Any Store"];
 
 export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => {
   const [newItem, setNewItem] = useState("");
-  const [newQuantity, setNewQuantity] = useState("1");
+  const [newQuantity, setNewQuantity] = useState("");
   const [newStore, setNewStore] = useState("Any Store");
   const [customStores, setCustomStores] = useState<string[]>([]);
   const [allStores, setAllStores] = useState<string[]>(DEFAULT_STORES);
@@ -114,7 +114,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
     
     onAddItem(newItem, newQuantity, newStore);
     setNewItem("");
-    setNewQuantity("1");
+    setNewQuantity("");
     setNewStore("Any Store");
   };
 
@@ -125,17 +125,17 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
           placeholder="Add new item..."
           value={newItem}
           onChange={(e) => setNewItem(e.target.value)}
-          className="flex-1"
+          className="flex-1 border-sage border"
         />
         <Input
           type="number"
           placeholder="Qty"
           value={newQuantity}
           onChange={(e) => setNewQuantity(e.target.value)}
-          className="w-16"
+          className="w-16 border-sage border"
         />
         <Select value={newStore} onValueChange={setNewStore}>
-          <SelectTrigger className="w-32">
+          <SelectTrigger className="w-32 border-sage border">
             <SelectValue placeholder="Select store" />
           </SelectTrigger>
           <SelectContent className="bg-[#efffed]">
