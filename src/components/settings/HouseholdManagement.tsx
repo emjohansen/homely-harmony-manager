@@ -43,18 +43,20 @@ export const HouseholdManagement = ({
             <>
               <div className="flex gap-2 mt-2">
                 <InviteMemberButton householdId={currentHousehold.id} />
-                {isAdmin && (
-                  <DeleteHouseholdDialog 
-                    household={currentHousehold}
-                    onDelete={onHouseholdsChange}
-                  />
-                )}
               </div>
               <div className="mt-4">
                 <HouseholdMembers 
                   householdId={currentHousehold.id}
                   onMemberRemoved={onHouseholdsChange}
                 />
+                {isAdmin && (
+                  <div className="mt-4">
+                    <DeleteHouseholdDialog 
+                      household={currentHousehold}
+                      onDelete={onHouseholdsChange}
+                    />
+                  </div>
+                )}
               </div>
             </>
           )}
