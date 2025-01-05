@@ -22,7 +22,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
           />
         </div>
       )}
-      <h3 className="font-semibold text-forest truncate">{recipe.title}</h3>
+      <h3 className="font-semibold text-forest break-words whitespace-pre-wrap">{recipe.title.length > 30 ? `${recipe.title.slice(0, 30)}\n${recipe.title.slice(30)}` : recipe.title}</h3>
       {recipe.description && (
         <p className="text-sm text-forest mt-1 line-clamp-2">{recipe.description}</p>
       )}
