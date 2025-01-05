@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ShoppingListItem } from "@/components/shopping/ShoppingListItem";
 import { ShoppingListHeader } from "@/components/shopping/ShoppingListHeader";
 import { AddShoppingListItem } from "@/components/shopping/AddShoppingListItem";
+import { ShoppingListItems } from "@/components/shopping/ShoppingListItems";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 
@@ -177,21 +178,13 @@ const ShoppingListDetail = () => {
         
         <AddShoppingListItem onAddItem={handleAddItem} />
 
-        <div className="space-y-2">
-          {items.map((item) => (
-            <ShoppingListItem
-              key={item.id}
-              item={{
-                ...item,
-                added_by: item.adder?.username || 'Unknown',
-              }}
-              onToggle={handleToggleItem}
-              onDelete={handleDeleteItem}
-              onUpdateStore={handleUpdateStore}
-              onUpdatePrice={handleUpdatePrice}
-            />
-          ))}
-        </div>
+        <ShoppingListItems
+          items={items}
+          onToggle={handleToggleItem}
+          onDelete={handleDeleteItem}
+          onUpdateStore={handleUpdateStore}
+          onUpdatePrice={handleUpdatePrice}
+        />
       </div>
 
       <Navigation />
