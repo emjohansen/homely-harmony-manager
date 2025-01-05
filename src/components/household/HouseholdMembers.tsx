@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { UserMinus } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Trash2 } from "lucide-react";
 
 interface Member {
-  user_id: string;
+  id: string;
+  username: string | null;
+  avatar_url: string | null;
   role: string;
-  profiles: {
-    username: string;
-  };
 }
 
 interface HouseholdMembersProps {
@@ -29,26 +29,41 @@ export default function HouseholdMembers({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    };
+
+    getCurrentUser();
     fetchMembers();
   }, [householdId]);
 
   const fetchMembers = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      setCurrentUserId(user.id);
-
       const { data, error } = await supabase
         .from("household_members")
         .select(`
           user_id,
           role,
-          profiles (username)
+          profiles:user_id (
+            username,
+            avatar_url
+          )
         `)
         .eq("household_id", householdId);
 
       if (error) throw error;
-      setMembers(data || []);
+
+      const formattedMembers = data.map((member: any) => ({
+        id: member.user_id,
+        username: member.profiles.username,
+        avatar_url: member.profiles.avatar_url,
+        role: member.role,
+      }));
+
+      setMembers(formattedMembers);
     } catch (error) {
       console.error("Error fetching members:", error);
     } finally {
@@ -56,19 +71,19 @@ export default function HouseholdMembers({
     }
   };
 
-  const handleRemoveMember = async (userId: string) => {
+  const removeMember = async (memberId: string) => {
     try {
       const { error } = await supabase
         .from("household_members")
         .delete()
         .eq("household_id", householdId)
-        .eq("user_id", userId);
+        .eq("user_id", memberId);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Member removed successfully",
+        description: "Member removed from household",
       });
 
       fetchMembers();
@@ -85,8 +100,9 @@ export default function HouseholdMembers({
     }
   };
 
-  const handleLeaveHousehold = async () => {
+  const leaveHousehold = async () => {
     try {
+      // Remove from household_members
       const { error } = await supabase
         .from("household_members")
         .delete()
@@ -94,6 +110,17 @@ export default function HouseholdMembers({
         .eq("user_id", currentUserId);
 
       if (error) throw error;
+
+      // Clear current_household in profiles
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ current_household: null })
+        .eq("id", currentUserId);
+
+      if (updateError) throw updateError;
+
+      // Clear localStorage
+      localStorage.removeItem('currentHouseholdId');
 
       toast({
         title: "Success",
@@ -103,9 +130,6 @@ export default function HouseholdMembers({
       if (onMembershipChange) {
         onMembershipChange();
       }
-
-      // Refresh the page to update the UI
-      window.location.reload();
     } catch (error) {
       console.error("Error leaving household:", error);
       toast({
@@ -116,35 +140,48 @@ export default function HouseholdMembers({
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+    return <div>Loading members...</div>;
+  }
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Members</h2>
       <div className="space-y-2">
         {members.map((member) => (
-          <div key={member.user_id} className="flex items-center justify-between p-4 bg-white rounded-lg shadow">
-            <div>
-              <p className="font-medium">{member.profiles.username || "Unknown user"}</p>
-              <p className="text-sm text-gray-500">{member.role}</p>
+          <div
+            key={member.id}
+            className="flex items-center justify-between p-2 rounded-lg bg-gray-50"
+          >
+            <div className="flex items-center space-x-3">
+              <Avatar>
+                <AvatarImage src={member.avatar_url || undefined} />
+                <AvatarFallback>
+                  {member.username?.[0]?.toUpperCase() || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-medium">{member.username}</p>
+                <p className="text-sm text-gray-500 capitalize">{member.role}</p>
+              </div>
             </div>
-            {isAdmin && member.user_id !== currentUserId && (
+            {isAdmin && member.id !== currentUserId && (
               <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleRemoveMember(member.user_id)}
+                variant="ghost"
+                size="icon"
+                onClick={() => removeMember(member.id)}
               >
-                <UserMinus className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             )}
           </div>
         ))}
       </div>
-      {!isAdmin && (
+
+      {currentUserId && (
         <Button
           variant="destructive"
-          onClick={handleLeaveHousehold}
           className="w-full"
+          onClick={leaveHousehold}
         >
           Leave Household
         </Button>
