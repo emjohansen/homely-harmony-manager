@@ -119,8 +119,8 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed]">
-      <div className="flex items-center gap-2 !p-0">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-6 bg-[#efffed]">
+      <div className="flex items-center gap-2">
         <Input
           placeholder="Add new item..."
           value={newItem}
@@ -138,7 +138,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
           <SelectTrigger className="w-32 border-sage border">
             <SelectValue placeholder="Select store" />
           </SelectTrigger>
-          <SelectContent className="bg-[#efffed]">
+          <SelectContent className="bg-[#efffed] z-50">
             {allStores.map((store) => (
               <SelectItem key={store} value={store}>
                 {store}
@@ -149,7 +149,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
                 <Button 
                   type="button"
                   variant="ghost" 
-                  className="w-full justify-start text-left px-2 py-1.5 text-sm"
+                  className="w-full justify-start text-left px-2 py-1.5 text-sm mt-2"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Add store
@@ -175,7 +175,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
           </SelectContent>
         </Select>
       </div>
-      <Button type="submit" className="w-full bg-sage hover:bg-sage/90">
+      <Button type="submit" className="w-full bg-sage hover:bg-sage/90 mt-2">
         <Plus className="h-4 w-4" />
       </Button>
     </form>
