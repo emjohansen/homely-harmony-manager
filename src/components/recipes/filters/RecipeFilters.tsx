@@ -31,13 +31,13 @@ export const RecipeFilters = ({
       <div className="grid grid-cols-2 gap-0 w-full max-w-lg mx-auto">
         <Button
           onClick={() => setShowFilters(!showFilters)}
-          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-sage rounded-r-none"
+          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-[#9dbc98] rounded-r-none"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           onClick={onRandomRecipe}
-          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-sage rounded-l-none border-l-0"
+          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-[#9dbc98] rounded-l-none border-l-0"
         >
           Random Recipe
         </Button>
