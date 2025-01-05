@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,21 +33,11 @@ interface ShoppingListItemProps {
   onUpdateStore: (id: string, store: string) => void;
 }
 
-const STORES = [
-  "REMA 1000",
-  "COOP",
-  "KIWI",
-  "SPAR",
-  "EUROPRIS",
-  "unspecified"
-];
-
 export const ShoppingListItem = ({
   item,
   onToggle,
   onDelete,
   onUpdatePrice,
-  onUpdateStore,
 }: ShoppingListItemProps) => {
   const [showPriceInput, setShowPriceInput] = useState(false);
   const [price, setPrice] = useState(item.price?.toString() || "");
@@ -67,7 +51,15 @@ export const ShoppingListItem = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border">
+    <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
+      {item.store && item.store !== 'unspecified' && (
+        <Badge 
+          variant="secondary" 
+          className="absolute top-2 right-2 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+        >
+          {item.store}
+        </Badge>
+      )}
       <div className="flex items-start gap-3">
         <Checkbox
           checked={item.is_checked}
@@ -92,22 +84,6 @@ export const ShoppingListItem = ({
       </div>
 
       <div className="flex items-center gap-2 mt-1">
-        <Select
-          value={item.store || "unspecified"}
-          onValueChange={(value) => onUpdateStore(item.id, value)}
-        >
-          <SelectTrigger className="flex-1">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="bg-[#efffed]">
-            {STORES.map((store) => (
-              <SelectItem key={store} value={store}>
-                {store}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
         <Button
           variant="ghost"
           size="sm"
