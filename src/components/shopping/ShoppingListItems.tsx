@@ -27,7 +27,7 @@ export const ShoppingListItems = ({
 
     // Group unchecked items by store
     const uncheckedGrouped = uncheckedItems.reduce<GroupedItems>((groups, item) => {
-      const store = item.store || 'an';
+      const store = item.store || 'unspecified';
       if (!groups[store]) {
         groups[store] = [];
       }
