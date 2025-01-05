@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import { useNavigate } from "react-router-dom";
-import HouseholdManager from "@/components/household/HouseholdManager";
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -31,10 +30,6 @@ export default function Settings() {
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <HouseholdManager />
-          </div>
-
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">Account</h2>
             {userEmail && (
