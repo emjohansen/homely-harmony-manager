@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronDown, UserPlus, UserMinus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,16 +16,12 @@ interface HouseholdDropdownProps {
   households: Household[];
   currentHousehold: Household | null;
   onHouseholdSelect: (household: Household) => Promise<void>;
-  onInviteMember: () => void;
-  onLeaveHousehold: (householdId: string) => void;
 }
 
 export const HouseholdDropdown = ({
   households,
   currentHousehold,
   onHouseholdSelect,
-  onInviteMember,
-  onLeaveHousehold,
 }: HouseholdDropdownProps) => {
   return (
     <DropdownMenu>
@@ -39,32 +35,9 @@ export const HouseholdDropdown = ({
         {households.map((household) => (
           <DropdownMenuItem
             key={household.id}
-            className="flex items-center justify-between"
             onClick={() => onHouseholdSelect(household)}
           >
-            <span>{household.name}</span>
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onInviteMember();
-                }}
-              >
-                <UserPlus className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onLeaveHousehold(household.id);
-                }}
-              >
-                <UserMinus className="h-4 w-4" />
-              </Button>
-            </div>
+            {household.name}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

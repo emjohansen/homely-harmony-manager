@@ -13,6 +13,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { HouseholdDropdown } from "./HouseholdDropdown";
+import { InviteMemberButton } from "./InviteMemberButton";
+import { HouseholdMembers } from "./HouseholdMembers";
 
 interface Household {
   id: string;
@@ -34,9 +36,7 @@ export const HouseholdManagement = ({
 }: HouseholdManagementProps) => {
   const { toast } = useToast();
   const [newHouseholdName, setNewHouseholdName] = useState("");
-  const [inviteEmail, setInviteEmail] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
   const handleCreateHousehold = async () => {
     try {
@@ -79,67 +79,6 @@ export const HouseholdManagement = ({
     }
   };
 
-  const handleInviteMember = async (householdId: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
-      const { error } = await supabase
-        .from('household_invites')
-        .insert([{
-          household_id: householdId,
-          email: inviteEmail,
-          invited_by: user.id
-        }]);
-
-      if (error) throw error;
-
-      setInviteEmail("");
-      setIsInviteDialogOpen(false);
-      
-      toast({
-        title: "Success",
-        description: "Invitation sent successfully.",
-      });
-    } catch (error) {
-      console.error('Error sending invitation:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send invitation. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleLeaveHousehold = async (householdId: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
-      const { error } = await supabase
-        .from('household_members')
-        .delete()
-        .eq('household_id', householdId)
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-
-      onHouseholdsChange();
-      
-      toast({
-        title: "Success",
-        description: "Left household successfully.",
-      });
-    } catch (error) {
-      console.error('Error leaving household:', error);
-      toast({
-        title: "Error",
-        description: "Failed to leave household. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-lg font-semibold mb-4">Household Management</h2>
@@ -152,9 +91,14 @@ export const HouseholdManagement = ({
             households={households}
             currentHousehold={currentHousehold}
             onHouseholdSelect={onHouseholdSelect}
-            onInviteMember={() => setIsInviteDialogOpen(true)}
-            onLeaveHousehold={handleLeaveHousehold}
           />
+          <InviteMemberButton householdId={currentHousehold?.id || null} />
+          <div className="mt-4">
+            <HouseholdMembers 
+              householdId={currentHousehold?.id || null}
+              onMemberRemoved={onHouseholdsChange}
+            />
+          </div>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -164,7 +108,7 @@ export const HouseholdManagement = ({
               Create New Household
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-cream">
             <DialogHeader>
               <DialogTitle>Create New Household</DialogTitle>
             </DialogHeader>
@@ -180,34 +124,6 @@ export const HouseholdManagement = ({
               </div>
               <Button onClick={handleCreateHousehold} className="w-full">
                 Create Household
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Invite Member</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              <div>
-                <Label htmlFor="inviteEmail">Email Address</Label>
-                <Input
-                  id="inviteEmail"
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="Enter email address"
-                />
-              </div>
-              <Button
-                onClick={() =>
-                  currentHousehold && handleInviteMember(currentHousehold.id)
-                }
-                className="w-full"
-              >
-                Send Invitation
               </Button>
             </div>
           </DialogContent>
