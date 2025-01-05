@@ -15,19 +15,38 @@ export const CustomStores = () => {
   const [customStores, setCustomStores] = useState<string[]>([]);
   const [newStore, setNewStore] = useState("");
   const { toast } = useToast();
+  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCustomStores();
+    fetchCurrentHousehold();
   }, []);
 
-  const fetchCustomStores = async () => {
+  const fetchCurrentHousehold = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data, error } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('custom_stores')
+      .select('current_household')
       .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      console.error('Error fetching current household:', profileError);
+      return;
+    }
+
+    if (profile?.current_household) {
+      setCurrentHouseholdId(profile.current_household);
+      fetchCustomStores(profile.current_household);
+    }
+  };
+
+  const fetchCustomStores = async (householdId: string) => {
+    const { data, error } = await supabase
+      .from('households')
+      .select('custom_stores')
+      .eq('id', householdId)
       .single();
 
     if (error) {
@@ -35,21 +54,18 @@ export const CustomStores = () => {
       return;
     }
 
-    setCustomStores(data.custom_stores || []);
+    setCustomStores(data?.custom_stores || []);
   };
 
   const addCustomStore = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newStore.trim()) return;
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!newStore.trim() || !currentHouseholdId) return;
 
     const updatedStores = [...customStores, newStore.trim()];
     const { error } = await supabase
-      .from('profiles')
+      .from('households')
       .update({ custom_stores: updatedStores })
-      .eq('id', user.id);
+      .eq('id', currentHouseholdId);
 
     if (error) {
       console.error('Error adding custom store:', error);
@@ -70,14 +86,13 @@ export const CustomStores = () => {
   };
 
   const removeCustomStore = async (storeToRemove: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!currentHouseholdId) return;
 
     const updatedStores = customStores.filter(store => store !== storeToRemove);
     const { error } = await supabase
-      .from('profiles')
+      .from('households')
       .update({ custom_stores: updatedStores })
-      .eq('id', user.id);
+      .eq('id', currentHouseholdId);
 
     if (error) {
       console.error('Error removing custom store:', error);
@@ -98,7 +113,7 @@ export const CustomStores = () => {
 
   return (
     <Accordion type="single" collapsible className="w-full">
-      <AccordionItem value="stores">
+      <AccordionItem value="stores" className="border-[#9dbc98]">
         <AccordionTrigger>
           Custom Stores ({customStores.length})
         </AccordionTrigger>

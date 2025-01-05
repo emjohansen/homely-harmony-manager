@@ -179,18 +179,21 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          custom_stores: string[] | null
           id: string
           name: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
+          custom_stores?: string[] | null
           id?: string
           name: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
+          custom_stores?: string[] | null
           id?: string
           name?: string
         }
@@ -209,7 +212,6 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           current_household: string | null
-          custom_stores: string[] | null
           id: string
           updated_at: string
           username: string | null
@@ -218,7 +220,6 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           current_household?: string | null
-          custom_stores?: string[] | null
           id: string
           updated_at?: string
           username?: string | null
@@ -227,7 +228,6 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           current_household?: string | null
-          custom_stores?: string[] | null
           id?: string
           updated_at?: string
           username?: string | null
