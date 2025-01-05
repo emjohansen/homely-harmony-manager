@@ -1,85 +1,74 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { UserMinus } from "lucide-react";
 
-interface HouseholdMember {
+interface Member {
   user_id: string;
   role: string;
   profiles: {
-    username: string | null;
+    username: string;
   };
 }
 
 interface HouseholdMembersProps {
   householdId: string;
-  isCreator: boolean;
-  onMembershipChange: () => void;
+  isAdmin: boolean;
 }
 
-const HouseholdMembers = ({ householdId, isCreator, onMembershipChange }: HouseholdMembersProps) => {
-  const [members, setMembers] = useState<HouseholdMember[]>([]);
+export default function HouseholdMembers({ householdId, isAdmin }: HouseholdMembersProps) {
   const { toast } = useToast();
+  const [members, setMembers] = useState<Member[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMembers = async () => {
+    fetchMembers();
+  }, [householdId]);
+
+  const fetchMembers = async () => {
+    try {
       const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || null);
+      if (!user) return;
+      setCurrentUserId(user.id);
 
       const { data, error } = await supabase
-        .from('household_members')
+        .from("household_members")
         .select(`
           user_id,
           role,
-          profiles (
-            username
-          )
+          profiles (username)
         `)
-        .eq('household_id', householdId);
+        .eq("household_id", householdId);
 
-      if (error) {
-        console.error('Error fetching members:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not fetch household members",
-        });
-        return;
-      }
-
-      setMembers(data);
-    };
-
-    fetchMembers();
-  }, [householdId, toast]);
+      if (error) throw error;
+      setMembers(data || []);
+    } catch (error) {
+      console.error("Error fetching members:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleRemoveMember = async (userId: string) => {
     try {
-      console.log('Attempting to remove member:', userId, 'from household:', householdId);
-      
       const { error } = await supabase
-        .from('household_members')
+        .from("household_members")
         .delete()
-        .eq('household_id', householdId)
-        .eq('user_id', userId);
+        .eq("household_id", householdId)
+        .eq("user_id", userId);
 
-      if (error) {
-        console.error('Error removing member:', error);
-        throw error;
-      }
-
-      // Update the local state to remove the member
-      setMembers(members.filter(member => member.user_id !== userId));
+      if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Member removed from household",
+        description: "Member removed successfully",
       });
 
-      onMembershipChange();
+      fetchMembers();
     } catch (error) {
-      console.error('Error removing member:', error);
+      console.error("Error removing member:", error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -90,27 +79,23 @@ const HouseholdMembers = ({ householdId, isCreator, onMembershipChange }: Househ
 
   const handleLeaveHousehold = async () => {
     try {
-      console.log('Attempting to leave household:', householdId);
-      
       const { error } = await supabase
-        .from('household_members')
+        .from("household_members")
         .delete()
-        .eq('household_id', householdId)
-        .eq('user_id', currentUserId);
+        .eq("household_id", householdId)
+        .eq("user_id", currentUserId);
 
-      if (error) {
-        console.error('Error leaving household:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       toast({
         title: "Success",
         description: "You have left the household",
       });
 
-      onMembershipChange();
+      // Refresh the page to update the UI
+      window.location.reload();
     } catch (error) {
-      console.error('Error leaving household:', error);
+      console.error("Error leaving household:", error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -119,36 +104,39 @@ const HouseholdMembers = ({ householdId, isCreator, onMembershipChange }: Househ
     }
   };
 
+  if (isLoading) return <div>Loading...</div>;
+
   return (
-    <div className="space-y-2">
-      <h4 className="font-medium">Members</h4>
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold">Members</h2>
       <div className="space-y-2">
         {members.map((member) => (
-          <div key={member.user_id} className="flex justify-between items-center p-2 bg-cream rounded-lg">
-            <span>{member.profiles.username || 'Unknown user'}</span>
-            {isCreator && member.user_id !== currentUserId && (
+          <div key={member.user_id} className="flex items-center justify-between p-4 bg-white rounded-lg shadow">
+            <div>
+              <p className="font-medium">{member.profiles.username || "Unknown user"}</p>
+              <p className="text-sm text-gray-500">{member.role}</p>
+            </div>
+            {isAdmin && member.user_id !== currentUserId && (
               <Button
-                variant="destructive"
                 size="sm"
+                variant="outline"
                 onClick={() => handleRemoveMember(member.user_id)}
               >
-                Remove
+                <UserMinus className="h-4 w-4" />
               </Button>
             )}
           </div>
         ))}
       </div>
-      {!isCreator && (
+      {!isAdmin && (
         <Button
           variant="destructive"
-          className="mt-4"
           onClick={handleLeaveHousehold}
+          className="w-full"
         >
           Leave Household
         </Button>
       )}
     </div>
   );
-};
-
-export default HouseholdMembers;
+}
