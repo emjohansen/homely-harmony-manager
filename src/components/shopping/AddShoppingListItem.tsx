@@ -11,6 +11,13 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface AddShoppingListItemProps {
   onAddItem: (item: string, quantity: string, store: string) => void;
@@ -24,6 +31,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   const [newStore, setNewStore] = useState("Any Store");
   const [customStores, setCustomStores] = useState<string[]>([]);
   const [allStores, setAllStores] = useState<string[]>(DEFAULT_STORES);
+  const [newCustomStore, setNewCustomStore] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -54,6 +62,47 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
       toast({
         title: "Error",
         description: "Failed to load custom stores",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addCustomStore = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCustomStore.trim()) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const updatedStores = [...customStores, newCustomStore.trim()];
+      const { error } = await supabase
+        .from('profiles')
+        .update({ custom_stores: updatedStores })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error adding custom store:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add custom store",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setCustomStores(updatedStores);
+      setAllStores([...DEFAULT_STORES, ...updatedStores]);
+      setNewCustomStore("");
+      toast({
+        title: "Success",
+        description: "Custom store added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding custom store:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add custom store",
         variant: "destructive",
       });
     }
@@ -95,6 +144,34 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
                 {store}
               </SelectItem>
             ))}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button 
+                  type="button"
+                  variant="ghost" 
+                  className="w-full justify-start text-left px-2 py-1.5 text-sm"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add store
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#efffed]">
+                <DialogHeader>
+                  <DialogTitle>Add Custom Store</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={addCustomStore} className="flex gap-2">
+                  <Input
+                    placeholder="Store name..."
+                    value={newCustomStore}
+                    onChange={(e) => setNewCustomStore(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button type="submit" className="bg-[#9dbc98] hover:bg-[#9dbc98]/90">
+                    Add
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </SelectContent>
         </Select>
       </div>
