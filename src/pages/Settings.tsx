@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import { useNavigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
+import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
 
 interface Household {
   id: string;
@@ -113,6 +114,8 @@ export default function Settings() {
             onHouseholdSelect={handleSelectHousehold}
             onHouseholdsChange={fetchHouseholds}
           />
+
+          <HouseholdInvites />
 
           <Button 
             variant="destructive" 
