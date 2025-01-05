@@ -89,7 +89,8 @@ const Shopping = () => {
         .from('shopping_lists')
         .select(`
           *,
-          creator:profiles!shopping_lists_created_by_fkey (username)
+          creator:profiles!shopping_lists_created_by_fkey (username),
+          archiver:profiles!shopping_lists_archived_by_fkey (username)
         `)
         .eq('household_id', householdId)
         .order('created_at', { ascending: false });
@@ -110,44 +111,6 @@ const Shopping = () => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCreateList = async (name: string) => {
-    if (!currentHouseholdId) {
-      toast({
-        title: "Error",
-        description: "You must be part of a household to create a shopping list",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('shopping_lists')
-        .insert({
-          name,
-          household_id: currentHouseholdId,
-          created_by: user.id,
-          status: 'active'
-        });
-
-      if (error) throw error;
-      
-      if (currentHouseholdId) {
-        fetchShoppingLists(currentHouseholdId);
-      }
-    } catch (error) {
-      console.error('Error creating shopping list:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create shopping list",
-        variant: "destructive",
-      });
     }
   };
 
