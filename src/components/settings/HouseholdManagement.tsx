@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,9 +12,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { HouseholdDropdown } from "./HouseholdDropdown";
 import { InviteMemberButton } from "./InviteMemberButton";
 import { HouseholdMembers } from "./HouseholdMembers";
+import { useHouseholdRole } from "@/hooks/use-household-role";
 
 interface Household {
   id: string;
@@ -37,6 +48,9 @@ export const HouseholdManagement = ({
   const { toast } = useToast();
   const [newHouseholdName, setNewHouseholdName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const { isAdmin } = useHouseholdRole(currentHousehold?.id || null);
 
   const handleCreateHousehold = async () => {
     try {
@@ -83,6 +97,42 @@ export const HouseholdManagement = ({
     }
   };
 
+  const handleDeleteHousehold = async () => {
+    if (!currentHousehold || deleteConfirmation !== currentHousehold.name) {
+      toast({
+        title: "Error",
+        description: "Please type the exact household name to confirm deletion.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('households')
+        .delete()
+        .eq('id', currentHousehold.id);
+
+      if (error) throw error;
+
+      setIsDeleteDialogOpen(false);
+      setDeleteConfirmation("");
+      onHouseholdsChange();
+      
+      toast({
+        title: "Success",
+        description: "Household deleted successfully.",
+      });
+    } catch (error) {
+      console.error('Error deleting household:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete household. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-lg font-semibold mb-4">Household Management</h2>
@@ -98,7 +148,19 @@ export const HouseholdManagement = ({
           />
           {currentHousehold && (
             <>
-              <InviteMemberButton householdId={currentHousehold.id} />
+              <div className="flex gap-2 mt-2">
+                <InviteMemberButton householdId={currentHousehold.id} />
+                {isAdmin && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    className="w-full"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Household
+                  </Button>
+                )}
+              </div>
               <div className="mt-4">
                 <HouseholdMembers 
                   householdId={currentHousehold.id}
@@ -136,6 +198,47 @@ export const HouseholdManagement = ({
             </div>
           </DialogContent>
         </Dialog>
+
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Household</AlertDialogTitle>
+              <AlertDialogDescription className="space-y-4">
+                <p className="text-red-600 font-medium">
+                  Warning: This action cannot be undone. All data associated with this household will be permanently deleted, including:
+                </p>
+                <ul className="list-disc pl-6 space-y-1">
+                  <li>All recipes</li>
+                  <li>Shopping lists</li>
+                  <li>Chores and reminders</li>
+                  <li>Storage items</li>
+                  <li>Member associations</li>
+                </ul>
+                <p>
+                  To confirm, please type the household name:
+                  <span className="font-medium"> {currentHousehold?.name}</span>
+                </p>
+                <Input
+                  value={deleteConfirmation}
+                  onChange={(e) => setDeleteConfirmation(e.target.value)}
+                  placeholder="Type household name to confirm"
+                  className="mt-2"
+                />
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setDeleteConfirmation("")}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteHousehold}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete Household
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
