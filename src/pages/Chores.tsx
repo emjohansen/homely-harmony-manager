@@ -5,11 +5,11 @@ const Chores = () => {
   return (
     <div className="min-h-screen bg-cream pb-16">
       <div 
-        className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
+        className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover"
         style={{
           backgroundImage: 'url("/lovable-uploads/7e24e64e-7cc7-4287-8a2e-41e46382fd65.png")',
           backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundPosition: 'bottom center'
         }}
       >
         <ClipboardList className="absolute opacity-10 h-64 w-64 text-cream transform -translate-y-8" />
