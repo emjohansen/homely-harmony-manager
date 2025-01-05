@@ -39,8 +39,8 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed] p-4 rounded-lg">
-      <div className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed]">
+      <div className="flex items-center gap-2 p-4">
         <Input
           placeholder="Add new item..."
           value={newItem}
@@ -54,10 +54,8 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
           onChange={(e) => setNewQuantity(e.target.value)}
           className="w-16"
         />
-      </div>
-      <div className="flex gap-2">
         <Select value={newStore} onValueChange={setNewStore}>
-          <SelectTrigger className="flex-1">
+          <SelectTrigger className="w-32">
             <SelectValue placeholder="Select store" />
           </SelectTrigger>
           <SelectContent className="bg-[#efffed]">
@@ -68,10 +66,10 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
             ))}
           </SelectContent>
         </Select>
-        <Button type="submit" className="w-16">
-          <Plus className="h-4 w-4" />
-        </Button>
       </div>
+      <Button type="submit" className="w-full bg-sage hover:bg-sage/90">
+        <Plus className="h-4 w-4" />
+      </Button>
     </form>
   );
 };
