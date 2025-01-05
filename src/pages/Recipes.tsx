@@ -61,7 +61,7 @@ const Recipes = () => {
             className="w-full"
             onValueChange={(value) => setActiveTab(value as "private" | "public")}
           >
-            <TabsList className="grid w-full grid-cols-2 overflow-visible bg-cream p-0 [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:bg-mint [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
+            <TabsList className="grid w-full grid-cols-2 overflow-visible bg-cream p-0 [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
               <TabsTrigger value="private" className="text-forest text-sm h-[42px]">My Recipes</TabsTrigger>
               <TabsTrigger value="public" className="text-forest text-sm h-[42px]">All Recipes</TabsTrigger>
             </TabsList>
