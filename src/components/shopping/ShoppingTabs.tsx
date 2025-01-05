@@ -14,8 +14,8 @@ export const ShoppingTabs = ({ currentHouseholdId, lists, onListsChange }: Shopp
       className="w-full"
     >
       <TabsList className="grid w-full grid-cols-2 overflow-visible bg-cream p-0 [&_[data-state=active]]:bg-sage [&_[data-state=active]]:text-cream [&_[data-state=active]]:border-sage [&_[data-state=active]]:border [&_[data-state=active]]:border-b [&_[data-state=inactive]]:border-sage [&_[data-state=inactive]]:border [&_[data-state=inactive]]:border-b">
-        <TabsTrigger value="active" className="text-forest text-sm h-[42px]">My Lists</TabsTrigger>
-        <TabsTrigger value="archived" className="text-forest text-sm h-[42px]">Archived</TabsTrigger>
+        <TabsTrigger value="active" className="text-forest text-sm h-[42px]">Open Lists</TabsTrigger>
+        <TabsTrigger value="archived" className="text-forest text-sm h-[42px]">Completed Lists</TabsTrigger>
       </TabsList>
       <TabsContent value="active" className="w-full">
         {!currentHouseholdId ? (
