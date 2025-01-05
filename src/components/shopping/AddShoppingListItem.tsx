@@ -34,20 +34,48 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   const [newCustomStore, setNewCustomStore] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
+  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCustomStores();
+    fetchCurrentHousehold();
   }, []);
 
-  const fetchCustomStores = async () => {
+  const fetchCurrentHousehold = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('custom_stores')
+        .select('current_household')
         .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching current household:', profileError);
+        return;
+      }
+
+      if (profile?.current_household) {
+        setCurrentHouseholdId(profile.current_household);
+        fetchCustomStores(profile.current_household);
+      }
+    } catch (error) {
+      console.error('Error fetching current household:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load custom stores",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchCustomStores = async (householdId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('households')
+        .select('custom_stores')
+        .eq('id', householdId)
         .single();
 
       if (error) {
@@ -70,17 +98,14 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
 
   const addCustomStore = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCustomStore.trim()) return;
+    if (!newCustomStore.trim() || !currentHouseholdId) return;
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
       const updatedStores = [...customStores, newCustomStore.trim()];
       const { error } = await supabase
-        .from('profiles')
+        .from('households')
         .update({ custom_stores: updatedStores })
-        .eq('id', user.id);
+        .eq('id', currentHouseholdId);
 
       if (error) {
         console.error('Error adding custom store:', error);
@@ -100,7 +125,6 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
         title: "Success",
         description: "Custom store added successfully",
       });
-      window.location.reload();
     } catch (error) {
       console.error('Error adding custom store:', error);
       toast({
