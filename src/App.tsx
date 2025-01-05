@@ -13,24 +13,102 @@ import Reminders from "@/pages/Reminders";
 import Storage from "@/pages/Storage";
 import Settings from "@/pages/Settings";
 import MealPlanner from "@/pages/MealPlanner";
+import RequireHousehold from "@/components/household/RequireHousehold";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/recipes" element={<Recipes />} />
-        <Route path="/recipes/new" element={<NewRecipe />} />
-        <Route path="/recipes/:id" element={<RecipeDetails />} />
-        <Route path="/recipes/:id/edit" element={<EditRecipe />} />
-        <Route path="/shopping" element={<Shopping />} />
-        <Route path="/shopping/list/:id" element={<ShoppingListDetail />} />
-        <Route path="/chores" element={<Chores />} />
-        <Route path="/reminders" element={<Reminders />} />
-        <Route path="/storage" element={<Storage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireHousehold>
+              <Dashboard />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/recipes"
+          element={
+            <RequireHousehold>
+              <Recipes />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/recipes/new"
+          element={
+            <RequireHousehold>
+              <NewRecipe />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/recipes/:id"
+          element={
+            <RequireHousehold>
+              <RecipeDetails />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/recipes/:id/edit"
+          element={
+            <RequireHousehold>
+              <EditRecipe />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/shopping"
+          element={
+            <RequireHousehold>
+              <Shopping />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/shopping/list/:id"
+          element={
+            <RequireHousehold>
+              <ShoppingListDetail />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/chores"
+          element={
+            <RequireHousehold>
+              <Chores />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/reminders"
+          element={
+            <RequireHousehold>
+              <Reminders />
+            </RequireHousehold>
+          }
+        />
+        <Route
+          path="/storage"
+          element={
+            <RequireHousehold>
+              <Storage />
+            </RequireHousehold>
+          }
+        />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/meal-planner" element={<MealPlanner />} />
+        <Route
+          path="/meal-planner"
+          element={
+            <RequireHousehold>
+              <MealPlanner />
+            </RequireHousehold>
+          }
+        />
       </Routes>
       <Toaster position="bottom-right" />
     </Router>

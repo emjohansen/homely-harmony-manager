@@ -11,15 +11,33 @@ const Index = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/recipes");
+        const { data: householdMemberships } = await supabase
+          .from('household_members')
+          .select('household_id')
+          .eq('user_id', session.user.id);
+
+        if (householdMemberships && householdMemberships.length > 0) {
+          navigate("/recipes");
+        } else {
+          navigate("/settings");
+        }
       }
     };
 
     checkSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        navigate("/recipes");
+        const { data: householdMemberships } = await supabase
+          .from('household_members')
+          .select('household_id')
+          .eq('user_id', session.user.id);
+
+        if (householdMemberships && householdMemberships.length > 0) {
+          navigate("/recipes");
+        } else {
+          navigate("/settings");
+        }
       }
     });
 
