@@ -10,19 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface AddShoppingListItemProps {
   onAddItem: (item: string, quantity: string, store: string) => void;
 }
 
-const DEFAULT_STORES = [
-  "REMA 1000",
-  "COOP",
-  "KIWI",
-  "SPAR",
-  "EUROPRIS",
-  "Any Store"
-];
+const DEFAULT_STORES = ["Any Store"];
 
 export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => {
   const [newItem, setNewItem] = useState("");
@@ -30,29 +24,39 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   const [newStore, setNewStore] = useState("Any Store");
   const [customStores, setCustomStores] = useState<string[]>([]);
   const [allStores, setAllStores] = useState<string[]>(DEFAULT_STORES);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchCustomStores();
   }, []);
 
   const fetchCustomStores = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('custom_stores')
-      .eq('id', user.id)
-      .single();
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('custom_stores')
+        .eq('id', user.id)
+        .single();
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching custom stores:', error);
+        return;
+      }
+
+      const userCustomStores = data?.custom_stores || [];
+      setCustomStores(userCustomStores);
+      setAllStores([...DEFAULT_STORES, ...userCustomStores]);
+    } catch (error) {
       console.error('Error fetching custom stores:', error);
-      return;
+      toast({
+        title: "Error",
+        description: "Failed to load custom stores",
+        variant: "destructive",
+      });
     }
-
-    const userCustomStores = data.custom_stores || [];
-    setCustomStores(userCustomStores);
-    setAllStores([...DEFAULT_STORES, ...userCustomStores]);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
