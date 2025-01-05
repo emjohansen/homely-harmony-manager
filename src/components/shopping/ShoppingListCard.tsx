@@ -1,20 +1,8 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Archive, Receipt, Trash2, Plus, Store } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { formatDistanceToNow } from "date-fns";
+import { ShoppingListActions } from "./ShoppingListActions";
 
 interface ShoppingListCardProps {
   list: {
@@ -53,7 +41,10 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
   };
 
   return (
-    <Card className="border border-sage p-4 space-y-4">
+    <Card 
+      className="border border-sage p-4 space-y-4 cursor-pointer hover:bg-mint/10 transition-colors"
+      onClick={() => onViewList(list.id)}
+    >
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-forest">{list.name}</h3>
@@ -61,55 +52,11 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
             Created {formatDistanceToNow(new Date(list.created_at))} ago
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onViewList(list.id)}
-            className="bg-cream hover:bg-cream/90"
-          >
-            View List
-          </Button>
-          {list.status === 'active' && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onArchive(list.id)}
-              className="bg-cream hover:bg-cream/90"
-            >
-              <Archive className="h-4 w-4" />
-            </Button>
-          )}
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-cream hover:bg-cream/90 text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  shopping list and all its items.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  className="bg-destructive text-destructive-foreground"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        <ShoppingListActions 
+          status={list.status}
+          onArchive={() => onArchive(list.id)}
+          onDelete={handleDelete}
+        />
       </div>
     </Card>
   );
