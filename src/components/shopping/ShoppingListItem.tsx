@@ -90,7 +90,10 @@ export const ShoppingListItem = ({
           </div>
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div>
-              Added by {item.added_by} - {formatDate(new Date(item.added_at))}
+              <div>Added by {item.added_by}</div>
+              <div className="text-[10px] text-gray-400">
+                {formatDate(new Date(item.added_at))}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               {showPriceInput ? (
