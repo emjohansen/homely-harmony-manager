@@ -62,7 +62,7 @@ export const ShoppingListItem = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
+    <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border border-sage relative">
       {item.store && item.store !== 'unspecified' && (
         <Badge 
           variant="secondary" 
