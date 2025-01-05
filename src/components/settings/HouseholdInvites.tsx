@@ -48,7 +48,10 @@ export const HouseholdInvites = () => {
         .eq('email', user.email)
         .eq('status', 'pending');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching invites:', error);
+        throw error;
+      }
 
       console.log('Fetched invites:', data);
       setPendingInvites(data || []);
@@ -71,11 +74,33 @@ export const HouseholdInvites = () => {
 
       console.log('Accepting invite:', inviteId, 'for household:', householdId);
 
+      // First check if user is already a member of this household
+      const { data: existingMember, error: memberCheckError } = await supabase
+        .from('household_members')
+        .select('household_id')
+        .eq('household_id', householdId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (memberCheckError && memberCheckError.code !== 'PGRST116') {
+        throw memberCheckError;
+      }
+
+      if (existingMember) {
+        toast({
+          title: "Already a member",
+          description: "You are already a member of this household",
+          variant: "default",
+        });
+        return;
+      }
+
       // Update invite status
       const { error: updateError } = await supabase
         .from('household_invites')
         .update({ status: 'accepted' })
-        .eq('id', inviteId);
+        .eq('id', inviteId)
+        .eq('status', 'pending'); // Only update if still pending
 
       if (updateError) throw updateError;
 
@@ -88,7 +113,14 @@ export const HouseholdInvites = () => {
           role: 'member'
         }]);
 
-      if (memberError) throw memberError;
+      if (memberError) {
+        // If adding member fails, revert invite status
+        await supabase
+          .from('household_invites')
+          .update({ status: 'pending' })
+          .eq('id', inviteId);
+        throw memberError;
+      }
 
       toast({
         title: "Success",
@@ -97,11 +129,11 @@ export const HouseholdInvites = () => {
 
       // Refresh invites list
       fetchInvites();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error accepting invite:', error);
       toast({
         title: "Error",
-        description: "Failed to accept invitation",
+        description: error.message || "Failed to accept invitation",
         variant: "destructive",
       });
     }
