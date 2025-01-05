@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface AddShoppingListItemProps {
   onAddItem: (item: string, quantity: string, store: string) => void;
@@ -39,7 +33,13 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed]">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed] relative">
+      <Badge 
+        variant="outline" 
+        className="absolute top-2 right-2 bg-[#efffed]"
+      >
+        {newStore}
+      </Badge>
       <div className="flex items-center gap-2 !p-0">
         <Input
           placeholder="Add new item..."
@@ -54,18 +54,6 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
           onChange={(e) => setNewQuantity(e.target.value)}
           className="w-16"
         />
-        <Select value={newStore} onValueChange={setNewStore}>
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Select store" />
-          </SelectTrigger>
-          <SelectContent className="bg-[#efffed]">
-            {STORES.map((store) => (
-              <SelectItem key={store} value={store}>
-                {store}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
       <Button type="submit" className="w-full bg-sage hover:bg-sage/90">
         <Plus className="h-4 w-4" />
