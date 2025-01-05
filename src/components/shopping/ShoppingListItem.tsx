@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, DollarSign } from "lucide-react";
+import { Trash2, DollarSign, UserRound } from "lucide-react";
 
 interface ShoppingListItemProps {
   item: {
@@ -90,7 +90,10 @@ export const ShoppingListItem = ({
           </div>
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div>
-              <div>Added by {item.added_by}</div>
+              <div className="flex items-center gap-1">
+                <UserRound className="h-3 w-3" />
+                <span>{item.added_by}</span>
+              </div>
               <div className="text-[10px] text-gray-400">
                 {formatDate(new Date(item.added_at))}
               </div>
