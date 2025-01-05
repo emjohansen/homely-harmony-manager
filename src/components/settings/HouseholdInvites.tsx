@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, CheckCircle, AlertCircle } from "lucide-react";
+import { House, CheckCircle, AlertCircle } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -17,6 +17,10 @@ interface Invite {
     name: string;
   };
   status: string;
+  invited_by: string;
+  profiles: {
+    username: string;
+  };
 }
 
 export const HouseholdInvites = () => {
@@ -43,7 +47,11 @@ export const HouseholdInvites = () => {
           households:household_id (
             name
           ),
-          status
+          status,
+          invited_by,
+          profiles:invited_by (
+            username
+          )
         `)
         .eq('email', user.email)
         .eq('status', 'pending');
@@ -139,6 +147,33 @@ export const HouseholdInvites = () => {
     }
   };
 
+  const handleDenyInvite = async (inviteId: string) => {
+    try {
+      const { error } = await supabase
+        .from('household_invites')
+        .update({ status: 'denied' })
+        .eq('id', inviteId)
+        .eq('status', 'pending');
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Invitation denied successfully",
+      });
+
+      // Refresh invites list
+      fetchInvites();
+    } catch (error: any) {
+      console.error('Error denying invite:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to deny invitation",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return <div className="text-center">Loading invites...</div>;
   }
@@ -149,7 +184,7 @@ export const HouseholdInvites = () => {
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="pending-invites">
           <AccordionTrigger className="flex items-center gap-2">
-            <Mail className="h-5 w-5" />
+            <House className="h-5 w-5" />
             <span>Pending Invites ({pendingInvites.length})</span>
           </AccordionTrigger>
           <AccordionContent>
@@ -160,21 +195,29 @@ export const HouseholdInvites = () => {
                 {pendingInvites.map((invite) => (
                   <div key={invite.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
                     <div className="flex items-center gap-2">
-                      {invite.status === 'pending' ? (
-                        <AlertCircle className="h-5 w-5 text-yellow-500" />
-                      ) : (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      )}
-                      <span>{invite.households.name}</span>
+                      <House className="h-5 w-5 text-sage" />
+                      <div className="flex flex-col">
+                        <span className="font-medium">{invite.households.name}</span>
+                        <span className="text-sm text-gray-500">
+                          Invited by {invite.profiles?.username || 'Unknown'}
+                        </span>
+                      </div>
                     </div>
-                    {invite.status === 'pending' && (
+                    <div className="flex gap-2">
                       <Button
                         size="sm"
                         onClick={() => handleAcceptInvite(invite.id, invite.household_id)}
                       >
                         Accept
                       </Button>
-                    )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDenyInvite(invite.id)}
+                      >
+                        Deny
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
