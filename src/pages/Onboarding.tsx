@@ -7,6 +7,14 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { CreateHouseholdDialog } from "@/components/settings/household/CreateHouseholdDialog";
 import { HouseholdDropdown } from "@/components/settings/HouseholdDropdown";
+import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Household {
   id: string;
@@ -19,6 +27,7 @@ export default function Onboarding() {
   const [households, setHouseholds] = useState<Household[]>([]);
   const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -32,6 +41,8 @@ export default function Onboarding() {
       navigate("/");
       return;
     }
+
+    setUserEmail(session.user.email);
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -110,14 +121,14 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#efffed] flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Welcome to Heimen</h1>
-          <p className="mt-2 text-gray-600">Let's get you set up</p>
+          <h1 className="text-2xl font-bold text-[#1e251c]">Welcome to Heimen</h1>
+          <p className="mt-2 text-[#1e251c]">Let's get you set up</p>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
+        <div className="bg-[#e0f0dd] p-6 rounded-lg shadow-md space-y-6">
           <div>
             <Label htmlFor="nickname">Choose your nickname</Label>
             <Input
@@ -140,12 +151,39 @@ export default function Onboarding() {
               />
             )}
             <CreateHouseholdDialog onHouseholdCreated={fetchHouseholds} />
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full bg-[#9dbc98] text-[#1e251c]">
+                  Join a Household
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#efffed]">
+                <DialogHeader>
+                  <DialogTitle>Join a Household</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <p className="text-[#1e251c]">
+                    To join a household, you need to be invited using your email address:
+                  </p>
+                  <p className="font-medium text-[#1e251c]">{userEmail}</p>
+                  <p className="text-[#1e251c]">
+                    Ask a household member to send you an invitation to this email.
+                    Once they do, you'll see the invitation here.
+                  </p>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <div className="mt-6">
+              <HouseholdInvites />
+            </div>
           </div>
 
           <Button 
             onClick={handleUpdateProfile}
             disabled={isLoading}
-            className="w-full bg-sage hover:bg-mint text-cream"
+            className="w-full bg-[#9dbc98] hover:bg-[#9dbc98]/90 text-[#1e251c]"
           >
             {isLoading ? "Setting up..." : "Complete Setup"}
           </Button>
