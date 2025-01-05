@@ -26,7 +26,7 @@ export const ShoppingListHeader = ({ list, totalPrice }: ShoppingListHeaderProps
         Back to Lists
       </Button>
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col items-center justify-center text-center mb-6">
         <div>
           <h1 className="text-2xl font-semibold">{list?.name}</h1>
           <p className="text-sm text-gray-500">
@@ -34,7 +34,7 @@ export const ShoppingListHeader = ({ list, totalPrice }: ShoppingListHeaderProps
           </p>
         </div>
         {totalPrice > 0 && (
-          <div className="flex items-center gap-2 text-lg font-semibold">
+          <div className="flex items-center gap-2 text-lg font-semibold mt-2">
             Total: {totalPrice} kr
           </div>
         )}
