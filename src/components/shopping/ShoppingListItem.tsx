@@ -52,14 +52,55 @@ export const ShoppingListItem = ({
 
   return (
     <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
-      {item.store && item.store !== 'unspecified' && (
-        <Badge 
-          variant="secondary" 
-          className="absolute top-2 right-2 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
-        >
-          {item.store}
-        </Badge>
-      )}
+      <div className="flex flex-col gap-1">
+        {item.store && item.store !== 'Any Store' && (
+          <Badge 
+            variant="secondary" 
+            className="self-end bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+          >
+            {item.store}
+          </Badge>
+        )}
+        <div className="flex gap-2 self-end mt-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowPriceInput(true)}
+            className="shrink-0"
+          >
+            {item.price ? (
+              <span className="text-sm">{item.price} kr</span>
+            ) : (
+              <DollarSign className="h-4 w-4" />
+            )}
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-destructive shrink-0">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="max-w-[90vw] bg-[#efffed]">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete item?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this item? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-[#efffed]">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(item.id)}
+                  className="bg-destructive text-destructive-foreground"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
       <div className="flex items-start gap-3">
         <Checkbox
           checked={item.is_checked}
@@ -81,46 +122,6 @@ export const ShoppingListItem = ({
             Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
           </div>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2 mt-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowPriceInput(true)}
-          className="shrink-0"
-        >
-          {item.price ? (
-            <span className="text-sm">{item.price} kr</span>
-          ) : (
-            <DollarSign className="h-4 w-4" />
-          )}
-        </Button>
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive shrink-0">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="max-w-[90vw] bg-[#efffed]">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete item?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete this item? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="bg-[#efffed]">Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => onDelete(item.id)}
-                className="bg-destructive text-destructive-foreground"
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </div>
   );

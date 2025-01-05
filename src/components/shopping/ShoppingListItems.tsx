@@ -27,7 +27,7 @@ export const ShoppingListItems = ({
 
     // Group unchecked items by store
     const uncheckedGrouped = uncheckedItems.reduce<GroupedItems>((groups, item) => {
-      const store = item.store || 'unspecified';
+      const store = item.store || 'Any Store';
       if (!groups[store]) {
         groups[store] = [];
       }
@@ -35,11 +35,11 @@ export const ShoppingListItems = ({
       return groups;
     }, {});
 
-    // Move 'unspecified' to the beginning
+    // Move 'Any Store' to the beginning
     const sortedGroups: GroupedItems = {};
-    if (uncheckedGrouped['unspecified']) {
-      sortedGroups['unspecified'] = uncheckedGrouped['unspecified'];
-      delete uncheckedGrouped['unspecified'];
+    if (uncheckedGrouped['Any Store']) {
+      sortedGroups['Any Store'] = uncheckedGrouped['Any Store'];
+      delete uncheckedGrouped['Any Store'];
     }
 
     // Add other store groups
@@ -59,7 +59,7 @@ export const ShoppingListItems = ({
       {/* Render unchecked items grouped by store */}
       {Object.entries(sortedGroups).map(([store, storeItems]) => (
         <div key={store} className="space-y-2">
-          {store !== 'unspecified' && (
+          {store !== 'Any Store' && (
             <h3 className="text-sm font-medium text-forest/80 pl-2">
               {store}
             </h3>
