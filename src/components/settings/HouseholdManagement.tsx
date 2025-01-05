@@ -3,7 +3,6 @@ import { InviteMemberButton } from "./InviteMemberButton";
 import { HouseholdMembers } from "./HouseholdMembers";
 import { useHouseholdRole } from "@/hooks/use-household-role";
 import { CreateHouseholdDialog } from "./household/CreateHouseholdDialog";
-import { DeleteHouseholdDialog } from "./household/DeleteHouseholdDialog";
 import { Label } from "@/components/ui/label";
 
 interface Household {
@@ -49,14 +48,6 @@ export const HouseholdManagement = ({
                   householdId={currentHousehold.id}
                   onMemberRemoved={onHouseholdsChange}
                 />
-                {isAdmin && (
-                  <div className="mt-4">
-                    <DeleteHouseholdDialog 
-                      household={currentHousehold}
-                      onDelete={onHouseholdsChange}
-                    />
-                  </div>
-                )}
               </div>
             </>
           )}

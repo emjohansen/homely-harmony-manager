@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useHouseholdRole } from "@/hooks/use-household-role";
+import { DeleteHouseholdDialog } from "./household/DeleteHouseholdDialog";
 
 interface Member {
   id: string;
@@ -182,6 +183,14 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
                   )}
                 </div>
               ))}
+              {isAdmin && (
+                <div className="pt-4 border-t border-mint/20 mt-4">
+                  <DeleteHouseholdDialog 
+                    household={{ id: householdId, name: "Current Household" }}
+                    onDelete={onMemberRemoved}
+                  />
+                </div>
+              )}
             </div>
           )}
         </AccordionContent>
