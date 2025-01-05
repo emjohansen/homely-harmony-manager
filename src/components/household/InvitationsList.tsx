@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import HouseholdMembers from "./HouseholdMembers";
-import PendingInvitation from "./PendingInvitation";
 import HouseholdSwitcher from "./HouseholdSwitcher";
+import HouseholdAccordion from "./HouseholdAccordion";
 
 interface InvitationsListProps {
   onInviteAccepted?: () => void;
@@ -135,6 +128,8 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
     console.log('Switching to household:', household);
     setCurrentHousehold(household);
     localStorage.setItem('currentHouseholdId', household.id);
+    // Refresh the page to reset all states
+    window.location.reload();
   };
 
   const handleAcceptInvite = async (inviteId: string) => {
@@ -227,43 +222,14 @@ const InvitationsList = ({ onInviteAccepted }: InvitationsListProps) => {
         />
       )}
 
-      <Accordion type="single" collapsible className="w-full">
-        {currentHousehold && (
-          <AccordionItem value="current-household">
-            <AccordionTrigger className="text-lg font-semibold">
-              Household Members
-            </AccordionTrigger>
-            <AccordionContent>
-              <HouseholdMembers
-                householdId={currentHousehold.id}
-                isAdmin={currentHousehold.isCreator}
-                onMembershipChange={fetchInvitations}
-              />
-            </AccordionContent>
-          </AccordionItem>
-        )}
-        
-        {pendingInvitations.length > 0 && (
-          <AccordionItem value="invitations">
-            <AccordionTrigger className="text-lg font-semibold">
-              Pending Invitations ({pendingInvitations.length})
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-3">
-                {pendingInvitations.map((invite) => (
-                  <PendingInvitation
-                    key={invite.id}
-                    invite={invite}
-                    currentUser={currentUser}
-                    onAccept={handleAcceptInvite}
-                    onDecline={handleDeclineInvite}
-                  />
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        )}
-      </Accordion>
+      <HouseholdAccordion
+        currentHousehold={currentHousehold}
+        pendingInvitations={pendingInvitations}
+        currentUser={currentUser}
+        onAcceptInvite={handleAcceptInvite}
+        onDeclineInvite={handleDeclineInvite}
+        onMembershipChange={fetchInvitations}
+      />
     </div>
   );
 };
