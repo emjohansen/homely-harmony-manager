@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useHouseholdRole } from "@/hooks/use-household-role";
 
 interface Member {
   id: string;
@@ -26,6 +27,18 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { isAdmin } = useHouseholdRole(householdId);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    };
+    getCurrentUser();
+  }, []);
 
   useEffect(() => {
     if (householdId) {
@@ -84,6 +97,16 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
 
   const handleRemoveMember = async (memberId: string) => {
     try {
+      // If user is not admin and trying to remove someone else
+      if (!isAdmin && memberId !== currentUserId) {
+        throw new Error("Only admins can remove other members");
+      }
+
+      // If user is admin trying to remove themselves
+      if (isAdmin && memberId === currentUserId) {
+        throw new Error("Admins cannot remove themselves");
+      }
+
       console.log('Removing member:', memberId, 'from household:', householdId);
       
       const { error } = await supabase
@@ -104,13 +127,23 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
 
       onMemberRemoved();
       await fetchMembers();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error removing member:', error);
       toast({
         title: "Error",
-        description: "Failed to remove member. Please try again.",
+        description: error.message || "Failed to remove member. Please try again.",
         variant: "destructive",
       });
+    }
+  };
+
+  const canRemoveMember = (memberId: string) => {
+    if (isAdmin) {
+      // Admin can remove anyone except themselves
+      return memberId !== currentUserId;
+    } else {
+      // Non-admin can only remove themselves
+      return memberId === currentUserId;
     }
   };
 
@@ -138,13 +171,15 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
                     <span className="font-medium">{member.username}</span>
                     <span className="ml-2 text-sm text-forest/70">({member.role})</span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleRemoveMember(member.id)}
-                  >
-                    <UserMinus className="h-4 w-4" />
-                  </Button>
+                  {canRemoveMember(member.id) && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveMember(member.id)}
+                    >
+                      <UserMinus className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>

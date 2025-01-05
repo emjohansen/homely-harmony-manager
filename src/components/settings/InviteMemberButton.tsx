@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useHouseholdRole } from "@/hooks/use-household-role";
 
 interface InviteMemberButtonProps {
   householdId: string | null;
@@ -21,6 +22,7 @@ export const InviteMemberButton = ({ householdId }: InviteMemberButtonProps) => 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const { toast } = useToast();
+  const { isAdmin, isLoading } = useHouseholdRole(householdId);
 
   const handleInviteMember = async () => {
     if (!householdId) return;
@@ -56,7 +58,7 @@ export const InviteMemberButton = ({ householdId }: InviteMemberButtonProps) => 
     }
   };
 
-  if (!householdId) return null;
+  if (!householdId || !isAdmin || isLoading) return null;
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
