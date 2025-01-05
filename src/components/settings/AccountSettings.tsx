@@ -11,7 +11,7 @@ interface AccountSettingsProps {
 }
 
 export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsProps) => {
-  const [nickname, setNickname] = useState(initialNickname);
+  const [nickname, setNickname] = useState(initialNickname || "0");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -28,6 +28,8 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
 
       if (profile?.username) {
         setNickname(profile.username);
+      } else {
+        setNickname("0");
       }
     };
 
