@@ -40,7 +40,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed]">
-      <div className="flex items-center gap-2 p-4">
+      <div className="flex items-center gap-2 !p-0">
         <Input
           placeholder="Add new item..."
           value={newItem}
