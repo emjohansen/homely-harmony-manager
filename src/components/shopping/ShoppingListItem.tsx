@@ -52,15 +52,20 @@ export const ShoppingListItem = ({
 
   return (
     <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
-      {item.store && item.store !== 'unspecified' && (
-        <Badge 
-          variant="secondary" 
-          className="absolute top-2 right-2 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
-        >
-          {item.store}
-        </Badge>
-      )}
-      <div className="flex items-start gap-3">
+      <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+        {item.store && item.store !== 'unspecified' && (
+          <Badge 
+            variant="secondary" 
+            className="bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+          >
+            {item.store}
+          </Badge>
+        )}
+        <div className="text-xs text-gray-500">
+          Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
+        </div>
+      </div>
+      <div className="flex items-start gap-3 pr-32">
         <Checkbox
           checked={item.is_checked}
           onCheckedChange={(checked) => onToggle(item.id, checked as boolean)}
@@ -76,9 +81,6 @@ export const ShoppingListItem = ({
                 ({item.quantity})
               </span>
             )}
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
           </div>
         </div>
       </div>
