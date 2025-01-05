@@ -35,7 +35,7 @@ export const RecipeCard = ({ recipe }: RecipeCardProps) => {
             {recipe.recipe_tags.map(({ tag }) => (
               <span
                 key={tag}
-                className="text-xs bg-cream text-forest px-2 py-1 rounded-full"
+                className="text-xs bg-mint text-forest px-2 py-1 rounded-full"
               >
                 {tag}
               </span>
