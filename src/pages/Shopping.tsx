@@ -6,7 +6,7 @@ import Navigation from "@/components/Navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NewShoppingList } from "@/components/shopping/NewShoppingList";
-import { ShoppingListCard } from "@/components/shopping/ShoppingListCard";
+import { ShoppingLists } from "@/components/shopping/ShoppingLists";
 
 const Shopping = () => {
   const [lists, setLists] = useState<any[]>([]);
@@ -16,47 +16,72 @@ const Shopping = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCurrentHousehold = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          console.log('No user found');
-          return;
-        }
-
-        console.log('Fetching household member data for user:', user.id);
-        const { data: householdMember, error } = await supabase
-          .from('profiles')
-          .select('current_household')
-          .eq('id', user.id)
-          .maybeSingle();
-
-        if (error) {
-          console.error('Error fetching current household:', error);
-          throw error;
-        }
-
-        console.log('Fetched household member data:', householdMember);
-        if (householdMember?.current_household) {
-          setCurrentHouseholdId(householdMember.current_household);
-          fetchShoppingLists(householdMember.current_household);
-        } else {
-          console.log('No current household found for user');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error in fetchCurrentHousehold:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch household information",
-          variant: "destructive",
-        });
-        setLoading(false);
-      }
-    };
-
+    checkSession();
     fetchCurrentHousehold();
   }, []);
+
+  const checkSession = async () => {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      if (!session) {
+        navigate('/');
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking session:', error);
+      navigate('/');
+    }
+  };
+
+  const fetchCurrentHousehold = async () => {
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        console.log('No user found');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching household member data for user:', user.id);
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Error fetching current household:', profileError);
+        throw profileError;
+      }
+
+      console.log('Fetched household member data:', profile);
+      if (profile?.current_household) {
+        setCurrentHouseholdId(profile.current_household);
+        fetchShoppingLists(profile.current_household);
+      } else {
+        console.log('No current household found for user');
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error in fetchCurrentHousehold:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch household information",
+        variant: "destructive",
+      });
+      setLoading(false);
+    }
+  };
 
   const fetchShoppingLists = async (householdId: string) => {
     try {
@@ -99,48 +124,32 @@ const Shopping = () => {
       return;
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const { error } = await supabase
-      .from('shopping_lists')
-      .insert({
-        name,
-        household_id: currentHouseholdId,
-        created_by: user.id,
-        status: 'active'
+      const { error } = await supabase
+        .from('shopping_lists')
+        .insert({
+          name,
+          household_id: currentHouseholdId,
+          created_by: user.id,
+          status: 'active'
+        });
+
+      if (error) throw error;
+      
+      if (currentHouseholdId) {
+        fetchShoppingLists(currentHouseholdId);
+      }
+    } catch (error) {
+      console.error('Error creating shopping list:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create shopping list",
+        variant: "destructive",
       });
-
-    if (error) throw error;
-    fetchShoppingLists(currentHouseholdId);
-  };
-
-  const handleArchiveList = async (id: string) => {
-    const { error } = await supabase
-      .from('shopping_lists')
-      .update({
-        status: 'archived',
-        archived_at: new Date().toISOString()
-      })
-      .eq('id', id);
-
-    if (error) throw error;
-    fetchShoppingLists(currentHouseholdId!);
-  };
-
-  const handleViewList = (id: string) => {
-    console.log('Opening shopping list:', id);
-    navigate(`/shopping/list/${id}`);
-  };
-
-  const handleDeleteList = async (id: string) => {
-    const { error } = await supabase
-      .from('shopping_lists')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
-    fetchShoppingLists(currentHouseholdId!);
+    }
   };
 
   return (
@@ -179,18 +188,11 @@ const Shopping = () => {
                   No shopping lists yet. Add your first list!
                 </div>
               ) : (
-                <div className="space-y-4 mt-6">
-                  {lists
-                    .filter(list => list.status === 'active')
-                    .map(list => (
-                      <ShoppingListCard
-                        key={list.id}
-                        list={list}
-                        onArchive={handleArchiveList}
-                        onDelete={handleDeleteList}
-                        onViewList={handleViewList}
-                      />
-                    ))}
+                <div className="mt-6">
+                  <ShoppingLists 
+                    lists={lists.filter(list => list.status === 'active')}
+                    onListsChange={() => currentHouseholdId && fetchShoppingLists(currentHouseholdId)}
+                  />
                 </div>
               )}
             </TabsContent>
@@ -200,18 +202,11 @@ const Shopping = () => {
                   No archived shopping lists.
                 </div>
               ) : (
-                <div className="space-y-4 mt-6">
-                  {lists
-                    .filter(list => list.status === 'archived')
-                    .map(list => (
-                      <ShoppingListCard
-                        key={list.id}
-                        list={list}
-                        onArchive={handleArchiveList}
-                        onDelete={handleDeleteList}
-                        onViewList={handleViewList}
-                      />
-                    ))}
+                <div className="mt-6">
+                  <ShoppingLists 
+                    lists={lists.filter(list => list.status === 'archived')}
+                    onListsChange={() => currentHouseholdId && fetchShoppingLists(currentHouseholdId)}
+                  />
                 </div>
               )}
             </TabsContent>
