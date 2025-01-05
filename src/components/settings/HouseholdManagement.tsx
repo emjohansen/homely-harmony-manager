@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,13 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown, UserPlus, UserMinus, Plus } from "lucide-react";
+import { HouseholdDropdown } from "./HouseholdDropdown";
 
 interface Household {
   id: string;
@@ -31,11 +26,11 @@ interface HouseholdManagementProps {
   onHouseholdsChange: () => void;
 }
 
-export const HouseholdManagement = ({ 
-  households, 
-  currentHousehold, 
+export const HouseholdManagement = ({
+  households,
+  currentHousehold,
   onHouseholdSelect,
-  onHouseholdsChange 
+  onHouseholdsChange,
 }: HouseholdManagementProps) => {
   const { toast } = useToast();
   const [newHouseholdName, setNewHouseholdName] = useState("");
@@ -153,47 +148,13 @@ export const HouseholdManagement = ({
           <Label className="text-sm font-medium text-gray-700 mb-2 block">
             Active Household
           </Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between">
-                {currentHousehold?.name || "Select a household"}
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-full min-w-[240px]">
-              {households.map((household) => (
-                <DropdownMenuItem
-                  key={household.id}
-                  className="flex items-center justify-between"
-                  onClick={() => onHouseholdSelect(household)}
-                >
-                  <span>{household.name}</span>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsInviteDialogOpen(true);
-                      }}
-                    >
-                      <UserPlus className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleLeaveHousehold(household.id);
-                      }}
-                    >
-                      <UserMinus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <HouseholdDropdown
+            households={households}
+            currentHousehold={currentHousehold}
+            onHouseholdSelect={onHouseholdSelect}
+            onInviteMember={() => setIsInviteDialogOpen(true)}
+            onLeaveHousehold={handleLeaveHousehold}
+          />
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -217,10 +178,7 @@ export const HouseholdManagement = ({
                   placeholder="Enter household name"
                 />
               </div>
-              <Button 
-                onClick={handleCreateHousehold}
-                className="w-full"
-              >
+              <Button onClick={handleCreateHousehold} className="w-full">
                 Create Household
               </Button>
             </div>
@@ -243,8 +201,10 @@ export const HouseholdManagement = ({
                   placeholder="Enter email address"
                 />
               </div>
-              <Button 
-                onClick={() => currentHousehold && handleInviteMember(currentHousehold.id)}
+              <Button
+                onClick={() =>
+                  currentHousehold && handleInviteMember(currentHousehold.id)
+                }
                 className="w-full"
               >
                 Send Invitation
