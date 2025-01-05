@@ -17,18 +17,41 @@ const Shopping = () => {
 
   useEffect(() => {
     const fetchCurrentHousehold = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          console.log('No user found');
+          return;
+        }
 
-      const { data: householdMember } = await supabase
-        .from('household_members')
-        .select('household_id')
-        .eq('user_id', user.id)
-        .single();
+        console.log('Fetching household member data for user:', user.id);
+        const { data: householdMember, error } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .maybeSingle();
 
-      if (householdMember) {
-        setCurrentHouseholdId(householdMember.household_id);
-        fetchShoppingLists(householdMember.household_id);
+        if (error) {
+          console.error('Error fetching current household:', error);
+          throw error;
+        }
+
+        console.log('Fetched household member data:', householdMember);
+        if (householdMember?.current_household) {
+          setCurrentHouseholdId(householdMember.current_household);
+          fetchShoppingLists(householdMember.current_household);
+        } else {
+          console.log('No current household found for user');
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error in fetchCurrentHousehold:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch household information",
+          variant: "destructive",
+        });
+        setLoading(false);
       }
     };
 
