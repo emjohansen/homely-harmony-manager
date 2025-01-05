@@ -89,79 +89,80 @@ export const ShoppingListItem = ({
               </span>
             )}
           </div>
-          <div className="text-xs text-gray-500">
-            Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
-            <div className="text-[10px] text-gray-400">
-              {formatDate(new Date(item.added_at))}
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <div>
+              Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
+              <div className="text-[10px] text-gray-400">
+                {formatDate(new Date(item.added_at))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {showPriceInput ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    className="w-24 h-8"
+                    placeholder="Price"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handlePriceSubmit();
+                      }
+                    }}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handlePriceSubmit}
+                    className="h-8 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90 shrink-0"
+                  >
+                    Save
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPriceInput(true)}
+                  className="shrink-0 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+                >
+                  {item.price ? (
+                    <span className="text-sm">{item.price} kr</span>
+                  ) : (
+                    <DollarSign className="h-4 w-4" />
+                  )}
+                </Button>
+              )}
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-destructive shrink-0">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="max-w-[90vw] bg-[#efffed]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete item?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete this item? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="bg-[#efffed]">Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => onDelete(item.id)}
+                      className="bg-destructive text-destructive-foreground"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2 mt-1 justify-end">
-        {showPriceInput ? (
-          <div className="flex items-center gap-2">
-            <Input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="w-24 h-8"
-              placeholder="Price"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handlePriceSubmit();
-                }
-              }}
-            />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handlePriceSubmit}
-              className="h-8 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90 shrink-0"
-            >
-              Save
-            </Button>
-          </div>
-        ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowPriceInput(true)}
-            className="shrink-0 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
-          >
-            {item.price ? (
-              <span className="text-sm">{item.price} kr</span>
-            ) : (
-              <DollarSign className="h-4 w-4" />
-            )}
-          </Button>
-        )}
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive shrink-0">
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="max-w-[90vw] bg-[#efffed]">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete item?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete this item? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="bg-[#efffed]">Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => onDelete(item.id)}
-                className="bg-destructive text-destructive-foreground"
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </div>
   );
