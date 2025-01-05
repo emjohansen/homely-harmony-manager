@@ -50,6 +50,17 @@ export const ShoppingListItem = ({
     setShowPriceInput(false);
   };
 
+  const formatDate = (date: Date) => {
+    return date.toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  };
+
   return (
     <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
       {item.store && item.store !== 'unspecified' && (
@@ -77,8 +88,11 @@ export const ShoppingListItem = ({
               </span>
             )}
           </div>
-          <div className="text-xs text-gray-500 mt-1">
-            Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago ({new Date(item.added_at).toLocaleString()})
+          <div className="text-xs text-gray-500">
+            Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
+            <div className="text-[10px] text-gray-400">
+              {formatDate(new Date(item.added_at))}
+            </div>
           </div>
         </div>
       </div>
