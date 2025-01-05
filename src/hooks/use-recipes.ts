@@ -20,11 +20,16 @@ export const useRecipes = () => {
         return;
       }
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('current_household')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        throw profileError;
+      }
 
       console.log("User profile with current household:", profile);
       const currentHouseholdId = profile?.current_household;
