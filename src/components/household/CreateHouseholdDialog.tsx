@@ -26,6 +26,23 @@ export default function CreateHouseholdDialog() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No authenticated user");
 
+      // Check if user is already in 3 households
+      const { data: memberships, error: membershipError } = await supabase
+        .from("household_members")
+        .select("household_id")
+        .eq("user_id", user.id);
+
+      if (membershipError) throw membershipError;
+
+      if (memberships && memberships.length >= 3) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "You can only be a member of up to 3 households",
+        });
+        return;
+      }
+
       const { data: household, error: householdError } = await supabase
         .from("households")
         .insert([{ name, created_by: user.id }])
