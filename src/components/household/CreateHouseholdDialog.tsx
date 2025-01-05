@@ -12,7 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 
-export default function CreateHouseholdDialog() {
+interface CreateHouseholdDialogProps {
+  onHouseholdCreated?: () => void;
+}
+
+export default function CreateHouseholdDialog({ onHouseholdCreated }: CreateHouseholdDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -79,8 +83,9 @@ export default function CreateHouseholdDialog() {
       setOpen(false);
       setName("");
       
-      // Refresh the page to reset all states
-      window.location.reload();
+      if (onHouseholdCreated) {
+        onHouseholdCreated();
+      }
     } catch (error) {
       console.error("Error creating household:", error);
       toast({
@@ -101,7 +106,7 @@ export default function CreateHouseholdDialog() {
           Create New Household
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#efffed]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Household</DialogTitle>
         </DialogHeader>

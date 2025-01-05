@@ -4,6 +4,7 @@ import CreateHouseholdDialog from "./CreateHouseholdDialog";
 import InviteMemberDialog from "./InviteMemberDialog";
 import HouseholdInvites from "./HouseholdInvites";
 import HouseholdMembers from "./HouseholdMembers";
+import { useToast } from "@/hooks/use-toast";
 
 interface Household {
   id: string;
@@ -12,6 +13,7 @@ interface Household {
 }
 
 export default function HouseholdManager() {
+  const { toast } = useToast();
   const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,53 +24,71 @@ export default function HouseholdManager() {
 
   const fetchCurrentHousehold = async () => {
     try {
+      console.log('Fetching current household...');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log('No user found');
+        setIsLoading(false);
+        return;
+      }
 
       // Get user's current household from profile
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("current_household")
         .eq("id", user.id)
         .single();
 
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        throw profileError;
+      }
+
+      console.log('Profile data:', profile);
+
       if (!profile?.current_household) {
+        console.log('No current household set');
         setIsLoading(false);
         return;
       }
 
-      // Verify user is still a member of the household
-      const { data: membership } = await supabase
-        .from("household_members")
-        .select("household_id")
-        .eq("user_id", user.id)
-        .eq("household_id", profile.current_household)
+      // Get household details and verify membership
+      const { data: household, error: householdError } = await supabase
+        .from("households")
+        .select(`
+          *,
+          household_members!inner (
+            user_id,
+            role
+          )
+        `)
+        .eq('id', profile.current_household)
+        .eq('household_members.user_id', user.id)
         .single();
 
-      if (!membership) {
-        console.log("User is no longer a member of their current household");
-        // Reset current_household in profile
+      if (householdError) {
+        console.error('Error fetching household:', householdError);
+        // If there's an error, reset the current_household in profile
         await supabase
           .from("profiles")
-          .update({ current_household: null })
+          .update({ 
+            current_household: null,
+            updated_at: new Date().toISOString()
+          })
           .eq("id", user.id);
-        setIsLoading(false);
-        return;
-      }
-
-      // Get household details
-      const { data: household } = await supabase
-        .from("households")
-        .select("*")
-        .eq("id", profile.current_household)
-        .single();
-
-      if (household) {
+        setCurrentHousehold(null);
+      } else if (household) {
+        console.log('Found household:', household);
         setCurrentHousehold(household);
         setIsAdmin(household.created_by === user.id);
       }
     } catch (error) {
-      console.error("Error fetching household:", error);
+      console.error("Error in fetchCurrentHousehold:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not fetch household information",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -83,8 +103,8 @@ export default function HouseholdManager() {
           <p className="text-center text-gray-500">
             You are not part of any household
           </p>
-          <CreateHouseholdDialog />
-          <HouseholdInvites />
+          <CreateHouseholdDialog onHouseholdCreated={fetchCurrentHousehold} />
+          <HouseholdInvites onInviteAccepted={fetchCurrentHousehold} />
         </div>
       ) : (
         <div className="space-y-6">
@@ -97,8 +117,9 @@ export default function HouseholdManager() {
           <HouseholdMembers
             householdId={currentHousehold.id}
             isAdmin={isAdmin}
+            onMembershipChange={fetchCurrentHousehold}
           />
-          <HouseholdInvites />
+          <HouseholdInvites onInviteAccepted={fetchCurrentHousehold} />
         </div>
       )}
     </div>
