@@ -122,13 +122,15 @@ export const useInvites = () => {
         throw updateError;
       }
 
+      // Remove the accepted invite from the local state
+      setPendingInvites(prevInvites => 
+        prevInvites.filter(invite => invite.id !== inviteId)
+      );
+
       toast({
         title: "Success",
         description: "Invitation accepted successfully",
       });
-
-      // Refresh invites list
-      fetchInvites();
     } catch (error: any) {
       console.error('Error accepting invite:', error);
       toast({
@@ -149,13 +151,15 @@ export const useInvites = () => {
 
       if (error) throw error;
 
+      // Remove the denied invite from the local state
+      setPendingInvites(prevInvites => 
+        prevInvites.filter(invite => invite.id !== inviteId)
+      );
+
       toast({
         title: "Success",
         description: "Invitation denied successfully",
       });
-
-      // Refresh invites list
-      fetchInvites();
     } catch (error: any) {
       console.error('Error denying invite:', error);
       toast({
