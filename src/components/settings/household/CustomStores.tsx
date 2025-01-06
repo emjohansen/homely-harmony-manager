@@ -16,6 +16,7 @@ export const CustomStores = () => {
   const [newStore, setNewStore] = useState("");
   const { toast } = useToast();
   const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchCurrentHousehold();
@@ -41,12 +42,16 @@ export const CustomStores = () => {
       }
 
       if (profile?.current_household) {
-        console.log('Current household ID:', profile.current_household);
         setCurrentHouseholdId(profile.current_household);
-        fetchCustomStores(profile.current_household);
+        await fetchCustomStores(profile.current_household);
       }
     } catch (error) {
       console.error('Error in fetchCurrentHousehold:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch household information",
+        variant: "destructive",
+      });
     }
   };
 
@@ -59,46 +64,39 @@ export const CustomStores = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching custom stores:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch custom stores",
-          variant: "destructive",
-        });
-        return;
+        throw error;
       }
 
       console.log('Fetched custom stores:', data?.custom_stores);
       setCustomStores(data?.custom_stores || []);
     } catch (error) {
-      console.error('Error in fetchCustomStores:', error);
+      console.error('Error fetching custom stores:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch custom stores",
+        variant: "destructive",
+      });
     }
   };
 
   const addCustomStore = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newStore.trim() || !currentHouseholdId) {
-      console.log('No store name or household ID');
-      return;
-    }
+    if (!newStore.trim() || !currentHouseholdId || isLoading) return;
 
+    setIsLoading(true);
     try {
       console.log('Adding custom store:', newStore, 'to household:', currentHouseholdId);
-      const updatedStores = [...customStores, newStore.trim()];
+      const updatedStores = [...new Set([...customStores, newStore.trim()])];
       
       const { error } = await supabase
         .from('households')
-        .update({ custom_stores: updatedStores })
+        .update({ 
+          custom_stores: updatedStores 
+        })
         .eq('id', currentHouseholdId);
 
       if (error) {
-        console.error('Error adding custom store:', error);
-        toast({
-          title: "Error",
-          description: "Failed to add custom store",
-          variant: "destructive",
-        });
-        return;
+        throw error;
       }
 
       setCustomStores(updatedStores);
@@ -108,18 +106,21 @@ export const CustomStores = () => {
         description: "Custom store added successfully",
       });
     } catch (error) {
-      console.error('Error in addCustomStore:', error);
+      console.error('Error adding custom store:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: "Failed to add custom store",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const removeCustomStore = async (storeToRemove: string) => {
-    if (!currentHouseholdId) return;
+    if (!currentHouseholdId || isLoading) return;
 
+    setIsLoading(true);
     try {
       const updatedStores = customStores.filter(store => store !== storeToRemove);
       
@@ -129,13 +130,7 @@ export const CustomStores = () => {
         .eq('id', currentHouseholdId);
 
       if (error) {
-        console.error('Error removing custom store:', error);
-        toast({
-          title: "Error",
-          description: "Failed to remove custom store",
-          variant: "destructive",
-        });
-        return;
+        throw error;
       }
 
       setCustomStores(updatedStores);
@@ -144,12 +139,14 @@ export const CustomStores = () => {
         description: "Custom store removed successfully",
       });
     } catch (error) {
-      console.error('Error in removeCustomStore:', error);
+      console.error('Error removing custom store:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: "Failed to remove custom store",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -167,8 +164,13 @@ export const CustomStores = () => {
                 value={newStore}
                 onChange={(e) => setNewStore(e.target.value)}
                 className="flex-1"
+                disabled={isLoading}
               />
-              <Button type="submit" className="bg-sage hover:bg-sage/90">
+              <Button 
+                type="submit" 
+                className="bg-sage hover:bg-sage/90"
+                disabled={isLoading}
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             </form>
@@ -181,6 +183,7 @@ export const CustomStores = () => {
                     size="sm"
                     onClick={() => removeCustomStore(store)}
                     className="text-forest hover:text-forest/70"
+                    disabled={isLoading}
                   >
                     <X className="h-4 w-4" />
                   </Button>
