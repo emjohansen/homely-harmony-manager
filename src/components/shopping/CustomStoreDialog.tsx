@@ -26,7 +26,7 @@ export const CustomStoreDialog = ({ onStoreAdded }: CustomStoreDialogProps) => {
     if (!newStore.trim()) return;
 
     try {
-      // Get current user's household
+      console.log('Adding new store:', newStore);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast({
@@ -52,7 +52,6 @@ export const CustomStoreDialog = ({ onStoreAdded }: CustomStoreDialogProps) => {
         return;
       }
 
-      // Get current custom stores
       const { data: household } = await supabase
         .from('households')
         .select('custom_stores')
@@ -60,26 +59,30 @@ export const CustomStoreDialog = ({ onStoreAdded }: CustomStoreDialogProps) => {
         .single();
 
       const currentStores = household?.custom_stores || [];
+      const trimmedStore = newStore.trim();
       
-      // Update household with new store
+      if (currentStores.includes(trimmedStore)) {
+        toast({
+          title: "Error",
+          description: "This store already exists",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const { error } = await supabase
         .from('households')
         .update({ 
-          custom_stores: [...currentStores, newStore.trim()] 
+          custom_stores: [...currentStores, trimmedStore] 
         })
         .eq('id', profile.current_household);
 
       if (error) {
         console.error('Error adding custom store:', error);
-        toast({
-          title: "Error",
-          description: "Failed to add custom store",
-          variant: "destructive",
-        });
-        return;
+        throw error;
       }
 
-      onStoreAdded(newStore.trim());
+      onStoreAdded(trimmedStore);
       setNewStore("");
       setIsOpen(false);
       toast({
@@ -87,7 +90,7 @@ export const CustomStoreDialog = ({ onStoreAdded }: CustomStoreDialogProps) => {
         description: "Custom store added successfully",
       });
     } catch (error) {
-      console.error('Error adding custom store:', error);
+      console.error('Error in addCustomStore:', error);
       toast({
         title: "Error",
         description: "Failed to add custom store",

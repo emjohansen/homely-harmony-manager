@@ -16,7 +16,10 @@ export const CustomStores = () => {
 
   const handleAddStore = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (await addCustomStore(newStore)) {
+    if (!newStore.trim()) return;
+    
+    const success = await addCustomStore(newStore);
+    if (success) {
       setNewStore("");
     }
   };
