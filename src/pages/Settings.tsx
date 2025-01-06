@@ -6,7 +6,6 @@ import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
 import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
 import { useToast } from "@/hooks/use-toast";
-import { useRetry } from "@/hooks/use-retry";
 import { useHouseholdSelection } from "@/hooks/use-household-selection";
 import { useNavigate } from "react-router-dom";
 
@@ -22,7 +21,6 @@ export default function Settings() {
   const [nickname, setNickname] = useState<string>("");
   const [households, setHouseholds] = useState<Household[]>([]);
   const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
-  const { executeWithRetry } = useRetry();
   const { selectHousehold, isLoading } = useHouseholdSelection();
 
   useEffect(() => {
@@ -32,26 +30,29 @@ export default function Settings() {
 
   const checkUser = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) throw sessionError;
       
       if (!session) {
         navigate("/");
         return;
       }
+
       setUserEmail(session.user.email);
       
-      const { data: profileData, error } = await supabase
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('username, current_household')
         .eq('id', session.user.id)
         .single();
       
-      if (error) throw error;
+      if (profileError) throw profileError;
       
       if (profileData?.username) {
         setNickname(profileData.username);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error checking user:", error);
       toast({
         title: "Error",
@@ -64,14 +65,16 @@ export default function Settings() {
   const fetchHouseholds = async () => {
     try {
       console.log("Fetching households...");
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) throw userError;
       
       if (!user) {
         console.log("No authenticated user found");
         return;
       }
 
-      const { data: memberHouseholds, error } = await supabase
+      const { data: memberHouseholds, error: householdsError } = await supabase
         .from('household_members')
         .select(`
           household_id,
@@ -82,7 +85,7 @@ export default function Settings() {
         `)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (householdsError) throw householdsError;
 
       console.log("Fetched member households:", memberHouseholds);
 
@@ -106,7 +109,7 @@ export default function Settings() {
           setCurrentHousehold(current || null);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in fetchHouseholds:", error);
       toast({
         title: "Error",

@@ -23,16 +23,17 @@ export const useHouseholdSelection = () => {
 
       console.log("Current authenticated user:", user.id);
 
-      // First update the local state
-      const { data, error: updateError } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update({ current_household: household.id })
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select()
+        .single();
 
-      console.log("Update response:", { data, error: updateError });
+      console.log("Update response:", { data, error });
 
-      if (updateError) {
-        throw updateError;
+      if (error) {
+        throw error;
       }
 
       toast({
