@@ -43,12 +43,7 @@ export const useHouseholdSelection = () => {
 
       return true;
     } catch (error: any) {
-      console.error('Error updating active household:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code
-      });
+      console.error('Error updating active household:', error);
       toast({
         title: "Error",
         description: "Failed to switch household. Please try again.",
