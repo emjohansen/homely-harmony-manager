@@ -44,36 +44,52 @@ export default function Settings() {
   };
 
   const fetchHouseholds = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: memberHouseholds } = await supabase
-      .from('household_members')
-      .select('household_id, households:household_id(id, name)')
-      .eq('user_id', user.id);
-
-    if (memberHouseholds) {
-      const households = memberHouseholds.map(mh => ({
-        id: mh.households.id,
-        name: mh.households.name
-      }));
-      setHouseholds(households);
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.current_household) {
-        const current = households.find(h => h.id === profile.current_household);
-        setCurrentHousehold(current || null);
+    try {
+      console.log("Fetching households...");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log("No authenticated user found");
+        return;
       }
+
+      const { data: memberHouseholds, error: memberError } = await supabase
+        .from('household_members')
+        .select('household_id, households:household_id(id, name)')
+        .eq('user_id', user.id);
+
+      if (memberError) {
+        console.error("Error fetching member households:", memberError);
+        throw memberError;
+      }
+
+      console.log("Fetched member households:", memberHouseholds);
+
+      if (memberHouseholds) {
+        const households = memberHouseholds.map(mh => ({
+          id: mh.households.id,
+          name: mh.households.name
+        }));
+        setHouseholds(households);
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.current_household) {
+          const current = households.find(h => h.id === profile.current_household);
+          setCurrentHousehold(current || null);
+        }
+      }
+    } catch (error) {
+      console.error("Error in fetchHouseholds:", error);
     }
   };
 
   const handleSelectHousehold = async (household: Household) => {
     try {
+      console.log("Selecting household:", household);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
@@ -85,10 +101,7 @@ export default function Settings() {
       if (error) throw error;
 
       setCurrentHousehold(household);
-      
-      // Force reload the page to refresh all data
       window.location.reload();
-      
     } catch (error) {
       console.error('Error updating active household:', error);
     }
