@@ -40,13 +40,13 @@ export default function Settings() {
       }
       setUserEmail(session.user.email);
       
-      const { data: profileData } = await executeWithRetry(() =>
-        supabase
-          .from('profiles')
-          .select('username, current_household')
-          .eq('id', session.user.id)
-          .single()
-      );
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('username, current_household')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (error) throw error;
       
       if (profileData?.username) {
         setNickname(profileData.username);
@@ -71,18 +71,18 @@ export default function Settings() {
         return;
       }
 
-      const { data: memberHouseholds } = await executeWithRetry(() =>
-        supabase
-          .from('household_members')
-          .select(`
-            household_id,
-            households:household_id (
-              id,
-              name
-            )
-          `)
-          .eq('user_id', user.id)
-      );
+      const { data: memberHouseholds, error } = await supabase
+        .from('household_members')
+        .select(`
+          household_id,
+          households:household_id (
+            id,
+            name
+          )
+        `)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
 
       console.log("Fetched member households:", memberHouseholds);
 
@@ -93,13 +93,13 @@ export default function Settings() {
         }));
         setHouseholds(households);
 
-        const { data: profileData } = await executeWithRetry(() =>
-          supabase
-            .from('profiles')
-            .select('current_household')
-            .eq('id', user.id)
-            .single()
-        );
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) throw profileError;
 
         if (profileData?.current_household) {
           const current = households.find(h => h.id === profileData.current_household);

@@ -24,12 +24,10 @@ export const useHouseholdSelection = () => {
       }
 
       // First update the local state
-      const { error: updateError } = await executeWithRetry(() =>
-        supabase
-          .from('profiles')
-          .update({ current_household: household.id })
-          .eq('id', user.id)
-      );
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ current_household: household.id })
+        .eq('id', user.id);
 
       if (updateError) {
         throw updateError;
