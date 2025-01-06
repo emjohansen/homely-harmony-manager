@@ -39,21 +39,21 @@ export const CustomStores = () => {
               />
               <Button 
                 type="submit" 
-                className="bg-sage hover:bg-sage/90"
-                disabled={isLoading}
+                className="bg-[#9dbc98] hover:bg-[#9dbc98]/90"
+                disabled={isLoading || !newStore.trim()}
               >
                 <Plus className="h-4 w-4" />
               </Button>
             </form>
             <div className="space-y-2">
               {customStores.map((store) => (
-                <div key={store} className="flex items-center justify-between p-2 bg-mint rounded-lg">
-                  <span>{store}</span>
+                <div key={store} className="flex items-center justify-between p-2 bg-[#e0f0dd] rounded-lg">
+                  <span className="text-[#1e251c]">{store}</span>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => removeCustomStore(store)}
-                    className="text-forest hover:text-forest/70"
+                    className="text-[#1e251c] hover:text-[#1e251c]/70"
                     disabled={isLoading}
                   >
                     <X className="h-4 w-4" />

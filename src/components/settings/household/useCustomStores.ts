@@ -26,7 +26,10 @@ export const useCustomStores = () => {
         .eq('id', user.id)
         .maybeSingle();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        return;
+      }
 
       if (profile?.current_household) {
         setCurrentHouseholdId(profile.current_household);
@@ -51,12 +54,16 @@ export const useCustomStores = () => {
         .eq('id', householdId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching custom stores:', error);
+        throw error;
+      }
 
-      console.log('Fetched custom stores:', data?.custom_stores);
-      setCustomStores(data?.custom_stores || []);
+      const stores = data?.custom_stores || [];
+      console.log('Fetched custom stores:', stores);
+      setCustomStores(stores);
     } catch (error) {
-      console.error('Error fetching custom stores:', error);
+      console.error('Error in fetchCustomStores:', error);
       toast({
         title: "Error",
         description: "Failed to fetch custom stores",
@@ -66,13 +73,26 @@ export const useCustomStores = () => {
   };
 
   const addCustomStore = async (newStore: string) => {
-    if (!newStore.trim() || !currentHouseholdId || isLoading) return false;
+    if (!newStore.trim() || !currentHouseholdId || isLoading) {
+      return false;
+    }
 
     setIsLoading(true);
     try {
       const trimmedStore = newStore.trim();
-      console.log('Adding custom store:', trimmedStore, 'to household:', currentHouseholdId);
+      
+      // Check if store already exists
+      if (customStores.includes(trimmedStore)) {
+        toast({
+          title: "Error",
+          description: "This store already exists",
+          variant: "destructive",
+        });
+        return false;
+      }
 
+      console.log('Adding custom store:', trimmedStore, 'to household:', currentHouseholdId);
+      
       const updatedStores = [...customStores, trimmedStore];
       
       const { error: updateError } = await supabase
@@ -80,7 +100,10 @@ export const useCustomStores = () => {
         .update({ custom_stores: updatedStores })
         .eq('id', currentHouseholdId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating custom stores:', updateError);
+        throw updateError;
+      }
 
       setCustomStores(updatedStores);
       toast({
@@ -89,7 +112,7 @@ export const useCustomStores = () => {
       });
       return true;
     } catch (error) {
-      console.error('Error adding custom store:', error);
+      console.error('Error in addCustomStore:', error);
       toast({
         title: "Error",
         description: "Failed to add custom store",
@@ -102,10 +125,14 @@ export const useCustomStores = () => {
   };
 
   const removeCustomStore = async (storeToRemove: string) => {
-    if (!currentHouseholdId || isLoading) return;
+    if (!currentHouseholdId || isLoading) {
+      return;
+    }
 
     setIsLoading(true);
     try {
+      console.log('Removing custom store:', storeToRemove, 'from household:', currentHouseholdId);
+      
       const updatedStores = customStores.filter(store => store !== storeToRemove);
       
       const { error: updateError } = await supabase
@@ -113,7 +140,10 @@ export const useCustomStores = () => {
         .update({ custom_stores: updatedStores })
         .eq('id', currentHouseholdId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error removing custom store:', updateError);
+        throw updateError;
+      }
 
       setCustomStores(updatedStores);
       toast({
@@ -121,7 +151,7 @@ export const useCustomStores = () => {
         description: "Custom store removed successfully",
       });
     } catch (error) {
-      console.error('Error removing custom store:', error);
+      console.error('Error in removeCustomStore:', error);
       toast({
         title: "Error",
         description: "Failed to remove custom store",
