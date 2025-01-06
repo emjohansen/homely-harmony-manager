@@ -68,7 +68,6 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
       setError(null);
       console.log('Fetching members for household:', householdId);
 
-      // Updated query to fetch all members of the household
       const { data: memberData, error } = await supabase
         .from('household_members')
         .select(`
@@ -85,7 +84,7 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
         throw error;
       }
 
-      console.log('Fetched members data:', memberData);
+      console.log('Raw members data:', memberData);
 
       if (!memberData) {
         setMembers([]);
