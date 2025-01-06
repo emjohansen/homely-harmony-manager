@@ -85,19 +85,27 @@ export const CustomStores = () => {
 
     setIsLoading(true);
     try {
-      console.log('Adding custom store:', newStore, 'to household:', currentHouseholdId);
-      const updatedStores = [...new Set([...customStores, newStore.trim()])];
+      const trimmedStore = newStore.trim();
+      console.log('Adding custom store:', trimmedStore, 'to household:', currentHouseholdId);
       
-      const { error } = await supabase
+      // First get the current stores to ensure we have the latest data
+      const { data: currentData, error: fetchError } = await supabase
         .from('households')
-        .update({ 
-          custom_stores: updatedStores 
-        })
+        .select('custom_stores')
+        .eq('id', currentHouseholdId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const currentStores = currentData?.custom_stores || [];
+      const updatedStores = [...new Set([...currentStores, trimmedStore])];
+      
+      const { error: updateError } = await supabase
+        .from('households')
+        .update({ custom_stores: updatedStores })
         .eq('id', currentHouseholdId);
 
-      if (error) {
-        throw error;
-      }
+      if (updateError) throw updateError;
 
       setCustomStores(updatedStores);
       setNewStore("");
@@ -129,9 +137,7 @@ export const CustomStores = () => {
         .update({ custom_stores: updatedStores })
         .eq('id', currentHouseholdId);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setCustomStores(updatedStores);
       toast({
