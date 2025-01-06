@@ -21,6 +21,12 @@ export const StoreSelect = ({
   stores,
   onAddStoreClick,
 }: StoreSelectProps) => {
+  const handleAddStoreClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onAddStoreClick();
+  };
+
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-32 border-sage border">
@@ -32,19 +38,17 @@ export const StoreSelect = ({
             {store}
           </SelectItem>
         ))}
-        <Button
-          type="button"
-          variant="ghost"
-          className="w-full justify-start text-left px-2 py-1.5 text-sm"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onAddStoreClick();
-          }}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add store
-        </Button>
+        <div className="px-2 py-1.5">
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full justify-start text-left text-sm"
+            onClick={handleAddStoreClick}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add store
+          </Button>
+        </div>
       </SelectContent>
     </Select>
   );

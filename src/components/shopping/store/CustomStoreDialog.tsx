@@ -29,7 +29,7 @@ export const CustomStoreDialog = ({
   const [newCustomStore, setNewCustomStore] = useState("");
   const { toast } = useToast();
 
-  const addCustomStore = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newCustomStore.trim() || !currentHouseholdId) {
@@ -94,16 +94,18 @@ export const CustomStoreDialog = ({
             Add a new store to your shopping list options.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={addCustomStore} className="flex gap-2">
-          <Input
-            placeholder="Store name..."
-            value={newCustomStore}
-            onChange={(e) => setNewCustomStore(e.target.value)}
-            className="flex-1"
-          />
-          <Button type="submit" className="bg-[#9dbc98] hover:bg-[#9dbc98]/90">
-            Add
-          </Button>
+        <form onSubmit={handleSubmit}>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Store name..."
+              value={newCustomStore}
+              onChange={(e) => setNewCustomStore(e.target.value)}
+              className="flex-1"
+            />
+            <Button type="submit" className="bg-[#9dbc98] hover:bg-[#9dbc98]/90">
+              Add
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
