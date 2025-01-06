@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 interface CreateHouseholdDialogProps {
@@ -43,7 +44,11 @@ export const CreateHouseholdDialog = ({ onHouseholdCreated }: CreateHouseholdDia
       // Create the household
       const { data: household, error: createError } = await supabase
         .from('households')
-        .insert([{ name: newHouseholdName, created_by: user.id }])
+        .insert([{ 
+          name: newHouseholdName, 
+          created_by: user.id,
+          custom_stores: []
+        }])
         .select()
         .single();
 
@@ -88,7 +93,7 @@ export const CreateHouseholdDialog = ({ onHouseholdCreated }: CreateHouseholdDia
         description: "Household created successfully.",
       });
 
-      // Refresh the page
+      // Refresh the page to update the UI
       window.location.reload();
     } catch (error: any) {
       console.error('Error in household creation:', error);
@@ -113,6 +118,9 @@ export const CreateHouseholdDialog = ({ onHouseholdCreated }: CreateHouseholdDia
       <DialogContent className="bg-[#efffed]">
         <DialogHeader>
           <DialogTitle>Create New Household</DialogTitle>
+          <DialogDescription>
+            Create a new household to manage your shared tasks and items.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 pt-4">
           <div>

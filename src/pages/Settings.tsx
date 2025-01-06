@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
 import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
+import { useToast } from "@/hooks/use-toast";
 
 interface Household {
   id: string;
@@ -14,6 +15,7 @@ interface Household {
 
 export default function Settings() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [nickname, setNickname] = useState<string>("");
   const [households, setHouseholds] = useState<Household[]>([]);
@@ -84,6 +86,11 @@ export default function Settings() {
       }
     } catch (error) {
       console.error("Error in fetchHouseholds:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch households. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -101,9 +108,18 @@ export default function Settings() {
       if (error) throw error;
 
       setCurrentHousehold(household);
+      toast({
+        title: "Success",
+        description: `Switched to ${household.name}`,
+      });
       window.location.reload();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating active household:', error);
+      toast({
+        title: "Error",
+        description: "Failed to switch household. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
