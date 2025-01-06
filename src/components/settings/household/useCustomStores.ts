@@ -84,18 +84,20 @@ export const useCustomStores = () => {
 
       const currentStores = currentData?.custom_stores || [];
       
-      // Update with the new store
-      const { data, error } = await supabase
+      // Prepare the update payload
+      const updatedStores = [...currentStores, trimmedStore];
+      
+      // Update the household with the new stores array
+      const { error: updateError } = await supabase
         .from('households')
-        .update({ custom_stores: [...currentStores, trimmedStore] })
-        .eq('id', currentHouseholdId)
-        .select()
-        .single();
+        .update({ custom_stores: updatedStores })
+        .eq('id', currentHouseholdId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      console.log('Updated stores:', data.custom_stores);
-      setCustomStores(data.custom_stores);
+      // Fetch the latest data after update
+      await fetchCustomStores(currentHouseholdId);
+      
       toast({
         title: "Success",
         description: "Custom store added successfully",
@@ -131,17 +133,17 @@ export const useCustomStores = () => {
       const currentStores = currentData?.custom_stores || [];
       const updatedStores = currentStores.filter(store => store !== storeToRemove);
       
-      const { data, error } = await supabase
+      // Update the household with the filtered stores array
+      const { error: updateError } = await supabase
         .from('households')
         .update({ custom_stores: updatedStores })
-        .eq('id', currentHouseholdId)
-        .select()
-        .single();
+        .eq('id', currentHouseholdId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      console.log('Updated stores after removal:', data.custom_stores);
-      setCustomStores(data.custom_stores);
+      // Fetch the latest data after update
+      await fetchCustomStores(currentHouseholdId);
+      
       toast({
         title: "Success",
         description: "Custom store removed successfully",
