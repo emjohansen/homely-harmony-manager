@@ -30,6 +30,7 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
   const { toast } = useToast();
   const { isAdmin } = useHouseholdRole(householdId);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [householdName, setHouseholdName] = useState<string>("");
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -44,8 +45,26 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
   useEffect(() => {
     if (householdId) {
       fetchMembers();
+      fetchHouseholdName();
     }
   }, [householdId]);
+
+  const fetchHouseholdName = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('households')
+        .select('name')
+        .eq('id', householdId)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setHouseholdName(data.name);
+      }
+    } catch (error) {
+      console.error('Error fetching household name:', error);
+    }
+  };
 
   const fetchMembers = async () => {
     try {
@@ -186,7 +205,7 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
               {isAdmin && (
                 <div className="pt-4 border-t border-mint/20 mt-4">
                   <DeleteHouseholdDialog 
-                    household={{ id: householdId, name: "Current Household" }}
+                    household={{ id: householdId, name: householdName }}
                     onDelete={onMemberRemoved}
                   />
                 </div>
