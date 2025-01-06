@@ -87,11 +87,9 @@ export const useCustomStores = () => {
       // Update with the new store
       const { data, error } = await supabase
         .from('households')
-        .update({ 
-          custom_stores: [...currentStores, trimmedStore]
-        })
+        .update({ custom_stores: [...currentStores, trimmedStore] })
         .eq('id', currentHouseholdId)
-        .select('custom_stores')
+        .select()
         .single();
 
       if (error) throw error;
@@ -137,7 +135,7 @@ export const useCustomStores = () => {
         .from('households')
         .update({ custom_stores: updatedStores })
         .eq('id', currentHouseholdId)
-        .select('custom_stores')
+        .select()
         .single();
 
       if (error) throw error;
