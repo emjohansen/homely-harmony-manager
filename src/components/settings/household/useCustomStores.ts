@@ -16,16 +16,14 @@ export const useCustomStores = () => {
   const fetchCustomStores = async () => {
     try {
       console.log('Fetching custom stores...');
-      const { data: { user } } = await executeWithRetry(() => 
-        supabase.auth.getUser()
-      );
+      const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         console.log('No user found');
         return;
       }
 
-      const { data: profile } = await executeWithRetry(() =>
+      const { data: profileData, error: profileError } = await executeWithRetry(async () =>
         supabase
           .from('profiles')
           .select('current_household')
@@ -33,21 +31,22 @@ export const useCustomStores = () => {
           .single()
       );
 
-      if (!profile?.current_household) {
+      if (profileError) throw profileError;
+      if (!profileData?.current_household) {
         console.log('No current household found');
         return;
       }
 
-      console.log('Fetching household data for:', profile.current_household);
-      const { data: household, error } = await executeWithRetry(() =>
+      console.log('Fetching household data for:', profileData.current_household);
+      const { data: household, error: householdError } = await executeWithRetry(async () =>
         supabase
           .from('households')
           .select('custom_stores')
-          .eq('id', profile.current_household)
+          .eq('id', profileData.current_household)
           .single()
       );
 
-      if (error) throw error;
+      if (householdError) throw householdError;
 
       console.log('Fetched custom stores:', household?.custom_stores);
       setCustomStores(household?.custom_stores || []);
@@ -66,16 +65,14 @@ export const useCustomStores = () => {
       setIsLoading(true);
       console.log('Adding new store:', newStore);
       
-      const { data: { user } } = await executeWithRetry(() =>
-        supabase.auth.getUser()
-      );
+      const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         console.log('No user found');
         return false;
       }
 
-      const { data: profile } = await executeWithRetry(() =>
+      const { data: profileData, error: profileError } = await executeWithRetry(async () =>
         supabase
           .from('profiles')
           .select('current_household')
@@ -83,7 +80,8 @@ export const useCustomStores = () => {
           .single()
       );
 
-      if (!profile?.current_household) {
+      if (profileError) throw profileError;
+      if (!profileData?.current_household) {
         console.log('No current household found');
         toast({
           title: "Error",
@@ -106,14 +104,14 @@ export const useCustomStores = () => {
       const updatedStores = [...customStores, trimmedStore];
       console.log('Updating stores to:', updatedStores);
       
-      const { error } = await executeWithRetry(() =>
+      const { error: updateError } = await executeWithRetry(async () =>
         supabase
           .from('households')
           .update({ custom_stores: updatedStores })
-          .eq('id', profile.current_household)
+          .eq('id', profileData.current_household)
       );
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       setCustomStores(updatedStores);
       toast({
@@ -139,16 +137,14 @@ export const useCustomStores = () => {
       setIsLoading(true);
       console.log('Removing store:', storeToRemove);
       
-      const { data: { user } } = await executeWithRetry(() =>
-        supabase.auth.getUser()
-      );
+      const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         console.log('No user found');
         return;
       }
 
-      const { data: profile } = await executeWithRetry(() =>
+      const { data: profileData, error: profileError } = await executeWithRetry(async () =>
         supabase
           .from('profiles')
           .select('current_household')
@@ -156,7 +152,8 @@ export const useCustomStores = () => {
           .single()
       );
 
-      if (!profile?.current_household) {
+      if (profileError) throw profileError;
+      if (!profileData?.current_household) {
         console.log('No current household found');
         return;
       }
@@ -164,14 +161,14 @@ export const useCustomStores = () => {
       const updatedStores = customStores.filter(store => store !== storeToRemove);
       console.log('Updating stores to:', updatedStores);
       
-      const { error } = await executeWithRetry(() =>
+      const { error: updateError } = await executeWithRetry(async () =>
         supabase
           .from('households')
           .update({ custom_stores: updatedStores })
-          .eq('id', profile.current_household)
+          .eq('id', profileData.current_household)
       );
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       setCustomStores(updatedStores);
       toast({

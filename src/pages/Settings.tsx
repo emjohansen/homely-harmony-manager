@@ -31,17 +31,16 @@ export default function Settings() {
 
   const checkUser = async () => {
     try {
-      const { data: { session } } = await executeWithRetry(() => 
-        supabase.auth.getSession()
-      );
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
+      if (sessionError) throw sessionError;
       if (!session) {
         navigate("/");
         return;
       }
       setUserEmail(session.user.email);
       
-      const { data: profile } = await executeWithRetry(() =>
+      const { data: profileData, error: profileError } = await executeWithRetry(async () =>
         supabase
           .from('profiles')
           .select('username, current_household')
@@ -49,8 +48,9 @@ export default function Settings() {
           .single()
       );
       
-      if (profile?.username) {
-        setNickname(profile.username);
+      if (profileError) throw profileError;
+      if (profileData?.username) {
+        setNickname(profileData.username);
       }
     } catch (error) {
       console.error("Error checking user:", error);
@@ -65,16 +65,15 @@ export default function Settings() {
   const fetchHouseholds = async () => {
     try {
       console.log("Fetching households...");
-      const { data: { user } } = await executeWithRetry(() =>
-        supabase.auth.getUser()
-      );
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       
+      if (userError) throw userError;
       if (!user) {
         console.log("No authenticated user found");
         return;
       }
 
-      const { data: memberHouseholds, error: memberError } = await executeWithRetry(() =>
+      const { data: memberHouseholds, error: memberError } = await executeWithRetry(async () =>
         supabase
           .from('household_members')
           .select(`
@@ -98,7 +97,7 @@ export default function Settings() {
         }));
         setHouseholds(households);
 
-        const { data: profile } = await executeWithRetry(() =>
+        const { data: profileData, error: profileError } = await executeWithRetry(async () =>
           supabase
             .from('profiles')
             .select('current_household')
@@ -106,8 +105,9 @@ export default function Settings() {
             .single()
         );
 
-        if (profile?.current_household) {
-          const current = households.find(h => h.id === profile.current_household);
+        if (profileError) throw profileError;
+        if (profileData?.current_household) {
+          const current = households.find(h => h.id === profileData.current_household);
           setCurrentHousehold(current || null);
         }
       }
@@ -126,24 +126,23 @@ export default function Settings() {
       setIsLoading(true);
       console.log("Selecting household:", household);
       
-      const { data: { user } } = await executeWithRetry(() =>
-        supabase.auth.getUser()
-      );
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       
+      if (userError) throw userError;
       if (!user) throw new Error("No user found");
 
       // First, update the local state
       setCurrentHousehold(household);
 
       // Then, update the database with retry mechanism
-      const { error } = await executeWithRetry(() =>
+      const { error: updateError } = await executeWithRetry(async () =>
         supabase
           .from('profiles')
           .update({ current_household: household.id })
           .eq('id', user.id)
       );
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       toast({
         title: "Success",
