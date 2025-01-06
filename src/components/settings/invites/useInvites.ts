@@ -22,10 +22,10 @@ export const useInvites = () => {
 
   const fetchInvites = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
 
-      console.log('Fetching invites for user email:', user.email);
+      console.log('Fetching invites for user email:', session.user.email);
 
       // First fetch the invites
       const { data: invitesData, error: invitesError } = await supabase
@@ -33,13 +33,13 @@ export const useInvites = () => {
         .select(`
           id,
           household_id,
-          households:household_id (
+          households (
             name
           ),
           status,
           invited_by
         `)
-        .eq('email', user.email)
+        .eq('email', session.user.email)
         .eq('status', 'pending');
 
       if (invitesError) throw invitesError;

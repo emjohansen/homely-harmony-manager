@@ -30,9 +30,9 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setCurrentUserId(user.id);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setCurrentUserId(session.user.id);
       }
     };
     getCurrentUser();
@@ -51,7 +51,7 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
         .from('households')
         .select('name')
         .eq('id', householdId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       if (data) {
@@ -68,37 +68,39 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
       setError(null);
       console.log('Fetching members for household:', householdId);
 
+      // First fetch the household members
       const { data: membersData, error: membersError } = await supabase
         .from('household_members')
-        .select(`
-          user_id,
-          role
-        `)
+        .select('user_id, role')
         .eq('household_id', householdId);
 
       if (membersError) throw membersError;
 
-      // Fetch profiles for the members
-      if (membersData) {
-        const userIds = membersData.map(member => member.user_id);
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, username')
-          .in('id', userIds);
-
-        if (profilesError) throw profilesError;
-
-        const formattedMembers = membersData.map(member => {
-          const profile = profilesData?.find(p => p.id === member.user_id);
-          return {
-            id: member.user_id,
-            username: profile?.username || 'Unknown User',
-            role: member.role
-          };
-        });
-
-        setMembers(formattedMembers);
+      if (!membersData) {
+        setMembers([]);
+        return;
       }
+
+      // Then fetch the profiles for these members
+      const userIds = membersData.map(member => member.user_id);
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, username')
+        .in('id', userIds);
+
+      if (profilesError) throw profilesError;
+
+      // Combine the data
+      const formattedMembers = membersData.map(member => {
+        const profile = profilesData?.find(p => p.id === member.user_id);
+        return {
+          id: member.user_id,
+          username: profile?.username || 'Unknown User',
+          role: member.role
+        };
+      });
+
+      setMembers(formattedMembers);
     } catch (err) {
       console.error('Error fetching members:', err);
       setError('Failed to load household members. Please try again later.');
