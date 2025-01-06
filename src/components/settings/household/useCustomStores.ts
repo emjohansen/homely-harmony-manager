@@ -24,7 +24,7 @@ export const useCustomStores = () => {
         .from('profiles')
         .select('current_household')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) throw profileError;
 
@@ -73,24 +73,11 @@ export const useCustomStores = () => {
       const trimmedStore = newStore.trim();
       console.log('Adding custom store:', trimmedStore, 'to household:', currentHouseholdId);
 
-      // Get current stores
-      const { data: currentData, error: fetchError } = await supabase
-        .from('households')
-        .select('custom_stores')
-        .eq('id', currentHouseholdId)
-        .maybeSingle();
-
-      if (fetchError) throw fetchError;
-
-      const currentStores = currentData?.custom_stores || [];
-      const updatedStores = [...currentStores, trimmedStore];
-
-      // Update stores
+      const updatedStores = [...customStores, trimmedStore];
+      
       const { error: updateError } = await supabase
         .from('households')
-        .update({ 
-          custom_stores: updatedStores 
-        })
+        .update({ custom_stores: updatedStores })
         .eq('id', currentHouseholdId);
 
       if (updateError) throw updateError;
@@ -119,24 +106,11 @@ export const useCustomStores = () => {
 
     setIsLoading(true);
     try {
-      // Get current stores
-      const { data: currentData, error: fetchError } = await supabase
-        .from('households')
-        .select('custom_stores')
-        .eq('id', currentHouseholdId)
-        .maybeSingle();
-
-      if (fetchError) throw fetchError;
-
-      const currentStores = currentData?.custom_stores || [];
-      const updatedStores = currentStores.filter(store => store !== storeToRemove);
-
-      // Update stores
+      const updatedStores = customStores.filter(store => store !== storeToRemove);
+      
       const { error: updateError } = await supabase
         .from('households')
-        .update({ 
-          custom_stores: updatedStores 
-        })
+        .update({ custom_stores: updatedStores })
         .eq('id', currentHouseholdId);
 
       if (updateError) throw updateError;
