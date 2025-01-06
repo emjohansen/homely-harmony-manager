@@ -31,12 +31,11 @@ export const HouseholdDropdown = ({
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-full min-w-[240px] bg-[#efffed]">
+      <DropdownMenuContent className="w-full min-w-[240px] bg-cream">
         {households.map((household) => (
           <DropdownMenuItem
             key={household.id}
             onClick={() => onHouseholdSelect(household)}
-            className="cursor-pointer"
           >
             {household.name}
           </DropdownMenuItem>

@@ -697,12 +697,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_household_member: {
-        Args: {
-          household_id: string
-        }
-        Returns: boolean
-      }
     }
     Enums: {
       [_ in never]: never

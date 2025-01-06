@@ -11,7 +11,13 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CustomStoreDialog } from "./CustomStoreDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface AddShoppingListItemProps {
   onAddItem: (item: string, quantity: string, store: string) => void;
@@ -25,39 +31,105 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
   const [newStore, setNewStore] = useState("Any Store");
   const [customStores, setCustomStores] = useState<string[]>([]);
   const [allStores, setAllStores] = useState<string[]>(DEFAULT_STORES);
+  const [newCustomStore, setNewCustomStore] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
+  const [currentHouseholdId, setCurrentHouseholdId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCustomStores();
+    fetchCurrentHousehold();
   }, []);
 
-  const fetchCustomStores = async () => {
+  const fetchCurrentHousehold = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('current_household')
         .eq('id', user.id)
         .single();
 
-      if (profile?.current_household) {
-        const { data: household } = await supabase
-          .from('households')
-          .select('custom_stores')
-          .eq('id', profile.current_household)
-          .single();
-
-        const userCustomStores = household?.custom_stores || [];
-        setCustomStores(userCustomStores);
-        setAllStores([...DEFAULT_STORES, ...userCustomStores]);
+      if (profileError) {
+        console.error('Error fetching current household:', profileError);
+        return;
       }
+
+      if (profile?.current_household) {
+        setCurrentHouseholdId(profile.current_household);
+        fetchCustomStores(profile.current_household);
+      }
+    } catch (error) {
+      console.error('Error fetching current household:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load custom stores",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchCustomStores = async (householdId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('households')
+        .select('custom_stores')
+        .eq('id', householdId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching custom stores:', error);
+        return;
+      }
+
+      const userCustomStores = data?.custom_stores || [];
+      setCustomStores(userCustomStores);
+      setAllStores([...DEFAULT_STORES, ...userCustomStores]);
     } catch (error) {
       console.error('Error fetching custom stores:', error);
       toast({
         title: "Error",
         description: "Failed to load custom stores",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addCustomStore = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCustomStore.trim() || !currentHouseholdId) return;
+
+    try {
+      const updatedStores = [...customStores, newCustomStore.trim()];
+      const { error } = await supabase
+        .from('households')
+        .update({ custom_stores: updatedStores })
+        .eq('id', currentHouseholdId);
+
+      if (error) {
+        console.error('Error adding custom store:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add custom store",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setCustomStores(updatedStores);
+      setAllStores([...DEFAULT_STORES, ...updatedStores]);
+      setNewCustomStore("");
+      setIsDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "Custom store added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding custom store:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add custom store",
         variant: "destructive",
       });
     }
@@ -71,11 +143,6 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
     setNewItem("");
     setNewQuantity("");
     setNewStore("Any Store");
-  };
-
-  const handleStoreAdded = (store: string) => {
-    setCustomStores(prev => [...prev, store]);
-    setAllStores(prev => [...prev, store]);
   };
 
   return (
@@ -104,7 +171,39 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
                 {store}
               </SelectItem>
             ))}
-            <CustomStoreDialog onStoreAdded={handleStoreAdded} />
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  type="button"
+                  variant="ghost" 
+                  className="w-full justify-start text-left px-2 py-1.5 text-sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add store
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#efffed]">
+                <DialogHeader>
+                  <DialogTitle>Add Custom Store</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={addCustomStore} className="flex gap-2">
+                  <Input
+                    placeholder="Store name..."
+                    value={newCustomStore}
+                    onChange={(e) => setNewCustomStore(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button type="submit" className="bg-[#9dbc98] hover:bg-[#9dbc98]/90">
+                    Add
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </SelectContent>
         </Select>
       </div>
