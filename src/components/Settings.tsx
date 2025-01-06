@@ -32,16 +32,36 @@ const Settings = () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
+          console.log("Loading data for user:", session.user.id);
           setEmail(session.user.email || "");
           
-          const { data: profile } = await supabase
+          const { data: profile, error } = await supabase
             .from('profiles')
             .select('username')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
+          
+          if (error) {
+            console.error("Error fetching profile:", error);
+            throw error;
+          }
             
           if (profile) {
+            console.log("Profile loaded:", profile);
             setUsername(profile.username || "");
+          } else {
+            console.log("No profile found, creating one");
+            // Create profile if it doesn't exist
+            const { error: insertError } = await supabase
+              .from('profiles')
+              .insert([{ id: session.user.id, username: session.user.email }]);
+              
+            if (insertError) {
+              console.error("Error creating profile:", insertError);
+              throw insertError;
+            }
+            
+            setUsername(session.user.email || "");
           }
         }
       } catch (error) {
