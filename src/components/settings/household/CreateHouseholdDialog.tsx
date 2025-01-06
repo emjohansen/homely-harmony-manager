@@ -57,6 +57,9 @@ export const CreateHouseholdDialog = ({ onHouseholdCreated }: CreateHouseholdDia
         title: "Success",
         description: "Household created successfully.",
       });
+
+      // Refresh the page
+      window.location.reload();
     } catch (error) {
       console.error('Error creating household:', error);
       toast({

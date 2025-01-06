@@ -131,6 +131,9 @@ export const useInvites = () => {
         title: "Success",
         description: "Invitation accepted successfully",
       });
+
+      // Refresh the page
+      window.location.reload();
     } catch (error: any) {
       console.error('Error accepting invite:', error);
       toast({
