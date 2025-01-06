@@ -97,41 +97,6 @@ export type Database = {
         }
         Relationships: []
       }
-      household_invites: {
-        Row: {
-          created_at: string
-          email: string
-          household_id: string | null
-          id: string
-          invited_by: string | null
-          status: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          household_id?: string | null
-          id?: string
-          invited_by?: string | null
-          status?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          household_id?: string | null
-          id?: string
-          invited_by?: string | null
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "household_invites_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       household_members: {
         Row: {
           household_id: string
@@ -184,41 +149,6 @@ export type Database = {
           name?: string
         }
         Relationships: []
-      }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          current_household: string | null
-          id: string
-          updated_at: string
-          username: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          current_household?: string | null
-          id: string
-          updated_at?: string
-          username?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          current_household?: string | null
-          id?: string
-          updated_at?: string
-          username?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_current_household_fkey"
-            columns: ["current_household"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       recipe_group_items: {
         Row: {
