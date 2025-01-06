@@ -68,36 +68,37 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
       setError(null);
       console.log('Fetching members for household:', householdId);
 
-      const { data, error } = await supabase
+      const { data: membersData, error: membersError } = await supabase
         .from('household_members')
         .select(`
           user_id,
-          role,
-          profiles:user_id (
-            username
-          )
+          role
         `)
         .eq('household_id', householdId);
 
-      if (error) {
-        console.error('Supabase error fetching members:', error);
-        throw error;
+      if (membersError) throw membersError;
+
+      // Fetch profiles for the members
+      if (membersData) {
+        const userIds = membersData.map(member => member.user_id);
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, username')
+          .in('id', userIds);
+
+        if (profilesError) throw profilesError;
+
+        const formattedMembers = membersData.map(member => {
+          const profile = profilesData?.find(p => p.id === member.user_id);
+          return {
+            id: member.user_id,
+            username: profile?.username || 'Unknown User',
+            role: member.role
+          };
+        });
+
+        setMembers(formattedMembers);
       }
-
-      console.log('Fetched members data:', data);
-
-      if (!data) {
-        setMembers([]);
-        return;
-      }
-
-      const formattedMembers = data.map(member => ({
-        id: member.user_id,
-        username: member.profiles?.username || 'Unknown User',
-        role: member.role
-      }));
-
-      setMembers(formattedMembers);
     } catch (err) {
       console.error('Error fetching members:', err);
       setError('Failed to load household members. Please try again later.');

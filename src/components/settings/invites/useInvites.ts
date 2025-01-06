@@ -12,7 +12,7 @@ interface Invite {
   invited_by: string;
   profiles: {
     username: string;
-  };
+  } | null;
 }
 
 export const useInvites = () => {
@@ -27,7 +27,8 @@ export const useInvites = () => {
 
       console.log('Fetching invites for user email:', user.email);
 
-      const { data, error } = await supabase
+      // First fetch the invites
+      const { data: invitesData, error: invitesError } = await supabase
         .from('household_invites')
         .select(`
           id,
@@ -36,21 +37,32 @@ export const useInvites = () => {
             name
           ),
           status,
-          invited_by,
-          profiles:invited_by (
-            username
-          )
+          invited_by
         `)
         .eq('email', user.email)
         .eq('status', 'pending');
 
-      if (error) {
-        console.error('Error fetching invites:', error);
-        throw error;
-      }
+      if (invitesError) throw invitesError;
 
-      console.log('Fetched invites:', data);
-      setPendingInvites(data || []);
+      if (invitesData) {
+        // Then fetch the profiles for the inviters
+        const inviterIds = invitesData.map(invite => invite.invited_by).filter(Boolean);
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, username')
+          .in('id', inviterIds);
+
+        if (profilesError) throw profilesError;
+
+        // Combine the data
+        const invitesWithProfiles = invitesData.map(invite => ({
+          ...invite,
+          profiles: profilesData?.find(p => p.id === invite.invited_by) || null
+        }));
+
+        console.log('Fetched invites with profiles:', invitesWithProfiles);
+        setPendingInvites(invitesWithProfiles);
+      }
     } catch (error) {
       console.error('Error fetching invites:', error);
       toast({
