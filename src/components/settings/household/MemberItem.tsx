@@ -1,5 +1,6 @@
 import { UserMinus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface MemberItemProps {
   member: {
@@ -13,10 +14,12 @@ interface MemberItemProps {
 
 export const MemberItem = ({ member, canRemove, onRemove }: MemberItemProps) => {
   return (
-    <div className="flex items-center justify-between p-2 bg-mint rounded-lg">
-      <div>
+    <div className="flex items-center justify-between p-2 bg-[#e0f0dd] rounded-lg">
+      <div className="flex items-center gap-2">
         <span className="font-medium">{member.username}</span>
-        <span className="ml-2 text-sm text-forest/70">({member.role})</span>
+        <Badge variant="outline" className="text-[#1e251c] border-[#9dbc98]">
+          {member.role}
+        </Badge>
       </div>
       {canRemove && (
         <Button

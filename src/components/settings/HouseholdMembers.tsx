@@ -68,7 +68,8 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
       setError(null);
       console.log('Fetching members for household:', householdId);
 
-      const { data, error } = await supabase
+      // Updated query to fetch all members of the household
+      const { data: memberData, error } = await supabase
         .from('household_members')
         .select(`
           user_id,
@@ -84,19 +85,20 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
         throw error;
       }
 
-      console.log('Fetched members data:', data);
+      console.log('Fetched members data:', memberData);
 
-      if (!data) {
+      if (!memberData) {
         setMembers([]);
         return;
       }
 
-      const formattedMembers = data.map(member => ({
+      const formattedMembers = memberData.map(member => ({
         id: member.user_id,
         username: member.profiles?.username || 'Unknown User',
         role: member.role
       }));
 
+      console.log('Formatted members:', formattedMembers);
       setMembers(formattedMembers);
     } catch (err) {
       console.error('Error fetching members:', err);
