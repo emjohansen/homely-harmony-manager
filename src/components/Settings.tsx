@@ -43,7 +43,12 @@ const Settings = () => {
           
           if (error) {
             console.error("Error fetching profile:", error);
-            throw error;
+            toast({
+              title: "Error",
+              description: "Failed to load profile data",
+              variant: "destructive",
+            });
+            return;
           }
             
           if (profile) {
@@ -51,17 +56,24 @@ const Settings = () => {
             setUsername(profile.username || "");
           } else {
             console.log("No profile found, creating one");
-            // Create profile if it doesn't exist
             const { error: insertError } = await supabase
               .from('profiles')
-              .insert([{ id: session.user.id, username: session.user.email }]);
+              .insert([{ 
+                id: session.user.id, 
+                username: session.user.email?.split('@')[0] || 'User'
+              }]);
               
             if (insertError) {
               console.error("Error creating profile:", insertError);
-              throw insertError;
+              toast({
+                title: "Error",
+                description: "Failed to create profile",
+                variant: "destructive",
+              });
+              return;
             }
             
-            setUsername(session.user.email || "");
+            setUsername(session.user.email?.split('@')[0] || 'User');
           }
         }
       } catch (error) {
@@ -83,6 +95,15 @@ const Settings = () => {
   };
 
   const updateUsername = async () => {
+    if (!username.trim()) {
+      toast({
+        title: "Error",
+        description: "Username cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
@@ -93,7 +114,7 @@ const Settings = () => {
 
       const { error } = await supabase
         .from('profiles')
-        .update({ username })
+        .update({ username: username.trim() })
         .eq('id', session.user.id);
 
       if (error) throw error;
@@ -152,7 +173,7 @@ const Settings = () => {
               type="email"
               value={email}
               disabled
-              className="bg-[#e0f0dd]"
+              className="bg-[#e0f0dd] text-forest"
             />
           </div>
 
@@ -165,14 +186,15 @@ const Settings = () => {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="bg-[#e0f0dd]"
+                className="bg-[#e0f0dd] text-forest"
+                placeholder="Enter your username"
               />
               <Button 
                 onClick={updateUsername}
                 disabled={isLoading}
                 className="bg-[#9dbc98] hover:bg-[#8baa88] text-[#1e251c]"
               >
-                Update
+                {isLoading ? "Updating..." : "Update"}
               </Button>
             </div>
           </div>
