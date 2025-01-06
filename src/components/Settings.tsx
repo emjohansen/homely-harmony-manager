@@ -10,6 +10,7 @@ import { Settings as SettingsIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ProfileSettings } from "./settings/ProfileSettings";
 import { LanguageSettings } from "./settings/LanguageSettings";
+import { AccountSettings } from "./settings/AccountSettings";
 
 const Settings = () => {
   const { t } = useTranslation();
@@ -25,9 +26,11 @@ const Settings = () => {
         <DialogHeader>
           <DialogTitle>{t('common.settings')}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <LanguageSettings />
+        <div className="space-y-6 py-4">
           <ProfileSettings />
+          <LanguageSettings />
+          <div className="h-px bg-sage/30" />
+          <AccountSettings />
         </div>
       </DialogContent>
     </Dialog>
