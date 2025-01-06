@@ -22,93 +22,130 @@ export const CustomStores = () => {
   }, []);
 
   const fetchCurrentHousehold = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('No authenticated user found');
+        return;
+      }
 
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('current_household')
-      .eq('id', user.id)
-      .single();
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', user.id)
+        .single();
 
-    if (profileError) {
-      console.error('Error fetching current household:', profileError);
-      return;
-    }
+      if (profileError) {
+        console.error('Error fetching current household:', profileError);
+        return;
+      }
 
-    if (profile?.current_household) {
-      setCurrentHouseholdId(profile.current_household);
-      fetchCustomStores(profile.current_household);
+      if (profile?.current_household) {
+        console.log('Current household ID:', profile.current_household);
+        setCurrentHouseholdId(profile.current_household);
+        fetchCustomStores(profile.current_household);
+      }
+    } catch (error) {
+      console.error('Error in fetchCurrentHousehold:', error);
     }
   };
 
   const fetchCustomStores = async (householdId: string) => {
-    const { data, error } = await supabase
-      .from('households')
-      .select('custom_stores')
-      .eq('id', householdId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('households')
+        .select('custom_stores')
+        .eq('id', householdId)
+        .single();
 
-    if (error) {
-      console.error('Error fetching custom stores:', error);
-      return;
+      if (error) {
+        console.error('Error fetching custom stores:', error);
+        return;
+      }
+
+      console.log('Fetched custom stores:', data?.custom_stores);
+      setCustomStores(data?.custom_stores || []);
+    } catch (error) {
+      console.error('Error in fetchCustomStores:', error);
     }
-
-    setCustomStores(data?.custom_stores || []);
   };
 
   const addCustomStore = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newStore.trim() || !currentHouseholdId) return;
-
-    const updatedStores = [...customStores, newStore.trim()];
-    const { error } = await supabase
-      .from('households')
-      .update({ custom_stores: updatedStores })
-      .eq('id', currentHouseholdId);
-
-    if (error) {
-      console.error('Error adding custom store:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add custom store",
-        variant: "destructive",
-      });
+    if (!newStore.trim() || !currentHouseholdId) {
+      console.log('No store name or household ID');
       return;
     }
 
-    setCustomStores(updatedStores);
-    setNewStore("");
-    toast({
-      title: "Success",
-      description: "Custom store added successfully",
-    });
+    try {
+      console.log('Adding custom store:', newStore, 'to household:', currentHouseholdId);
+      const updatedStores = [...customStores, newStore.trim()];
+      
+      const { error } = await supabase
+        .from('households')
+        .update({ custom_stores: updatedStores })
+        .eq('id', currentHouseholdId);
+
+      if (error) {
+        console.error('Error adding custom store:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add custom store: " + error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setCustomStores(updatedStores);
+      setNewStore("");
+      toast({
+        title: "Success",
+        description: "Custom store added successfully",
+      });
+    } catch (error) {
+      console.error('Error in addCustomStore:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    }
   };
 
   const removeCustomStore = async (storeToRemove: string) => {
     if (!currentHouseholdId) return;
 
-    const updatedStores = customStores.filter(store => store !== storeToRemove);
-    const { error } = await supabase
-      .from('households')
-      .update({ custom_stores: updatedStores })
-      .eq('id', currentHouseholdId);
+    try {
+      const updatedStores = customStores.filter(store => store !== storeToRemove);
+      
+      const { error } = await supabase
+        .from('households')
+        .update({ custom_stores: updatedStores })
+        .eq('id', currentHouseholdId);
 
-    if (error) {
-      console.error('Error removing custom store:', error);
+      if (error) {
+        console.error('Error removing custom store:', error);
+        toast({
+          title: "Error",
+          description: "Failed to remove custom store",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setCustomStores(updatedStores);
+      toast({
+        title: "Success",
+        description: "Custom store removed successfully",
+      });
+    } catch (error) {
+      console.error('Error in removeCustomStore:', error);
       toast({
         title: "Error",
-        description: "Failed to remove custom store",
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
-      return;
     }
-
-    setCustomStores(updatedStores);
-    toast({
-      title: "Success",
-      description: "Custom store removed successfully",
-    });
   };
 
   return (
