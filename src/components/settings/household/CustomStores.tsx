@@ -60,6 +60,11 @@ export const CustomStores = () => {
 
       if (error) {
         console.error('Error fetching custom stores:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch custom stores",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -90,7 +95,7 @@ export const CustomStores = () => {
         console.error('Error adding custom store:', error);
         toast({
           title: "Error",
-          description: "Failed to add custom store: " + error.message,
+          description: "Failed to add custom store",
           variant: "destructive",
         });
         return;
