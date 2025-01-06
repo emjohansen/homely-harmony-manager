@@ -16,13 +16,18 @@ import MealPlanner from "@/pages/MealPlanner";
 import { useNewUserCheck } from "@/hooks/use-new-user-check";
 
 const ProtectedRoute = ({ children, allowSettings = false }: { children: React.ReactNode, allowSettings?: boolean }) => {
-  const { isLoading } = useNewUserCheck(allowSettings);
+  const { isLoading, SetupDialog } = useNewUserCheck(allowSettings);
   
   if (isLoading) {
     return <div className="min-h-screen bg-cream flex items-center justify-center">Loading...</div>;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {SetupDialog}
+      {children}
+    </>
+  );
 };
 
 function App() {

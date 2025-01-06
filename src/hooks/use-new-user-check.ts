@@ -2,11 +2,24 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 export const useNewUserCheck = (allowSettingsPage: boolean = false) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [showSetupDialog, setShowSetupDialog] = useState(false);
+  const [setupNeeded, setSetupNeeded] = useState<{
+    hasNickname: boolean;
+    hasHousehold: boolean;
+  } | null>(null);
 
   useEffect(() => {
     const checkUserSetup = async () => {
@@ -35,12 +48,8 @@ export const useNewUserCheck = (allowSettingsPage: boolean = false) => {
         if (!hasNickname || !hasHousehold) {
           console.log('User setup incomplete:', { hasNickname, hasHousehold });
           if (!allowSettingsPage) {
-            toast({
-              title: "Setup Required",
-              description: "You need to have a nickname and be part of a household",
-              variant: "destructive",
-            });
-            navigate('/settings?setup=required');
+            setSetupNeeded({ hasNickname, hasHousehold });
+            setShowSetupDialog(true);
           }
         }
       } catch (error) {
@@ -51,7 +60,41 @@ export const useNewUserCheck = (allowSettingsPage: boolean = false) => {
     };
 
     checkUserSetup();
-  }, [navigate, toast, allowSettingsPage]);
+  }, [navigate, allowSettingsPage]);
 
-  return { isLoading };
+  const handleSetupConfirm = () => {
+    setShowSetupDialog(false);
+    navigate('/settings?setup=required');
+  };
+
+  return { 
+    isLoading,
+    SetupDialog: showSetupDialog && setupNeeded ? (
+      <AlertDialog open={showSetupDialog} onOpenChange={setShowSetupDialog}>
+        <AlertDialogContent className="bg-[#efffed]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Complete Your Profile Setup</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              To access all features, you need to:
+              {!setupNeeded.hasNickname && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-[#1e251c]">• Set up a nickname</span>
+                </div>
+              )}
+              {!setupNeeded.hasHousehold && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-[#1e251c]">• Join or create a household</span>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="mt-4 flex justify-end">
+            <AlertDialogAction onClick={handleSetupConfirm} className="bg-[#9dbc98] text-[#1e251c] hover:bg-[#e0f0dd]">
+              OK
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+    ) : null
+  };
 };
