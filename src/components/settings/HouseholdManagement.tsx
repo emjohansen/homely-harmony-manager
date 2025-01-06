@@ -1,6 +1,5 @@
 import { HouseholdDropdown } from "./HouseholdDropdown";
 import { InviteMemberButton } from "./InviteMemberButton";
-import { HouseholdMembers } from "./HouseholdMembers";
 import { useHouseholdRole } from "@/hooks/use-household-role";
 import { CreateHouseholdDialog } from "./household/CreateHouseholdDialog";
 import { Label } from "@/components/ui/label";
@@ -44,11 +43,7 @@ export const HouseholdManagement = ({
               <div className="flex gap-2 mt-2">
                 <InviteMemberButton householdId={currentHousehold.id} />
               </div>
-              <div className="mt-4 space-y-4">
-                <HouseholdMembers 
-                  householdId={currentHousehold.id}
-                  onMemberRemoved={onHouseholdsChange}
-                />
+              <div className="mt-4">
                 <CustomStores />
               </div>
             </>
