@@ -1,79 +1,109 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-export const AccountSettings = () => {
-  const navigate = useNavigate();
+interface AccountSettingsProps {
+  userEmail: string | null;
+  initialNickname: string;
+}
+
+export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsProps) => {
+  const [nickname, setNickname] = useState(initialNickname);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const [email, setEmail] = useState<string | undefined>();
 
   useEffect(() => {
-    const getUser = async () => {
+    const fetchNickname = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setEmail(user?.email);
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.username) {
+        setNickname(profile.username);
+      }
     };
-    getUser();
+
+    fetchNickname();
   }, []);
 
-  const handleSignOut = async () => {
+  const handleUpdateNickname = async () => {
+    setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signOut();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ username: nickname })
+        .eq('id', user.id);
+
       if (error) throw error;
-      navigate("/");
+
+      toast({
+        title: "Success",
+        description: "Your nickname has been updated.",
+      });
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error('Error updating nickname:', error);
       toast({
         title: "Error",
-        description: "Failed to sign out",
+        description: "Failed to update nickname. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleDeleteAccount = async () => {
-    toast({
-      title: "Coming Soon",
-      description: "Account deletion will be available in a future update",
-    });
-  };
-
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-medium text-forest">Account</h3>
-      <Card className="bg-cream border-sage">
-        <CardHeader>
-          <CardTitle className="text-forest">Account Information</CardTitle>
-          <CardDescription className="text-forest/70">
-            Manage your account settings and preferences
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-forest">Email</p>
-            <p className="text-sm text-forest/70">{email}</p>
+    <div className="bg-white p-6 rounded-lg shadow">
+      <h2 className="text-lg font-semibold mb-4">Account Settings</h2>
+      <div className="space-y-4">
+        {userEmail && (
+          <div>
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={userEmail}
+              disabled
+              className="mt-1 bg-gray-50"
+            />
           </div>
-          <div className="h-px bg-sage/30" />
-          <div className="space-y-4">
-            <Button 
-              onClick={handleSignOut}
-              variant="outline"
-              className="w-full border-forest text-forest hover:bg-sage/20"
-            >
-              Sign Out
-            </Button>
-            <Button 
-              onClick={handleDeleteAccount}
-              variant="outline"
-              className="w-full border-forest text-forest hover:bg-sage/20"
-            >
-              Delete Account
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        )}
+
+        <div>
+          <Label htmlFor="nickname" className="text-sm font-medium text-gray-700">
+            Nickname
+          </Label>
+          <Input
+            id="nickname"
+            type="text"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            className="mt-1"
+            placeholder="Enter your nickname"
+          />
+        </div>
+
+        <Button 
+          onClick={handleUpdateNickname}
+          disabled={isLoading}
+          className="w-full bg-sage hover:bg-mint text-cream"
+        >
+          {isLoading ? "Updating..." : "Update Nickname"}
+        </Button>
+      </div>
     </div>
   );
 };
