@@ -11,7 +11,7 @@ interface AccountSettingsProps {
 }
 
 export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsProps) => {
-  const [nickname, setNickname] = useState(initialNickname);
+  const [nickname, setNickname] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -24,6 +24,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
           return;
         }
 
+        console.log('Fetching nickname for user:', user.id);
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('username')
@@ -35,6 +36,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
           return;
         }
 
+        console.log('Fetched profile:', profile);
         if (profile?.username) {
           setNickname(profile.username);
         }
