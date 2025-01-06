@@ -17,17 +17,29 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
 
   useEffect(() => {
     const fetchNickname = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          console.log('No user found during nickname fetch');
+          return;
+        }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', user.id)
-        .single();
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', user.id)
+          .single();
 
-      if (profile?.username) {
-        setNickname(profile.username);
+        if (error) {
+          console.error('Error fetching profile:', error);
+          return;
+        }
+
+        if (profile?.username) {
+          setNickname(profile.username);
+        }
+      } catch (error) {
+        console.error('Error in fetchNickname:', error);
       }
     };
 
@@ -38,14 +50,19 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
     setIsLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
+      if (!user) {
+        throw new Error("No user found");
+      }
 
       const { error } = await supabase
         .from('profiles')
         .update({ username: nickname })
         .eq('id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating nickname:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -64,12 +81,12 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-lg font-semibold mb-4">Account Settings</h2>
+    <div className="bg-[#efffed] p-6 rounded-lg shadow">
+      <h2 className="text-lg font-semibold mb-4 text-[#1e251c]">Account Settings</h2>
       <div className="space-y-4">
         {userEmail && (
           <div>
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="email" className="text-sm font-medium text-[#1e251c]">
               Email
             </Label>
             <Input
@@ -77,13 +94,13 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
               type="email"
               value={userEmail}
               disabled
-              className="mt-1 bg-gray-50"
+              className="mt-1 bg-[#e0f0dd]"
             />
           </div>
         )}
 
         <div>
-          <Label htmlFor="nickname" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="nickname" className="text-sm font-medium text-[#1e251c]">
             Nickname
           </Label>
           <Input
@@ -99,7 +116,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
         <Button 
           onClick={handleUpdateNickname}
           disabled={isLoading}
-          className="w-full bg-sage hover:bg-mint text-cream"
+          className="w-full bg-[#9dbc98] hover:bg-[#e0f0dd] text-[#1e251c]"
         >
           {isLoading ? "Updating..." : "Update Nickname"}
         </Button>
