@@ -16,6 +16,7 @@ interface HouseholdManagementProps {
   currentHousehold: Household | null;
   onHouseholdSelect: (household: Household) => Promise<void>;
   onHouseholdsChange: () => void;
+  isLoading: boolean;
 }
 
 export const HouseholdManagement = ({
@@ -23,6 +24,7 @@ export const HouseholdManagement = ({
   currentHousehold,
   onHouseholdSelect,
   onHouseholdsChange,
+  isLoading,
 }: HouseholdManagementProps) => {
   const { isAdmin } = useHouseholdRole(currentHousehold?.id || null);
 
@@ -38,6 +40,7 @@ export const HouseholdManagement = ({
             households={households}
             currentHousehold={currentHousehold}
             onHouseholdSelect={onHouseholdSelect}
+            isLoading={isLoading}
           />
           {currentHousehold && (
             <>
