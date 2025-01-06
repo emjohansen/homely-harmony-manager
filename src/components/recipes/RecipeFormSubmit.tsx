@@ -30,44 +30,52 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
     if (isSubmitting) return;
     
     try {
+      console.log("Starting recipe submission...");
+      setIsSubmitting(true);
+
       // Validate ingredient amounts
       const invalidIngredients = formData.ingredients.filter(ing => {
-        if (!ing.amount) return false; // Empty amount is ok
+        if (!ing.amount) return false;
         return isNaN(parseFloat(ing.amount));
       });
 
       if (invalidIngredients.length > 0) {
         toast({
-          title: "Ugyldig mengde",
-          description: "Alle mengder må være tall",
+          title: "Invalid amount",
+          description: "All amounts must be numbers",
           variant: "destructive",
         });
         return;
       }
 
-      setIsSubmitting(true);
       const { data: { session } } = await supabase.auth.getSession();
+      console.log("Auth session:", session);
       
       if (!session) {
         toast({
-          title: "Feil",
-          description: "Du må være logget inn for å opprette oppskrifter",
+          title: "Error",
+          description: "You must be logged in to create recipes",
           variant: "destructive",
         });
         return;
       }
 
-      // Fetch user's current household from profile
+      // Fetch user's current household
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('current_household')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (profileError || !profile?.current_household) {
+      if (profileError) {
+        console.error("Error fetching profile:", profileError);
+        throw profileError;
+      }
+
+      if (!profile?.current_household) {
         toast({
-          title: "Feil",
-          description: "Du må velge en aktiv husholdning for å opprette oppskrifter",
+          title: "Error",
+          description: "You must select an active household to create recipes",
           variant: "destructive",
         });
         return;
@@ -106,8 +114,8 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
         ]);
 
         toast({
-          title: "Suksess",
-          description: "Oppskrift opprettet!",
+          title: "Success",
+          description: "Recipe created!",
         });
         navigate("/recipes");
       } else {
@@ -131,8 +139,8 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
         );
 
         toast({
-          title: "Suksess",
-          description: "Oppskrift oppdatert!",
+          title: "Success",
+          description: "Recipe updated!",
         });
         navigate(`/recipes/${recipeId}`);
       }
@@ -140,7 +148,7 @@ export const useRecipeSubmit = ({ mode, recipeId, formData }: RecipeFormSubmitPr
       console.error("Error saving recipe:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Kunne ikke lagre oppskriften",
+        description: error instanceof Error ? error.message : "Could not save the recipe",
         variant: "destructive",
       });
     } finally {
