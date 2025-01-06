@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MemberListItem } from "./MemberListItem";
 import { DeleteHouseholdDialog } from "./DeleteHouseholdDialog";
+import { useNavigate } from "react-router-dom";
 
 interface Member {
   id: string;
@@ -32,6 +33,7 @@ export const MembersList = ({
   onMemberRemoved,
 }: MembersListProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleRemoveMember = async (memberId: string) => {
     try {
@@ -58,7 +60,12 @@ export const MembersList = ({
         description: "Member removed successfully.",
       });
 
-      onMemberRemoved();
+      // If user removed themselves, refresh the page
+      if (memberId === currentUserId) {
+        window.location.reload();
+      } else {
+        onMemberRemoved();
+      }
     } catch (error: any) {
       console.error('Error removing member:', error);
       toast({
