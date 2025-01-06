@@ -80,7 +80,7 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
         .eq('household_id', householdId);
 
       if (error) {
-        console.error('Supabase error fetching members:', error);
+        console.error('Error fetching members:', error);
         throw error;
       }
 
@@ -100,8 +100,8 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
       console.log('Formatted members:', formattedMembers);
       setMembers(formattedMembers);
     } catch (err) {
-      console.error('Error fetching members:', err);
-      setError('Failed to load household members. Please try again later.');
+      console.error('Error in fetchMembers:', err);
+      setError('Failed to load household members');
     } finally {
       setIsLoading(false);
     }
@@ -109,12 +109,10 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
 
   const handleRemoveMember = async (memberId: string) => {
     try {
-      // If user is not admin and trying to remove someone else
       if (!isAdmin && memberId !== currentUserId) {
         throw new Error("Only admins can remove other members");
       }
 
-      // If user is admin trying to remove themselves
       if (isAdmin && memberId === currentUserId) {
         throw new Error("Admins cannot remove themselves");
       }

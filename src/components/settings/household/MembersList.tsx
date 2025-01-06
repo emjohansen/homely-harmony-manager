@@ -35,6 +35,10 @@ export const MembersList = ({
     try {
       setIsRemoving(true);
       await onRemoveMember(memberId);
+      toast({
+        title: "Success",
+        description: "Member removed successfully",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -48,10 +52,8 @@ export const MembersList = ({
 
   const canRemoveMember = (memberId: string) => {
     if (isAdmin) {
-      // Admin can remove anyone except themselves
       return memberId !== currentUserId;
     } else {
-      // Non-admin can only remove themselves
       return memberId === currentUserId;
     }
   };
