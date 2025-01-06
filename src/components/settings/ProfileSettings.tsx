@@ -14,50 +14,56 @@ export const ProfileSettings = () => {
     const loadUserData = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          console.log("Loading data for user:", session.user.id);
-          setEmail(session.user.email || "");
+        if (!session?.user) {
+          console.log("No session found");
+          return;
+        }
+
+        console.log("Loading data for user:", session.user.id);
+        setEmail(session.user.email || "");
+        
+        // Use maybeSingle() instead of single()
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error("Error fetching profile:", error);
+          toast({
+            title: "Error",
+            description: "Failed to load profile data",
+            variant: "destructive",
+          });
+          return;
+        }
+            
+        if (profile) {
+          console.log("Profile loaded:", profile);
+          setUsername(profile.username || "");
+        } else {
+          console.log("No profile found, creating one");
+          const defaultUsername = session.user.email?.split('@')[0] || 'User';
           
-          const { data: profile, error } = await supabase
+          const { error: insertError } = await supabase
             .from('profiles')
-            .select('username')
-            .eq('id', session.user.id)
-            .maybeSingle();
-          
-          if (error) {
-            console.error("Error fetching profile:", error);
+            .insert([{ 
+              id: session.user.id, 
+              username: defaultUsername
+            }]);
+              
+          if (insertError) {
+            console.error("Error creating profile:", insertError);
             toast({
               title: "Error",
-              description: "Failed to load profile data",
+              description: "Failed to create profile",
               variant: "destructive",
             });
             return;
           }
-            
-          if (profile) {
-            console.log("Profile loaded:", profile);
-            setUsername(profile.username || "");
-          } else {
-            console.log("No profile found, creating one");
-            const { error: insertError } = await supabase
-              .from('profiles')
-              .insert([{ 
-                id: session.user.id, 
-                username: session.user.email?.split('@')[0] || 'User'
-              }]);
-              
-            if (insertError) {
-              console.error("Error creating profile:", insertError);
-              toast({
-                title: "Error",
-                description: "Failed to create profile",
-                variant: "destructive",
-              });
-              return;
-            }
-            
-            setUsername(session.user.email?.split('@')[0] || 'User');
-          }
+          
+          setUsername(defaultUsername);
         }
       } catch (error) {
         console.error("Error loading user data:", error);
