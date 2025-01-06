@@ -130,13 +130,6 @@ export type Database = {
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "household_invites_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       household_members: {
@@ -166,13 +159,6 @@ export type Database = {
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "household_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
       households: {
@@ -197,15 +183,7 @@ export type Database = {
           id?: string
           name?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "households_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -410,22 +388,7 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "recipes_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "recipes_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       reminder_assignments: {
         Row: {
@@ -519,13 +482,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "shopping_list_items_added_by_fkey"
-            columns: ["added_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "shopping_list_items_shopping_list_id_fkey"
             columns: ["shopping_list_id"]
             isOneToOne: false
@@ -597,22 +553,7 @@ export type Database = {
           name?: string
           status?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "shopping_lists_archived_by_fkey"
-            columns: ["archived_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shopping_lists_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       storage_items: {
         Row: {
