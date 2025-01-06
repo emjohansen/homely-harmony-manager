@@ -25,12 +25,14 @@ import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSearchParams } from "react-router-dom";
 
 const Settings = () => {
   const { t, i18n } = useTranslation();
   const [showSetupAlert, setShowSetupAlert] = useState(false);
   const [hasNickname, setHasNickname] = useState(true);
   const [hasHousehold, setHasHousehold] = useState(true);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const checkUserSetup = async () => {
@@ -46,12 +48,16 @@ const Settings = () => {
       if (profile) {
         setHasNickname(!!profile.username);
         setHasHousehold(!!profile.current_household);
-        setShowSetupAlert(!profile.username || !profile.current_household);
+        
+        // Only show the alert if redirected from another page
+        if (searchParams.get('setup') === 'required') {
+          setShowSetupAlert(!profile.username || !profile.current_household);
+        }
       }
     };
 
     checkUserSetup();
-  }, []);
+  }, [searchParams]);
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);

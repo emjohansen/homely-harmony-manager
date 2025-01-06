@@ -40,7 +40,7 @@ export const useNewUserCheck = (allowSettingsPage: boolean = false) => {
               description: "You need to have a nickname and be part of a household",
               variant: "destructive",
             });
-            navigate('/settings');
+            navigate('/settings?setup=required');
           }
         }
       } catch (error) {
