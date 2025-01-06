@@ -31,14 +31,30 @@ export const CustomStoreDialog = ({
 
   const addCustomStore = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCustomStore.trim() || !currentHouseholdId) return;
+    
+    if (!newCustomStore.trim() || !currentHouseholdId) {
+      toast({
+        title: "Error",
+        description: "Please enter a store name",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
+      console.log('Adding custom store:', {
+        householdId: currentHouseholdId,
+        newStore: newCustomStore,
+        existingStores: customStores
+      });
+
       const updatedStores = [...customStores, newCustomStore.trim()];
-      const { error } = await supabase
+      
+      const { data, error } = await supabase
         .from('households')
         .update({ custom_stores: updatedStores })
-        .eq('id', currentHouseholdId);
+        .eq('id', currentHouseholdId)
+        .select();
 
       if (error) {
         console.error('Error adding custom store:', error);
@@ -50,9 +66,11 @@ export const CustomStoreDialog = ({
         return;
       }
 
+      console.log('Successfully added custom store:', data);
       onStoreAdded(newCustomStore.trim());
       setNewCustomStore("");
       onClose();
+      
       toast({
         title: "Success",
         description: "Custom store added successfully",
