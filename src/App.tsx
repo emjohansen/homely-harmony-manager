@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
@@ -13,24 +13,83 @@ import Reminders from "@/pages/Reminders";
 import Storage from "@/pages/Storage";
 import Settings from "@/pages/Settings";
 import MealPlanner from "@/pages/MealPlanner";
+import { useNewUserCheck } from "@/hooks/use-new-user-check";
+
+const ProtectedRoute = ({ children, allowSettings = false }: { children: React.ReactNode, allowSettings?: boolean }) => {
+  const { isLoading } = useNewUserCheck(allowSettings);
+  
+  if (isLoading) {
+    return <div className="min-h-screen bg-cream flex items-center justify-center">Loading...</div>;
+  }
+
+  return <>{children}</>;
+};
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/recipes" element={<Recipes />} />
-        <Route path="/recipes/new" element={<NewRecipe />} />
-        <Route path="/recipes/:id" element={<RecipeDetails />} />
-        <Route path="/recipes/:id/edit" element={<EditRecipe />} />
-        <Route path="/shopping" element={<Shopping />} />
-        <Route path="/shopping/list/:id" element={<ShoppingListDetail />} />
-        <Route path="/chores" element={<Chores />} />
-        <Route path="/reminders" element={<Reminders />} />
-        <Route path="/storage" element={<Storage />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/meal-planner" element={<MealPlanner />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/recipes" element={
+          <ProtectedRoute>
+            <Recipes />
+          </ProtectedRoute>
+        } />
+        <Route path="/recipes/new" element={
+          <ProtectedRoute>
+            <NewRecipe />
+          </ProtectedRoute>
+        } />
+        <Route path="/recipes/:id" element={
+          <ProtectedRoute>
+            <RecipeDetails />
+          </ProtectedRoute>
+        } />
+        <Route path="/recipes/:id/edit" element={
+          <ProtectedRoute>
+            <EditRecipe />
+          </ProtectedRoute>
+        } />
+        <Route path="/shopping" element={
+          <ProtectedRoute>
+            <Shopping />
+          </ProtectedRoute>
+        } />
+        <Route path="/shopping/list/:id" element={
+          <ProtectedRoute>
+            <ShoppingListDetail />
+          </ProtectedRoute>
+        } />
+        <Route path="/chores" element={
+          <ProtectedRoute>
+            <Chores />
+          </ProtectedRoute>
+        } />
+        <Route path="/reminders" element={
+          <ProtectedRoute>
+            <Reminders />
+          </ProtectedRoute>
+        } />
+        <Route path="/storage" element={
+          <ProtectedRoute>
+            <Storage />
+          </ProtectedRoute>
+        } />
+        <Route path="/settings" element={
+          <ProtectedRoute allowSettings={true}>
+            <Settings />
+          </ProtectedRoute>
+        } />
+        <Route path="/meal-planner" element={
+          <ProtectedRoute>
+            <MealPlanner />
+          </ProtectedRoute>
+        } />
       </Routes>
       <Toaster position="bottom-right" />
     </Router>
