@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useRetry } from "@/hooks/use-retry";
 
 export const useCustomStores = () => {
   const [customStores, setCustomStores] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { executeWithRetry } = useRetry();
 
   useEffect(() => {
     fetchCustomStores();
@@ -14,17 +16,22 @@ export const useCustomStores = () => {
   const fetchCustomStores = async () => {
     try {
       console.log('Fetching custom stores...');
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await executeWithRetry(() => 
+        supabase.auth.getUser()
+      );
+      
       if (!user) {
         console.log('No user found');
         return;
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .single();
+      const { data: profile } = await executeWithRetry(() =>
+        supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single()
+      );
 
       if (!profile?.current_household) {
         console.log('No current household found');
@@ -32,16 +39,15 @@ export const useCustomStores = () => {
       }
 
       console.log('Fetching household data for:', profile.current_household);
-      const { data: household, error } = await supabase
-        .from('households')
-        .select('custom_stores')
-        .eq('id', profile.current_household)
-        .single();
+      const { data: household, error } = await executeWithRetry(() =>
+        supabase
+          .from('households')
+          .select('custom_stores')
+          .eq('id', profile.current_household)
+          .single()
+      );
 
-      if (error) {
-        console.error('Error fetching custom stores:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       console.log('Fetched custom stores:', household?.custom_stores);
       setCustomStores(household?.custom_stores || []);
@@ -49,7 +55,7 @@ export const useCustomStores = () => {
       console.error('Error in fetchCustomStores:', error);
       toast({
         title: "Error",
-        description: "Failed to load custom stores",
+        description: "Failed to load custom stores. Please try refreshing the page.",
         variant: "destructive",
       });
     }
@@ -60,17 +66,22 @@ export const useCustomStores = () => {
       setIsLoading(true);
       console.log('Adding new store:', newStore);
       
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await executeWithRetry(() =>
+        supabase.auth.getUser()
+      );
+      
       if (!user) {
         console.log('No user found');
         return false;
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .single();
+      const { data: profile } = await executeWithRetry(() =>
+        supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single()
+      );
 
       if (!profile?.current_household) {
         console.log('No current household found');
@@ -95,15 +106,14 @@ export const useCustomStores = () => {
       const updatedStores = [...customStores, trimmedStore];
       console.log('Updating stores to:', updatedStores);
       
-      const { error } = await supabase
-        .from('households')
-        .update({ custom_stores: updatedStores })
-        .eq('id', profile.current_household);
+      const { error } = await executeWithRetry(() =>
+        supabase
+          .from('households')
+          .update({ custom_stores: updatedStores })
+          .eq('id', profile.current_household)
+      );
 
-      if (error) {
-        console.error('Error updating custom stores:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       setCustomStores(updatedStores);
       toast({
@@ -115,7 +125,7 @@ export const useCustomStores = () => {
       console.error('Error in addCustomStore:', error);
       toast({
         title: "Error",
-        description: "Failed to add store",
+        description: "Failed to add store. Please try again.",
         variant: "destructive",
       });
       return false;
@@ -129,17 +139,22 @@ export const useCustomStores = () => {
       setIsLoading(true);
       console.log('Removing store:', storeToRemove);
       
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await executeWithRetry(() =>
+        supabase.auth.getUser()
+      );
+      
       if (!user) {
         console.log('No user found');
         return;
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .single();
+      const { data: profile } = await executeWithRetry(() =>
+        supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single()
+      );
 
       if (!profile?.current_household) {
         console.log('No current household found');
@@ -149,15 +164,14 @@ export const useCustomStores = () => {
       const updatedStores = customStores.filter(store => store !== storeToRemove);
       console.log('Updating stores to:', updatedStores);
       
-      const { error } = await supabase
-        .from('households')
-        .update({ custom_stores: updatedStores })
-        .eq('id', profile.current_household);
+      const { error } = await executeWithRetry(() =>
+        supabase
+          .from('households')
+          .update({ custom_stores: updatedStores })
+          .eq('id', profile.current_household)
+      );
 
-      if (error) {
-        console.error('Error removing custom store:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       setCustomStores(updatedStores);
       toast({
@@ -168,7 +182,7 @@ export const useCustomStores = () => {
       console.error('Error in removeCustomStore:', error);
       toast({
         title: "Error",
-        description: "Failed to remove store",
+        description: "Failed to remove store. Please try again.",
         variant: "destructive",
       });
     } finally {

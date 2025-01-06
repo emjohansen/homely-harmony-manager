@@ -7,6 +7,7 @@ import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
 import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
 import { useToast } from "@/hooks/use-toast";
+import { useRetry } from "@/hooks/use-retry";
 
 interface Household {
   id: string;
@@ -21,6 +22,7 @@ export default function Settings() {
   const [households, setHouseholds] = useState<Household[]>([]);
   const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { executeWithRetry } = useRetry();
 
   useEffect(() => {
     checkUser();
@@ -29,20 +31,23 @@ export default function Settings() {
 
   const checkUser = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await executeWithRetry(() => 
+        supabase.auth.getSession()
+      );
+      
       if (!session) {
         navigate("/");
         return;
       }
       setUserEmail(session.user.email);
       
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('username, current_household')
-        .eq('id', session.user.id)
-        .single();
-      
-      if (profileError) throw profileError;
+      const { data: profile } = await executeWithRetry(() =>
+        supabase
+          .from('profiles')
+          .select('username, current_household')
+          .eq('id', session.user.id)
+          .single()
+      );
       
       if (profile?.username) {
         setNickname(profile.username);
@@ -51,7 +56,7 @@ export default function Settings() {
       console.error("Error checking user:", error);
       toast({
         title: "Error",
-        description: "Failed to load user profile",
+        description: "Failed to load user profile. Please try refreshing the page.",
         variant: "destructive",
       });
     }
@@ -60,22 +65,27 @@ export default function Settings() {
   const fetchHouseholds = async () => {
     try {
       console.log("Fetching households...");
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await executeWithRetry(() =>
+        supabase.auth.getUser()
+      );
+      
       if (!user) {
         console.log("No authenticated user found");
         return;
       }
 
-      const { data: memberHouseholds, error: memberError } = await supabase
-        .from('household_members')
-        .select(`
-          household_id,
-          households:household_id (
-            id,
-            name
-          )
-        `)
-        .eq('user_id', user.id);
+      const { data: memberHouseholds, error: memberError } = await executeWithRetry(() =>
+        supabase
+          .from('household_members')
+          .select(`
+            household_id,
+            households:household_id (
+              id,
+              name
+            )
+          `)
+          .eq('user_id', user.id)
+      );
 
       if (memberError) throw memberError;
 
@@ -88,11 +98,13 @@ export default function Settings() {
         }));
         setHouseholds(households);
 
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('current_household')
-          .eq('id', user.id)
-          .single();
+        const { data: profile } = await executeWithRetry(() =>
+          supabase
+            .from('profiles')
+            .select('current_household')
+            .eq('id', user.id)
+            .single()
+        );
 
         if (profile?.current_household) {
           const current = households.find(h => h.id === profile.current_household);
@@ -103,7 +115,7 @@ export default function Settings() {
       console.error("Error in fetchHouseholds:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch households. Please try again.",
+        description: "Failed to fetch households. Please try refreshing the page.",
         variant: "destructive",
       });
     }
@@ -114,17 +126,22 @@ export default function Settings() {
       setIsLoading(true);
       console.log("Selecting household:", household);
       
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await executeWithRetry(() =>
+        supabase.auth.getUser()
+      );
+      
       if (!user) throw new Error("No user found");
 
       // First, update the local state
       setCurrentHousehold(household);
 
-      // Then, update the database
-      const { error } = await supabase
-        .from('profiles')
-        .update({ current_household: household.id })
-        .eq('id', user.id);
+      // Then, update the database with retry mechanism
+      const { error } = await executeWithRetry(() =>
+        supabase
+          .from('profiles')
+          .update({ current_household: household.id })
+          .eq('id', user.id)
+      );
 
       if (error) throw error;
 
