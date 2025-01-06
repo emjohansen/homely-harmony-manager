@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useRetry } from "@/hooks/use-retry";
 
 interface Household {
   id: string;
@@ -11,7 +10,6 @@ interface Household {
 export const useHouseholdSelection = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { executeWithRetry } = useRetry();
 
   const selectHousehold = async (household: Household) => {
     try {
@@ -23,11 +21,15 @@ export const useHouseholdSelection = () => {
         throw new Error("No user found");
       }
 
+      console.log("Current authenticated user:", user.id);
+
       // First update the local state
-      const { error: updateError } = await supabase
+      const { data, error: updateError } = await supabase
         .from('profiles')
         .update({ current_household: household.id })
         .eq('id', user.id);
+
+      console.log("Update response:", { data, error: updateError });
 
       if (updateError) {
         throw updateError;
@@ -40,7 +42,12 @@ export const useHouseholdSelection = () => {
 
       return true;
     } catch (error: any) {
-      console.error('Error updating active household:', error);
+      console.error('Error updating active household:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       toast({
         title: "Error",
         description: "Failed to switch household. Please try again.",
