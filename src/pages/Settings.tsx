@@ -103,16 +103,16 @@ export default function Settings() {
     <div className="min-h-screen bg-cream pb-16">
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="space-y-6">
+          <AccountSettings 
+            userEmail={userEmail} 
+            initialNickname={nickname} 
+          />
+          
           <HouseholdManagement
             households={households}
             currentHousehold={currentHousehold}
             onHouseholdSelect={handleSelectHousehold}
             onHouseholdsChange={fetchHouseholds}
-          />
-
-          <AccountSettings 
-            userEmail={userEmail} 
-            initialNickname={nickname} 
           />
 
           <HouseholdInvites />
