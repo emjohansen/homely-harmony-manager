@@ -44,6 +44,7 @@ export const useCustomStores = () => {
 
   const fetchCustomStores = async (householdId: string) => {
     try {
+      console.log('Fetching custom stores for household:', householdId);
       const { data, error } = await supabase
         .from('households')
         .select('custom_stores')
@@ -65,17 +66,29 @@ export const useCustomStores = () => {
   };
 
   const addCustomStore = async (newStore: string) => {
-    if (!newStore.trim() || !currentHouseholdId || isLoading) return;
+    if (!newStore.trim() || !currentHouseholdId || isLoading) return false;
 
     setIsLoading(true);
     try {
       const trimmedStore = newStore.trim();
       console.log('Adding custom store:', trimmedStore, 'to household:', currentHouseholdId);
       
+      // First get the current stores to ensure we have the latest data
+      const { data: currentData, error: fetchError } = await supabase
+        .from('households')
+        .select('custom_stores')
+        .eq('id', currentHouseholdId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const currentStores = currentData?.custom_stores || [];
+      
+      // Update with the new store
       const { data, error } = await supabase
         .from('households')
         .update({ 
-          custom_stores: [...customStores, trimmedStore]
+          custom_stores: [...currentStores, trimmedStore]
         })
         .eq('id', currentHouseholdId)
         .select('custom_stores')
@@ -108,7 +121,17 @@ export const useCustomStores = () => {
 
     setIsLoading(true);
     try {
-      const updatedStores = customStores.filter(store => store !== storeToRemove);
+      // First get the current stores to ensure we have the latest data
+      const { data: currentData, error: fetchError } = await supabase
+        .from('households')
+        .select('custom_stores')
+        .eq('id', currentHouseholdId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const currentStores = currentData?.custom_stores || [];
+      const updatedStores = currentStores.filter(store => store !== storeToRemove);
       
       const { data, error } = await supabase
         .from('households')
@@ -119,6 +142,7 @@ export const useCustomStores = () => {
 
       if (error) throw error;
 
+      console.log('Updated stores after removal:', data.custom_stores);
       setCustomStores(data.custom_stores);
       toast({
         title: "Success",
