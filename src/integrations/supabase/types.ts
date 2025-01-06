@@ -97,151 +97,6 @@ export type Database = {
         }
         Relationships: []
       }
-      household_invites: {
-        Row: {
-          created_at: string
-          email: string
-          household_id: string | null
-          id: string
-          invited_by: string | null
-          status: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          household_id?: string | null
-          id?: string
-          invited_by?: string | null
-          status?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          household_id?: string | null
-          id?: string
-          invited_by?: string | null
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "household_invites_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "household_invites_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      household_members: {
-        Row: {
-          household_id: string
-          joined_at: string
-          role: string
-          user_id: string
-        }
-        Insert: {
-          household_id: string
-          joined_at?: string
-          role: string
-          user_id: string
-        }
-        Update: {
-          household_id?: string
-          joined_at?: string
-          role?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "household_members_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "household_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      households: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          custom_stores: string[] | null
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          custom_stores?: string[] | null
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          custom_stores?: string[] | null
-          id?: string
-          name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "households_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          current_household: string | null
-          id: string
-          updated_at: string
-          username: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          current_household?: string | null
-          id: string
-          updated_at?: string
-          username?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          current_household?: string | null
-          id?: string
-          updated_at?: string
-          username?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_current_household_fkey"
-            columns: ["current_household"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       recipe_group_items: {
         Row: {
           group_id: string
@@ -410,22 +265,7 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "recipes_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "recipes_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       reminder_assignments: {
         Row: {
@@ -519,13 +359,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "shopping_list_items_added_by_fkey"
-            columns: ["added_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "shopping_list_items_shopping_list_id_fkey"
             columns: ["shopping_list_id"]
             isOneToOne: false
@@ -597,22 +430,7 @@ export type Database = {
           name?: string
           status?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "shopping_lists_archived_by_fkey"
-            columns: ["archived_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shopping_lists_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       storage_items: {
         Row: {
@@ -684,25 +502,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      check_household_membership: {
-        Args: {
-          p_user_id: string
-          p_household_id: string
-        }
-        Returns: boolean
-      }
-      check_user_household_access: {
-        Args: {
-          recipe_household_id: string
-        }
-        Returns: boolean
-      }
-      is_household_member: {
-        Args: {
-          household_id: string
-        }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
