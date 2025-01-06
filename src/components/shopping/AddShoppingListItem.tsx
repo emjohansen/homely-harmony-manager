@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 interface AddShoppingListItemProps {
@@ -98,6 +99,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
 
   const addCustomStore = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event bubbling
     if (!newCustomStore.trim() || !currentHouseholdId) return;
 
     try {
@@ -119,6 +121,7 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
 
       setCustomStores(updatedStores);
       setAllStores([...DEFAULT_STORES, ...updatedStores]);
+      setNewStore(newCustomStore.trim());
       setNewCustomStore("");
       setIsDialogOpen(false);
       toast({
@@ -190,6 +193,9 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
               <DialogContent className="bg-[#efffed]">
                 <DialogHeader>
                   <DialogTitle>Add Custom Store</DialogTitle>
+                  <DialogDescription>
+                    Add a new store to your shopping list options.
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={addCustomStore} className="flex gap-2">
                   <Input
