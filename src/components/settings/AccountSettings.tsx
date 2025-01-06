@@ -18,21 +18,26 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   useEffect(() => {
     const fetchNickname = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError) {
+          console.error('Error getting user:', userError);
+          return;
+        }
+
         if (!user) {
           console.log('No user found during nickname fetch');
           return;
         }
 
         console.log('Fetching nickname for user:', user.id);
-        const { data: profile, error } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('username')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
-        if (error) {
-          console.error('Error fetching profile:', error);
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
           return;
         }
 
@@ -51,19 +56,21 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   const handleUpdateNickname = async () => {
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      
       if (!user) {
         throw new Error("No user found");
       }
 
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ username: nickname })
         .eq('id', user.id);
 
-      if (error) {
-        console.error('Error updating nickname:', error);
-        throw error;
+      if (updateError) {
+        console.error('Error updating nickname:', updateError);
+        throw updateError;
       }
 
       toast({
