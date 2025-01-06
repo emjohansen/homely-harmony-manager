@@ -12,7 +12,11 @@
   }
 
   /* Reset all default colors to use our palette */
+  html, body, #root {
+    @apply min-h-screen bg-cream text-forest;
+  }
+
   body {
-    @apply bg-cream text-forest;
+    @apply m-0 p-0;
   }
 }

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
 import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
+import { useToast } from "@/hooks/use-toast";
 
 interface Household {
   id: string;
@@ -14,6 +15,7 @@ interface Household {
 
 export default function Settings() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [nickname, setNickname] = useState<string>("");
   const [households, setHouseholds] = useState<Household[]>([]);
@@ -44,36 +46,57 @@ export default function Settings() {
   };
 
   const fetchHouseholds = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: memberHouseholds } = await supabase
-      .from('household_members')
-      .select('household_id, households:household_id(id, name)')
-      .eq('user_id', user.id);
-
-    if (memberHouseholds) {
-      const households = memberHouseholds.map(mh => ({
-        id: mh.households.id,
-        name: mh.households.name
-      }));
-      setHouseholds(households);
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.current_household) {
-        const current = households.find(h => h.id === profile.current_household);
-        setCurrentHousehold(current || null);
+    try {
+      console.log("Fetching households...");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log("No authenticated user found");
+        return;
       }
+
+      const { data: memberHouseholds, error: memberError } = await supabase
+        .from('household_members')
+        .select('household_id, households:household_id(id, name)')
+        .eq('user_id', user.id);
+
+      if (memberError) {
+        console.error("Error fetching member households:", memberError);
+        throw memberError;
+      }
+
+      console.log("Fetched member households:", memberHouseholds);
+
+      if (memberHouseholds) {
+        const households = memberHouseholds.map(mh => ({
+          id: mh.households.id,
+          name: mh.households.name
+        }));
+        setHouseholds(households);
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.current_household) {
+          const current = households.find(h => h.id === profile.current_household);
+          setCurrentHousehold(current || null);
+        }
+      }
+    } catch (error) {
+      console.error("Error in fetchHouseholds:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch households. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleSelectHousehold = async (household: Household) => {
     try {
+      console.log("Selecting household:", household);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
@@ -85,12 +108,18 @@ export default function Settings() {
       if (error) throw error;
 
       setCurrentHousehold(household);
-      
-      // Force reload the page to refresh all data
+      toast({
+        title: "Success",
+        description: `Switched to ${household.name}`,
+      });
       window.location.reload();
-      
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating active household:', error);
+      toast({
+        title: "Error",
+        description: "Failed to switch household. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
