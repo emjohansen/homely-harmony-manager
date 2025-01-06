@@ -91,16 +91,7 @@ export const useInvites = () => {
         return;
       }
 
-      // Update invite status
-      const { error: updateError } = await supabase
-        .from('household_invites')
-        .update({ status: 'accepted' })
-        .eq('id', inviteId)
-        .eq('status', 'pending'); // Only update if still pending
-
-      if (updateError) throw updateError;
-
-      // Add user to household members
+      // Add user to household members first
       const { error: memberError } = await supabase
         .from('household_members')
         .insert([{
@@ -111,12 +102,24 @@ export const useInvites = () => {
 
       if (memberError) {
         console.error('Error adding member:', memberError);
-        // If adding member fails, revert invite status
-        await supabase
-          .from('household_invites')
-          .update({ status: 'pending' })
-          .eq('id', inviteId);
         throw memberError;
+      }
+
+      // Then update invite status
+      const { error: updateError } = await supabase
+        .from('household_invites')
+        .update({ status: 'accepted' })
+        .eq('id', inviteId)
+        .eq('status', 'pending');
+
+      if (updateError) {
+        // If updating invite fails, try to remove the member
+        await supabase
+          .from('household_members')
+          .delete()
+          .eq('household_id', householdId)
+          .eq('user_id', user.id);
+        throw updateError;
       }
 
       toast({
