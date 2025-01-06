@@ -33,7 +33,6 @@ export const MembersList = ({
   onMemberRemoved,
 }: MembersListProps) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleRemoveMember = async (memberId: string) => {
     try {
@@ -60,12 +59,9 @@ export const MembersList = ({
         description: "Member removed successfully.",
       });
 
-      // If user removed themselves, refresh the page
-      if (memberId === currentUserId) {
-        window.location.reload();
-      } else {
-        onMemberRemoved();
-      }
+      // Always refresh the page after successful removal
+      window.location.reload();
+      
     } catch (error: any) {
       console.error('Error removing member:', error);
       toast({
