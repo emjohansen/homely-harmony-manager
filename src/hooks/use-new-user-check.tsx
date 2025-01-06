@@ -24,43 +24,72 @@ export const useNewUserCheck = (allowSettingsPage: boolean = false) => {
   useEffect(() => {
     const checkUserSetup = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        console.log("Starting user setup check...");
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          throw sessionError;
+        }
         
         if (!session) {
+          console.log("No session found, redirecting to home");
           navigate('/');
           return;
         }
 
-        const { data: profile } = await supabase
+        console.log("Fetching profile for user:", session.user.id);
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('username, current_household')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
-        const { data: householdMemberships } = await supabase
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          throw profileError;
+        }
+
+        console.log("Profile data:", profile);
+
+        // Check household memberships with error handling
+        const { data: householdMemberships, error: membershipError } = await supabase
           .from('household_members')
           .select('household_id')
           .eq('user_id', session.user.id);
 
+        if (membershipError) {
+          console.error("Household membership fetch error:", membershipError);
+          throw membershipError;
+        }
+
+        console.log("Household memberships:", householdMemberships);
+
         const hasNickname = !!profile?.username;
         const hasHousehold = householdMemberships && householdMemberships.length > 0;
 
+        console.log("Setup status:", { hasNickname, hasHousehold });
+
         if (!hasNickname || !hasHousehold) {
-          console.log('User setup incomplete:', { hasNickname, hasHousehold });
           if (!allowSettingsPage) {
             setSetupNeeded({ hasNickname, hasHousehold });
             setShowSetupDialog(true);
           }
         }
       } catch (error) {
-        console.error('Error checking user setup:', error);
+        console.error('Error in checkUserSetup:', error);
+        toast({
+          title: "Error checking user setup",
+          description: "Please try refreshing the page",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     checkUserSetup();
-  }, [navigate, allowSettingsPage]);
+  }, [navigate, allowSettingsPage, toast]);
 
   const handleSetupConfirm = () => {
     setShowSetupDialog(false);
