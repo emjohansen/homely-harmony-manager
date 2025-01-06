@@ -35,6 +35,32 @@ export interface Database {
           updated_at?: string
         }
       }
+      household_invites: {
+        Row: {
+          id: string
+          household_id: string | null
+          email: string
+          status: string
+          invited_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          household_id?: string | null
+          email: string
+          status?: string
+          invited_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          household_id?: string | null
+          email?: string
+          status?: string
+          invited_by?: string | null
+          created_at?: string
+        }
+      }
       households: {
         Row: {
           id: string
