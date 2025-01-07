@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { members } from '@/services/localStorage';
+import { members } from '@/services/storage/members';
 import { useAuth } from './use-auth';
 
 export const useHouseholdRole = (householdId: string | null) => {
