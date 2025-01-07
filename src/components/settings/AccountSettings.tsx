@@ -56,29 +56,41 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   const handleUpdateNickname = async () => {
     setIsLoading(true);
     try {
+      console.log('Starting nickname update...');
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
+      if (userError) {
+        console.error('Error getting user for update:', userError);
+        throw userError;
+      }
       
       if (!user) {
+        console.error('No user found for update');
         throw new Error("No user found");
       }
 
-      const { error: updateError } = await supabase
+      console.log('Updating nickname for user:', user.id, 'to:', nickname);
+      const { data, error: updateError } = await supabase
         .from('profiles')
-        .update({ username: nickname })
-        .eq('id', user.id);
+        .update({ 
+          username: nickname,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
 
       if (updateError) {
         console.error('Error updating nickname:', updateError);
         throw updateError;
       }
 
+      console.log('Update successful:', data);
       toast({
         title: "Success",
         description: "Your nickname has been updated.",
       });
     } catch (error) {
-      console.error('Error updating nickname:', error);
+      console.error('Error in handleUpdateNickname:', error);
       toast({
         title: "Error",
         description: "Failed to update nickname. Please try again.",
