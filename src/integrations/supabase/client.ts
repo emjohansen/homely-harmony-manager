@@ -1,52 +1,48 @@
+type MockResponse = {
+  data: any;
+  error: any;
+};
+
+type MockQueryBuilder = {
+  select: (columns?: string) => MockQueryBuilder;
+  eq: (column: string, value: any) => MockQueryBuilder;
+  order: (column: string, options?: { ascending?: boolean }) => MockQueryBuilder;
+  single: () => Promise<MockResponse>;
+  maybeSingle: () => Promise<MockResponse>;
+};
+
 // Mock Supabase client for local storage implementation
 const mockSupabaseClient = {
   auth: {
-    getSession: async () => ({ data: { session: null }, error: null }),
-    getUser: async () => ({ data: { user: null }, error: null }),
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    getUser: () => Promise.resolve({ data: { user: null }, error: null }),
     onAuthStateChange: () => ({
       data: { subscription: { unsubscribe: () => {} } }
     }),
-    signOut: async () => ({ error: null })
+    signOut: () => Promise.resolve({ error: null })
   },
   storage: {
-    from: () => ({
-      upload: async () => ({ data: null, error: null }),
-      getPublicUrl: () => ({ data: { publicUrl: '' } })
+    from: (bucket: string) => ({
+      upload: (path: string, file: File) => Promise.resolve({ data: null, error: null }),
+      getPublicUrl: (path: string) => ({ data: { publicUrl: '' } })
     })
   },
-  from: (table: string) => ({
-    select: () => ({
-      single: async () => ({ data: null, error: null }),
-      maybeSingle: async () => ({ data: null, error: null }),
-      eq: () => ({
-        select: () => ({
-          single: async () => ({ data: null, error: null })
-        })
-      }),
-      order: () => ({
-        eq: () => ({
-          select: () => ({
-            single: async () => ({ data: null, error: null })
-          })
-        })
-      })
-    }),
-    insert: () => ({
-      select: () => ({
-        single: async () => ({ data: null, error: null })
-      })
-    }),
-    update: () => ({
-      eq: () => ({
-        select: () => ({
-          single: async () => ({ data: null, error: null })
-        })
-      })
-    }),
-    delete: () => ({
-      eq: () => ({ data: null, error: null })
-    })
-  })
+  from: (table: string): MockQueryBuilder => {
+    const queryBuilder: MockQueryBuilder = {
+      select: (columns?: string) => queryBuilder,
+      eq: (column: string, value: any) => queryBuilder,
+      order: (column: string, options?: { ascending?: boolean }) => queryBuilder,
+      single: () => Promise.resolve({ data: null, error: null }),
+      maybeSingle: () => Promise.resolve({ data: null, error: null })
+    };
+
+    return {
+      ...queryBuilder,
+      insert: (values: any) => queryBuilder,
+      update: (values: any) => queryBuilder,
+      delete: () => queryBuilder,
+    };
+  }
 };
 
 export const supabase = mockSupabaseClient;
