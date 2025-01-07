@@ -11,28 +11,31 @@ export const useRecipes = () => {
 
   const fetchRecipes = async () => {
     try {
-      console.log("Starting to fetch recipes...");
-      
+      // First get the user's current household
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        console.log("No authenticated session found");
         setPrivateRecipes([]);
         setPublicRecipes([]);
         setLoading(false);
         return;
       }
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('current_household')
         .eq('id', session.user.id)
         .maybeSingle();
 
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        throw profileError;
+      }
+
       console.log("User profile with current household:", profile);
       const currentHouseholdId = profile?.current_household;
       
       if (currentHouseholdId) {
-        // Fetch household recipes
+        // Fetch all household recipes
         const { data: householdRecipes, error: privateError } = await supabase
           .from('recipes')
           .select(`
@@ -48,7 +51,6 @@ export const useRecipes = () => {
           console.error('Error fetching household recipes:', privateError);
           throw privateError;
         }
-
         console.log("Household recipes fetched:", householdRecipes);
         setPrivateRecipes(householdRecipes || []);
       } else {
@@ -71,7 +73,6 @@ export const useRecipes = () => {
         console.error('Error fetching public recipes:', publicError);
         throw publicError;
       }
-
       console.log("Public recipes fetched:", allPublicRecipes);
       setPublicRecipes(allPublicRecipes || []);
       
@@ -88,7 +89,6 @@ export const useRecipes = () => {
   };
 
   useEffect(() => {
-    console.log("useRecipes hook mounted, fetching recipes...");
     fetchRecipes();
   }, []);
 

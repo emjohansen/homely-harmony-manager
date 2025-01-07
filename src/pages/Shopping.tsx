@@ -89,8 +89,7 @@ const Shopping = () => {
         .from('shopping_lists')
         .select(`
           *,
-          creator:profiles!shopping_lists_created_by_fkey (username),
-          archiver:profiles!shopping_lists_archived_by_fkey (username)
+          creator:profiles!shopping_lists_created_by_fkey (username)
         `)
         .eq('household_id', householdId)
         .order('created_at', { ascending: false });
@@ -155,10 +154,11 @@ const Shopping = () => {
   return (
     <div className="min-h-screen bg-cream pb-16">
       <div 
-        className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-bottom md:bg-top"
+        className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
           backgroundImage: 'url("/lovable-uploads/7e24e64e-7cc7-4287-8a2e-41e46382fd65.png")',
           backgroundSize: 'cover',
+          backgroundPosition: 'center'
         }}
       >
         <ShoppingCart className="absolute opacity-10 h-64 w-64 text-cream transform -translate-y-8" />

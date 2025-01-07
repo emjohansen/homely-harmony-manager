@@ -172,15 +172,7 @@ const ShoppingListDetail = () => {
   const totalPrice = items.reduce((sum, item) => sum + (item.price || 0), 0);
 
   return (
-    <div 
-      className="min-h-screen bg-cream pb-20"
-      style={{
-        backgroundImage: "url('/lovable-uploads/339c2e19-94be-4a7e-916f-a2ca72ca5b25.png')",
-        backgroundPosition: "top left",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "256px auto"
-      }}
-    >
+    <div className="min-h-screen bg-cream pb-20">
       <div className="max-w-4xl mx-auto px-4 py-4">
         <ShoppingListHeader list={list} totalPrice={totalPrice} />
         

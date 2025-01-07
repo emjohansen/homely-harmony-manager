@@ -1,4 +1,4 @@
-import { Utensils, ShoppingCart, Refrigerator, Menu, Calendar, Settings, ClipboardList, Bell } from "lucide-react";
+import { Utensils, ShoppingCart, CalendarClock, ClipboardList, Refrigerator, Settings, Menu } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -13,15 +13,14 @@ const Navigation = () => {
   const navigationItems = [
     { path: "/recipes", icon: Utensils, label: "Recipes" },
     { path: "/shopping", icon: ShoppingCart, label: "Shopping" },
+    { path: "/reminders", icon: CalendarClock, label: "Reminders" },
+    { path: "/chores", icon: ClipboardList, label: "Chores" },
     { path: "/storage", icon: Refrigerator, label: "Storage" },
-    { path: "/meal-planner", icon: Calendar, label: "Meal Planner" },
+    { path: "/settings", icon: Settings, label: "Profile and Settings" },
   ];
 
-  const menuItems = [
-    { path: "/chores", icon: ClipboardList, label: "Chores" },
-    { path: "/reminders", icon: Bell, label: "Reminders" },
-    { path: "/settings", icon: Settings, label: "Profile & Settings" },
-  ];
+  const mainItems = navigationItems.slice(0, 4);
+  const menuItems = navigationItems.slice(4);
 
   const NavigationButton = ({ path, Icon, label }: { path: string; Icon: any; label: string }) => (
     <button
@@ -42,7 +41,7 @@ const Navigation = () => {
     <div className="fixed bottom-0 left-0 right-0 bg-cream border-t border-sage">
       <div className="max-w-lg mx-auto px-4">
         <div className="flex justify-between py-2">
-          {navigationItems.map(({ path, icon: Icon, label }) => (
+          {mainItems.map(({ path, icon: Icon, label }) => (
             <NavigationButton key={path} path={path} Icon={Icon} label={label} />
           ))}
           

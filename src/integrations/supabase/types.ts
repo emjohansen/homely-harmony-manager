@@ -130,6 +130,13 @@ export type Database = {
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "household_invites_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       household_members: {
@@ -159,31 +166,43 @@ export type Database = {
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "household_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       households: {
         Row: {
           created_at: string
           created_by: string | null
-          custom_stores: string[] | null
           id: string
           name: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
-          custom_stores?: string[] | null
           id?: string
           name: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
-          custom_stores?: string[] | null
           id?: string
           name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "households_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -388,7 +407,22 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "recipes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reminder_assignments: {
         Row: {
@@ -482,6 +516,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "shopping_list_items_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "shopping_list_items_shopping_list_id_fkey"
             columns: ["shopping_list_id"]
             isOneToOne: false
@@ -525,7 +566,6 @@ export type Database = {
       shopping_lists: {
         Row: {
           archived_at: string | null
-          archived_by: string | null
           created_at: string
           created_by: string | null
           household_id: string | null
@@ -535,7 +575,6 @@ export type Database = {
         }
         Insert: {
           archived_at?: string | null
-          archived_by?: string | null
           created_at?: string
           created_by?: string | null
           household_id?: string | null
@@ -545,7 +584,6 @@ export type Database = {
         }
         Update: {
           archived_at?: string | null
-          archived_by?: string | null
           created_at?: string
           created_by?: string | null
           household_id?: string | null
@@ -553,7 +591,15 @@ export type Database = {
           name?: string
           status?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       storage_items: {
         Row: {
@@ -635,12 +681,6 @@ export type Database = {
       check_user_household_access: {
         Args: {
           recipe_household_id: string
-        }
-        Returns: boolean
-      }
-      is_household_member: {
-        Args: {
-          household_id: string
         }
         Returns: boolean
       }

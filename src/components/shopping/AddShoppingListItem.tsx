@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
@@ -9,59 +9,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { CustomStoreDialog } from "./CustomStoreDialog";
 
 interface AddShoppingListItemProps {
   onAddItem: (item: string, quantity: string, store: string) => void;
 }
 
-const DEFAULT_STORES = ["Any Store"];
+const STORES = [
+  "REMA 1000",
+  "COOP",
+  "KIWI",
+  "SPAR",
+  "EUROPRIS",
+  "Any Store"
+];
 
 export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => {
   const [newItem, setNewItem] = useState("");
-  const [newQuantity, setNewQuantity] = useState("");
+  const [newQuantity, setNewQuantity] = useState("1");
   const [newStore, setNewStore] = useState("Any Store");
-  const [customStores, setCustomStores] = useState<string[]>([]);
-  const [allStores, setAllStores] = useState<string[]>(DEFAULT_STORES);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    fetchCustomStores();
-  }, []);
-
-  const fetchCustomStores = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.current_household) {
-        const { data: household } = await supabase
-          .from('households')
-          .select('custom_stores')
-          .eq('id', profile.current_household)
-          .single();
-
-        const userCustomStores = household?.custom_stores || [];
-        setCustomStores(userCustomStores);
-        setAllStores([...DEFAULT_STORES, ...userCustomStores]);
-      }
-    } catch (error) {
-      console.error('Error fetching custom stores:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load custom stores",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,42 +34,36 @@ export const AddShoppingListItem = ({ onAddItem }: AddShoppingListItemProps) => 
     
     onAddItem(newItem, newQuantity, newStore);
     setNewItem("");
-    setNewQuantity("");
+    setNewQuantity("1");
     setNewStore("Any Store");
   };
 
-  const handleStoreAdded = (store: string) => {
-    setCustomStores(prev => [...prev, store]);
-    setAllStores(prev => [...prev, store]);
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-6 bg-[#efffed]">
-      <div className="flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed]">
+      <div className="flex items-center gap-2 !p-0">
         <Input
           placeholder="Add new item..."
           value={newItem}
           onChange={(e) => setNewItem(e.target.value)}
-          className="flex-1 border-sage border"
+          className="flex-1"
         />
         <Input
           type="number"
           placeholder="Qty"
           value={newQuantity}
           onChange={(e) => setNewQuantity(e.target.value)}
-          className="w-16 border-sage border"
+          className="w-16"
         />
         <Select value={newStore} onValueChange={setNewStore}>
-          <SelectTrigger className="w-32 border-sage border">
+          <SelectTrigger className="w-32">
             <SelectValue placeholder="Select store" />
           </SelectTrigger>
-          <SelectContent className="bg-[#efffed] z-50">
-            {allStores.map((store) => (
+          <SelectContent className="bg-[#efffed]">
+            {STORES.map((store) => (
               <SelectItem key={store} value={store}>
                 {store}
               </SelectItem>
             ))}
-            <CustomStoreDialog onStoreAdded={handleStoreAdded} />
           </SelectContent>
         </Select>
       </div>

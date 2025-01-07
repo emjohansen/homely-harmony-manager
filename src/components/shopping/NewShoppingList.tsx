@@ -67,7 +67,7 @@ export const NewShoppingList = ({ onCreateList }: NewShoppingListProps) => {
             placeholder="Shopping List Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-cream border-sage text-forest placeholder:text-forest/50"
+            className="bg-mint border-sage text-forest placeholder:text-forest/50"
           />
           <Button type="submit" className="w-full bg-sage hover:bg-sage/90 text-cream">
             Create List

@@ -31,13 +31,13 @@ export const RecipeFilters = ({
       <div className="grid grid-cols-2 gap-0 w-full max-w-lg mx-auto">
         <Button
           onClick={() => setShowFilters(!showFilters)}
-          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-[#9dbc98] rounded-r-none"
+          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-sage rounded-r-none"
         >
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
         <Button
           onClick={onRandomRecipe}
-          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-[#9dbc98] rounded-l-none border-l-0"
+          className="hover:bg-sage text-forest hover:text-cream text-sm h-[36px] border border-sage rounded-l-none border-l-0"
         >
           Random Recipe
         </Button>
@@ -57,7 +57,7 @@ export const RecipeFilters = ({
         <div className="mb-6">
           <Accordion type="single" collapsible className="w-full space-y-2">
             {Object.entries(TAG_CATEGORIES).map(([key, category]) => (
-              <AccordionItem key={key} value={key} className="border border-[#9dbc98] rounded-lg shadow-sm">
+              <AccordionItem key={key} value={key} className="border rounded-lg shadow-sm">
                 <AccordionTrigger className="px-4">
                   <span className="text-sm font-semibold text-forest">{category.label}</span>
                 </AccordionTrigger>

@@ -10,12 +10,7 @@ interface ShoppingList {
   status: string;
   created_at: string;
   created_by: string;
-  archived_at: string | null;
-  archived_by: string | null;
   creator?: {
-    username: string | null;
-  };
-  archiver?: {
     username: string | null;
   };
 }
@@ -31,15 +26,11 @@ export const ShoppingLists = ({ lists, onListsChange }: ShoppingListsProps) => {
 
   const handleArchiveList = async (id: string) => {
     try {
-      const user = (await supabase.auth.getUser()).data.user;
-      if (!user) throw new Error("No user found");
-
       const { error } = await supabase
         .from('shopping_lists')
         .update({
           status: 'archived',
-          archived_at: new Date().toISOString(),
-          archived_by: user.id
+          archived_at: new Date().toISOString()
         })
         .eq('id', id);
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { ShoppingListActions } from "./ShoppingListActions";
 
 interface ShoppingListCardProps {
@@ -11,14 +11,6 @@ interface ShoppingListCardProps {
     status: string;
     created_at: string;
     created_by: string;
-    archived_at: string | null;
-    archived_by?: string | null;
-    creator?: {
-      username: string | null;
-    };
-    archiver?: {
-      username: string | null;
-    };
   };
   onArchive: (id: string) => void;
   onDelete: (id: string) => void;
@@ -48,32 +40,17 @@ export const ShoppingListCard = ({ list, onArchive, onDelete, onViewList }: Shop
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "MMM d, yyyy 'at' h:mm a");
-  };
-
   return (
     <Card 
       className="border border-sage p-4 space-y-4 cursor-pointer hover:bg-mint/10 transition-colors"
       onClick={() => onViewList(list.id)}
     >
       <div className="flex items-center justify-between">
-        <div className="space-y-2">
+        <div>
           <h3 className="text-lg font-semibold text-forest">{list.name}</h3>
-          <div className="space-y-1">
-            <div>
-              <p className="text-sm text-forest/80">Created by {list.creator?.username || "Unknown"}</p>
-              <p className="text-xs text-forest/60">({formatDate(list.created_at)})</p>
-            </div>
-            {list.status === "archived" && list.archived_at && (
-              <div>
-                <p className="text-sm text-forest/80">
-                  Archived by {list.archiver?.username || "Unknown"}
-                </p>
-                <p className="text-xs text-forest/60">({formatDate(list.archived_at)})</p>
-              </div>
-            )}
-          </div>
+          <p className="text-sm text-forest/80">
+            Created {formatDistanceToNow(new Date(list.created_at))} ago
+          </p>
         </div>
         <ShoppingListActions 
           status={list.status}

@@ -11,42 +11,23 @@ interface AccountSettingsProps {
 }
 
 export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsProps) => {
-  const [nickname, setNickname] = useState<string>("");
+  const [nickname, setNickname] = useState(initialNickname);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchNickname = async () => {
-      try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) {
-          console.error('Error getting user:', userError);
-          return;
-        }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-        if (!user) {
-          console.log('No user found during nickname fetch');
-          return;
-        }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .single();
 
-        // Test GET request to verify access
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('username')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-          return;
-        }
-
-        console.log('Successfully fetched profile:', profile);
-        if (profile?.username) {
-          setNickname(profile.username);
-        }
-      } catch (error) {
-        console.error('Error in fetchNickname:', error);
+      if (profile?.username) {
+        setNickname(profile.username);
       }
     };
 
@@ -56,62 +37,25 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   const handleUpdateNickname = async () => {
     setIsLoading(true);
     try {
-      console.log('Starting nickname update...');
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) {
-        console.error('Auth error:', userError);
-        throw userError;
-      }
-      
-      if (!user) {
-        console.error('No authenticated user found');
-        throw new Error("No user found");
-      }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
 
-      console.log('Attempting to update nickname for user:', user.id);
-      
-      // First verify we can read the profile
-      const { data: existingProfile, error: readError } = await supabase
+      const { error } = await supabase
         .from('profiles')
-        .select('username')
-        .eq('id', user.id)
-        .single();
-        
-      if (readError) {
-        console.error('Error reading profile:', readError);
-        throw readError;
-      }
+        .update({ username: nickname })
+        .eq('id', user.id);
 
-      console.log('Current profile data:', existingProfile);
-
-      // Now attempt the update
-      const { data: updatedProfile, error: updateError } = await supabase
-        .from('profiles')
-        .update({ 
-          username: nickname,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id)
-        .select()
-        .single();
-
-      if (updateError) {
-        console.error('Profile update error:', updateError);
-        throw updateError;
-      }
-
-      console.log('Profile successfully updated:', updatedProfile);
+      if (error) throw error;
 
       toast({
         title: "Success",
         description: "Your nickname has been updated.",
       });
-    } catch (error: any) {
-      console.error('Error in handleUpdateNickname:', error);
+    } catch (error) {
+      console.error('Error updating nickname:', error);
       toast({
         title: "Error",
-        description: `Failed to update nickname: ${error.message}`,
+        description: "Failed to update nickname. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -120,12 +64,12 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   };
 
   return (
-    <div className="bg-[#efffed] p-6 rounded-lg shadow">
-      <h2 className="text-lg font-semibold mb-4 text-[#1e251c]">Account Settings</h2>
+    <div className="bg-white p-6 rounded-lg shadow">
+      <h2 className="text-lg font-semibold mb-4">Account Settings</h2>
       <div className="space-y-4">
         {userEmail && (
           <div>
-            <Label htmlFor="email" className="text-sm font-medium text-[#1e251c]">
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
               Email
             </Label>
             <Input
@@ -133,13 +77,13 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
               type="email"
               value={userEmail}
               disabled
-              className="mt-1 bg-[#e0f0dd]"
+              className="mt-1 bg-gray-50"
             />
           </div>
         )}
 
         <div>
-          <Label htmlFor="nickname" className="text-sm font-medium text-[#1e251c]">
+          <Label htmlFor="nickname" className="text-sm font-medium text-gray-700">
             Nickname
           </Label>
           <Input
@@ -155,7 +99,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
         <Button 
           onClick={handleUpdateNickname}
           disabled={isLoading}
-          className="w-full bg-[#9dbc98] hover:bg-[#e0f0dd] text-[#1e251c]"
+          className="w-full bg-sage hover:bg-mint text-cream"
         >
           {isLoading ? "Updating..." : "Update Nickname"}
         </Button>

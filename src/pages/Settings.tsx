@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
+import { useNavigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
 import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
-import { useToast } from "@/hooks/use-toast";
-import { useHouseholdSelection } from "@/hooks/use-household-selection";
-import { useNavigate } from "react-router-dom";
 
 interface Household {
   id: string;
@@ -16,12 +14,10 @@ interface Household {
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [nickname, setNickname] = useState<string>("");
   const [households, setHouseholds] = useState<Household[]>([]);
   const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
-  const { selectHousehold, isLoading } = useHouseholdSelection();
 
   useEffect(() => {
     checkUser();
@@ -29,101 +25,72 @@ export default function Settings() {
   }, []);
 
   const checkUser = async () => {
-    try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) throw sessionError;
-      
-      if (!session) {
-        navigate("/");
-        return;
-      }
-
-      setUserEmail(session.user.email);
-      
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('username, current_household')
-        .eq('id', session.user.id)
-        .single();
-      
-      if (profileError) throw profileError;
-      
-      if (profileData?.username) {
-        setNickname(profileData.username);
-      }
-    } catch (error: any) {
-      console.error("Error checking user:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load user profile. Please try refreshing the page.",
-        variant: "destructive",
-      });
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate("/");
+      return;
+    }
+    setUserEmail(session.user.email);
+    
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('username, current_household')
+      .eq('id', session.user.id)
+      .single();
+    
+    if (profile?.username) {
+      setNickname(profile.username);
     }
   };
 
   const fetchHouseholds = async () => {
-    try {
-      console.log("Fetching households...");
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) throw userError;
-      
-      if (!user) {
-        console.log("No authenticated user found");
-        return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: memberHouseholds } = await supabase
+      .from('household_members')
+      .select('household_id, households:household_id(id, name)')
+      .eq('user_id', user.id);
+
+    if (memberHouseholds) {
+      const households = memberHouseholds.map(mh => ({
+        id: mh.households.id,
+        name: mh.households.name
+      }));
+      setHouseholds(households);
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.current_household) {
+        const current = households.find(h => h.id === profile.current_household);
+        setCurrentHousehold(current || null);
       }
-
-      const { data: memberHouseholds, error: householdsError } = await supabase
-        .from('household_members')
-        .select(`
-          household_id,
-          households:household_id (
-            id,
-            name
-          )
-        `)
-        .eq('user_id', user.id);
-
-      if (householdsError) throw householdsError;
-
-      console.log("Fetched member households:", memberHouseholds);
-
-      if (memberHouseholds) {
-        const households = memberHouseholds.map(mh => ({
-          id: mh.households.id,
-          name: mh.households.name
-        }));
-        setHouseholds(households);
-
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('current_household')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) throw profileError;
-
-        if (profileData?.current_household) {
-          const current = households.find(h => h.id === profileData.current_household);
-          setCurrentHousehold(current || null);
-        }
-      }
-    } catch (error: any) {
-      console.error("Error in fetchHouseholds:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch households. Please try refreshing the page.",
-        variant: "destructive",
-      });
     }
   };
 
   const handleSelectHousehold = async (household: Household) => {
-    const success = await selectHousehold(household);
-    if (success) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ current_household: household.id })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
       setCurrentHousehold(household);
-      window.location.reload(); // Refresh to update all components
+      
+      // Force reload the page to refresh all data
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error updating active household:', error);
     }
   };
 
@@ -146,7 +113,6 @@ export default function Settings() {
             currentHousehold={currentHousehold}
             onHouseholdSelect={handleSelectHousehold}
             onHouseholdsChange={fetchHouseholds}
-            isLoading={isLoading}
           />
 
           <HouseholdInvites />
