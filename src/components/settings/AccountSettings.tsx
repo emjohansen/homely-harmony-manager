@@ -29,19 +29,19 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
           return;
         }
 
-        console.log('Fetching nickname for user:', user.id);
+        // Test GET request to verify access
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('username')
           .eq('id', user.id)
-          .maybeSingle();
+          .single();
 
         if (profileError) {
           console.error('Error fetching profile:', profileError);
           return;
         }
 
-        console.log('Fetched profile:', profile);
+        console.log('Successfully fetched profile:', profile);
         if (profile?.username) {
           setNickname(profile.username);
         }
@@ -58,19 +58,50 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
     try {
       console.log('Starting nickname update...');
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
+      
+      if (userError) {
+        console.error('Auth error:', userError);
+        throw userError;
+      }
       
       if (!user) {
+        console.error('No authenticated user found');
         throw new Error("No user found");
       }
 
-      console.log('Updating nickname for user:', user.id, 'to:', nickname);
-      const { error: updateError } = await supabase
+      console.log('Attempting to update nickname for user:', user.id);
+      
+      // First verify we can read the profile
+      const { data: existingProfile, error: readError } = await supabase
         .from('profiles')
-        .update({ username: nickname })
-        .eq('id', user.id);
+        .select('username')
+        .eq('id', user.id)
+        .single();
+        
+      if (readError) {
+        console.error('Error reading profile:', readError);
+        throw readError;
+      }
 
-      if (updateError) throw updateError;
+      console.log('Current profile data:', existingProfile);
+
+      // Now attempt the update
+      const { data: updatedProfile, error: updateError } = await supabase
+        .from('profiles')
+        .update({ 
+          username: nickname,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error('Profile update error:', updateError);
+        throw updateError;
+      }
+
+      console.log('Profile successfully updated:', updatedProfile);
 
       toast({
         title: "Success",
@@ -80,7 +111,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
       console.error('Error in handleUpdateNickname:', error);
       toast({
         title: "Error",
-        description: "Failed to update nickname. Please try again.",
+        description: `Failed to update nickname: ${error.message}`,
         variant: "destructive",
       });
     } finally {
