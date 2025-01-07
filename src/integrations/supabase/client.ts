@@ -16,16 +16,18 @@ type MockQueryBuilder = {
   error?: any;
 };
 
+const createMockAuth = () => ({
+  getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+  getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+  onAuthStateChange: (callback?: Function) => ({
+    data: { subscription: { unsubscribe: () => {} } }
+  }),
+  signOut: () => Promise.resolve({ error: null })
+});
+
 // Mock Supabase client for local storage implementation
 const mockSupabaseClient = {
-  auth: {
-    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-    getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-    onAuthStateChange: (callback?: Function) => ({
-      data: { subscription: { unsubscribe: () => {} } }
-    }),
-    signOut: () => Promise.resolve({ error: null })
-  },
+  auth: createMockAuth(),
   storage: {
     from: (bucket: string) => ({
       upload: (path: string, file: File) => Promise.resolve({ data: null, error: null }),
@@ -54,13 +56,7 @@ const mockSupabaseClient = {
   realtime: { connect: () => {}, disconnect: () => {} },
   realtimeUrl: '',
   rest: { signal: undefined },
-  headers: {},
-  auth: {
-    ...mockSupabaseClient.auth,
-    onAuthStateChange: (callback?: Function) => ({
-      data: { subscription: { unsubscribe: () => {} } }
-    })
-  }
+  headers: {}
 };
 
 export const supabase = mockSupabaseClient as any; // Type assertion to satisfy SupabaseClient interface
