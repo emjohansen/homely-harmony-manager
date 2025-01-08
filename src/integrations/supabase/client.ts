@@ -9,9 +9,9 @@ type MockQueryBuilder = {
   order: (column: string, options?: { ascending?: boolean }) => MockQueryBuilder;
   single: () => Promise<MockResponse>;
   maybeSingle: () => Promise<MockResponse>;
-  insert: (values: any) => MockQueryBuilder;
-  update: (values: any) => MockQueryBuilder;
-  delete: () => MockQueryBuilder;
+  insert: (values: any) => Promise<MockResponse>;
+  update: (values: any) => Promise<MockResponse>;
+  delete: () => Promise<MockResponse>;
   data?: any;
   error?: any;
 };
@@ -23,8 +23,22 @@ const createMockAuth = () => ({
     data: { subscription: { unsubscribe: () => {} } }
   }),
   signOut: () => Promise.resolve({ error: null }),
-  signInWithPassword: ({ email, password }: { email: string; password: string }) => 
-    Promise.resolve({ data: { user: null, session: null }, error: null }),
+  signInWithPassword: async ({ email, password }: { email: string; password: string }) => {
+    // Mock successful sign in
+    const mockUser = {
+      id: '123',
+      email,
+      user_metadata: { username: email.split('@')[0] }
+    };
+    const mockSession = {
+      access_token: 'mock_token',
+      user: mockUser
+    };
+    return Promise.resolve({ 
+      data: { user: mockUser, session: mockSession }, 
+      error: null 
+    });
+  },
   signUp: ({ email, password }: { email: string; password: string }) =>
     Promise.resolve({ data: { user: null, session: null }, error: null }),
   signInWithOAuth: ({ provider }: { provider: string }) =>
@@ -49,22 +63,14 @@ const mockSupabaseClient = {
       order: (column: string, options?: { ascending?: boolean }) => queryBuilder,
       single: () => Promise.resolve({ data: null, error: null }),
       maybeSingle: () => Promise.resolve({ data: null, error: null }),
-      insert: (values: any) => queryBuilder,
-      update: (values: any) => queryBuilder,
-      delete: () => queryBuilder,
+      insert: (values: any) => Promise.resolve({ data: null, error: null }),
+      update: (values: any) => Promise.resolve({ data: null, error: null }),
+      delete: () => Promise.resolve({ data: null, error: null }),
       data: null,
       error: null
     };
-
     return queryBuilder;
-  },
-  // Add missing Supabase client properties
-  supabaseUrl: '',
-  supabaseKey: '',
-  realtime: { connect: () => {}, disconnect: () => {} },
-  realtimeUrl: '',
-  rest: { signal: undefined },
-  headers: {}
+  }
 };
 
-export const supabase = mockSupabaseClient as any; // Type assertion to satisfy SupabaseClient interface
+export const supabase = mockSupabaseClient as any;
