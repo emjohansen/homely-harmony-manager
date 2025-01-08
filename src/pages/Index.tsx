@@ -41,7 +41,6 @@ const Index = () => {
                   colors: {
                     brand: '#9dbc98',
                     brandAccent: '#1e251c',
-                    backgroundAccent: '#efffed',
                   }
                 }
               }

@@ -20,11 +20,16 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select('username')
         .eq('id', user.id)
         .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return;
+      }
 
       if (profile?.username) {
         setNickname(profile.username);

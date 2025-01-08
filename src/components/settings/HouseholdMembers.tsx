@@ -14,7 +14,7 @@ import { DeleteHouseholdDialog } from "./household/DeleteHouseholdDialog";
 
 interface Member {
   id: string;
-  username: string;
+  username: string | null;
   role: string;
 }
 

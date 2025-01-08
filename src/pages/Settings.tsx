@@ -32,12 +32,17 @@ export default function Settings() {
     }
     setUserEmail(session.user.email);
     
-    const { data: profile } = await supabase
+    const { data: profile, error } = await supabase
       .from('profiles')
-      .select('username, current_household')
+      .select('username')
       .eq('id', session.user.id)
       .single();
     
+    if (error) {
+      console.error('Error fetching profile:', error);
+      return;
+    }
+
     if (profile?.username) {
       setNickname(profile.username);
     }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { House, CheckCircle, AlertCircle } from "lucide-react";
+import { House } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -20,7 +20,7 @@ interface Invite {
   invited_by: string;
   profiles: {
     username: string;
-  };
+  } | null;
 }
 
 export const HouseholdInvites = () => {
