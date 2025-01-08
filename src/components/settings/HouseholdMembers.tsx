@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { UserMinus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useHouseholdRole } from "@/hooks/use-household-role";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useHouseholdRole } from "@/hooks/use-household-role";
 import { DeleteHouseholdDialog } from "./household/DeleteHouseholdDialog";
+import { MemberList } from "./household/MemberList";
 
 interface Member {
   id: string;
@@ -98,12 +97,10 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
 
   const handleRemoveMember = async (memberId: string) => {
     try {
-      // If user is not admin and trying to remove someone else
       if (!isAdmin && memberId !== currentUserId) {
         throw new Error("Only admins can remove other members");
       }
 
-      // If user is admin trying to remove themselves
       if (isAdmin && memberId === currentUserId) {
         throw new Error("Admins cannot remove themselves");
       }
@@ -140,10 +137,8 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
 
   const canRemoveMember = (memberId: string) => {
     if (isAdmin) {
-      // Admin can remove anyone except themselves
       return memberId !== currentUserId;
     } else {
-      // Non-admin can only remove themselves
       return memberId === currentUserId;
     }
   };
@@ -162,27 +157,12 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
           ) : members.length === 0 ? (
             <div className="text-center py-4 text-gray-500">No members found</div>
           ) : (
-            <div className="space-y-2">
-              {members.map((member) => (
-                <div
-                  key={member.id}
-                  className="flex items-center justify-between p-2 bg-mint rounded-lg"
-                >
-                  <div>
-                    <span className="font-medium">{member.username}</span>
-                    <span className="ml-2 text-sm text-forest/70">({member.role})</span>
-                  </div>
-                  {canRemoveMember(member.id) && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemoveMember(member.id)}
-                    >
-                      <UserMinus className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
+            <>
+              <MemberList 
+                members={members}
+                canRemoveMember={canRemoveMember}
+                onRemoveMember={handleRemoveMember}
+              />
               {isAdmin && (
                 <div className="pt-4 border-t border-mint/20 mt-4">
                   <DeleteHouseholdDialog 
@@ -191,7 +171,7 @@ export const HouseholdMembers = ({ householdId, onMemberRemoved }: HouseholdMemb
                   />
                 </div>
               )}
-            </div>
+            </>
           )}
         </AccordionContent>
       </AccordionItem>

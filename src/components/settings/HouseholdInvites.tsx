@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { House } from "lucide-react";
 import {
@@ -9,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { InviteList } from "./household/InviteList";
 
 interface Invite {
   id: string;
@@ -82,7 +82,6 @@ export const HouseholdInvites = () => {
 
       console.log('Accepting invite:', inviteId, 'for household:', householdId);
 
-      // First check if user is already a member of this household
       const { data: existingMember, error: memberCheckError } = await supabase
         .from('household_members')
         .select('household_id')
@@ -103,16 +102,14 @@ export const HouseholdInvites = () => {
         return;
       }
 
-      // Update invite status
       const { error: updateError } = await supabase
         .from('household_invites')
         .update({ status: 'accepted' })
         .eq('id', inviteId)
-        .eq('status', 'pending'); // Only update if still pending
+        .eq('status', 'pending');
 
       if (updateError) throw updateError;
 
-      // Add user to household members
       const { error: memberError } = await supabase
         .from('household_members')
         .insert([{
@@ -122,7 +119,6 @@ export const HouseholdInvites = () => {
         }]);
 
       if (memberError) {
-        // If adding member fails, revert invite status
         await supabase
           .from('household_invites')
           .update({ status: 'pending' })
@@ -135,7 +131,6 @@ export const HouseholdInvites = () => {
         description: "Invitation accepted successfully",
       });
 
-      // Refresh invites list
       fetchInvites();
     } catch (error: any) {
       console.error('Error accepting invite:', error);
@@ -162,7 +157,6 @@ export const HouseholdInvites = () => {
         description: "Invitation denied successfully",
       });
 
-      // Refresh invites list
       fetchInvites();
     } catch (error: any) {
       console.error('Error denying invite:', error);
@@ -191,36 +185,11 @@ export const HouseholdInvites = () => {
             {pendingInvites.length === 0 ? (
               <p className="text-gray-500 text-sm py-2">No pending invites</p>
             ) : (
-              <div className="space-y-4">
-                {pendingInvites.map((invite) => (
-                  <div key={invite.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
-                    <div className="flex items-center gap-2">
-                      <House className="h-5 w-5 text-sage" />
-                      <div className="flex flex-col">
-                        <span className="font-medium">{invite.households.name}</span>
-                        <span className="text-sm text-gray-500">
-                          Invited by {invite.profiles?.username || 'Unknown'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={() => handleAcceptInvite(invite.id, invite.household_id)}
-                      >
-                        Accept
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleDenyInvite(invite.id)}
-                      >
-                        Deny
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <InviteList 
+                invites={pendingInvites}
+                onAccept={handleAcceptInvite}
+                onDeny={handleDenyInvite}
+              />
             )}
           </AccordionContent>
         </AccordionItem>
