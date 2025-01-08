@@ -22,7 +22,15 @@ const createMockAuth = () => ({
   onAuthStateChange: (callback?: Function) => ({
     data: { subscription: { unsubscribe: () => {} } }
   }),
-  signOut: () => Promise.resolve({ error: null })
+  signOut: () => Promise.resolve({ error: null }),
+  signInWithPassword: ({ email, password }: { email: string; password: string }) => 
+    Promise.resolve({ data: { user: null, session: null }, error: null }),
+  signUp: ({ email, password }: { email: string; password: string }) =>
+    Promise.resolve({ data: { user: null, session: null }, error: null }),
+  signInWithOAuth: ({ provider }: { provider: string }) =>
+    Promise.resolve({ data: { user: null, session: null }, error: null }),
+  resetPasswordForEmail: (email: string) =>
+    Promise.resolve({ data: null, error: null })
 });
 
 // Mock Supabase client for local storage implementation
