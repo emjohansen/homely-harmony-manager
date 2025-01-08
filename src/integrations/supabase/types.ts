@@ -163,24 +163,30 @@ export type Database = {
       }
       households: {
         Row: {
+          admins: string[] | null
           created_at: string
           created_by: string | null
           custom_stores: string[] | null
           id: string
+          members: string[] | null
           name: string
         }
         Insert: {
+          admins?: string[] | null
           created_at?: string
           created_by?: string | null
           custom_stores?: string[] | null
           id?: string
+          members?: string[] | null
           name: string
         }
         Update: {
+          admins?: string[] | null
           created_at?: string
           created_by?: string | null
           custom_stores?: string[] | null
           id?: string
+          members?: string[] | null
           name?: string
         }
         Relationships: []
@@ -190,6 +196,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           current_household: string | null
+          households: string[] | null
           id: string
           updated_at: string
           username: string | null
@@ -198,6 +205,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           current_household?: string | null
+          households?: string[] | null
           id: string
           updated_at?: string
           username?: string | null
@@ -206,6 +214,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           current_household?: string | null
+          households?: string[] | null
           id?: string
           updated_at?: string
           username?: string | null
