@@ -15,52 +15,76 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Fetch nickname on component load
   useEffect(() => {
     const fetchNickname = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error("Error fetching user:", userError);
+          return;
+        }
 
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', user.id)
-        .single();
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return;
-      }
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+          return;
+        }
 
-      if (profile?.username) {
-        setNickname(profile.username);
+        if (profile?.username) {
+          setNickname(profile.username);
+        }
+      } catch (error) {
+        console.error("Error in fetchNickname:", error);
       }
     };
 
     fetchNickname();
   }, []);
 
+  // Update nickname
   const handleUpdateNickname = async () => {
     setIsLoading(true);
+
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to update your nickname.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({ username: nickname })
-        .eq('id', user.id);
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .upsert([{ id: user.id, username: nickname }]); // Use upsert to insert or update
 
-      if (error) throw error;
+      if (updateError) {
+        console.error("Error updating profile:", updateError);
+        toast({
+          title: "Error",
+          description: "Failed to update nickname. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       toast({
         title: "Success",
         description: "Your nickname has been updated.",
       });
     } catch (error) {
-      console.error('Error updating nickname:', error);
+      console.error("Unhandled error updating nickname:", error);
       toast({
         title: "Error",
-        description: "Failed to update nickname. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -72,6 +96,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-lg font-semibold mb-4">Account Settings</h2>
       <div className="space-y-4">
+        {/* Email Display */}
         {userEmail && (
           <div>
             <Label htmlFor="email" className="text-sm font-medium text-gray-700">
@@ -87,6 +112,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
           </div>
         )}
 
+        {/* Nickname Input */}
         <div>
           <Label htmlFor="nickname" className="text-sm font-medium text-gray-700">
             Nickname
@@ -101,7 +127,8 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
           />
         </div>
 
-        <Button 
+        {/* Update Button */}
+        <Button
           onClick={handleUpdateNickname}
           disabled={isLoading}
           className="w-full bg-sage hover:bg-mint text-cream"
