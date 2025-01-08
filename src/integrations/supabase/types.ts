@@ -191,7 +191,6 @@ export type Database = {
           created_at: string
           current_household: string | null
           id: string
-          nickname: string | null
           updated_at: string
           username: string | null
         }
@@ -200,7 +199,6 @@ export type Database = {
           created_at?: string
           current_household?: string | null
           id: string
-          nickname?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -209,7 +207,6 @@ export type Database = {
           created_at?: string
           current_household?: string | null
           id?: string
-          nickname?: string | null
           updated_at?: string
           username?: string | null
         }
