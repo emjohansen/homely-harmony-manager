@@ -18,6 +18,7 @@ const Index = () => {
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, session);
       if (session) {
         navigate("/recipes");
       }
@@ -33,7 +34,18 @@ const Index = () => {
         <div className="bg-white p-8 rounded-lg shadow-md">
           <Auth
             supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
+            appearance={{ 
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#9dbc98',
+                    brandAccent: '#1e251c',
+                    backgroundAccent: '#efffed',
+                  }
+                }
+              }
+            }}
             theme="light"
             providers={[]}
           />
