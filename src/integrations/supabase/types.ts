@@ -130,6 +130,13 @@ export type Database = {
             referencedRelation: "households"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "household_invites_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       household_members: {

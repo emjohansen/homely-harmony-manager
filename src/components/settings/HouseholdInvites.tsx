@@ -19,7 +19,7 @@ interface Invite {
   status: string;
   invited_by: string;
   profiles: {
-    username: string;
+    username: string | null;
   } | null;
 }
 
@@ -49,7 +49,7 @@ export const HouseholdInvites = () => {
           ),
           status,
           invited_by,
-          profiles:invited_by (
+          profiles!household_invites_invited_by_fkey (
             username
           )
         `)
