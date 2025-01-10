@@ -15,6 +15,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Fetch nickname on component load
   useEffect(() => {
     const fetchNickname = async () => {
       try {
@@ -46,8 +47,8 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
     fetchNickname();
   }, []);
 
+  // Update nickname
   const handleUpdateNickname = async () => {
-    console.log("Button clicked to update nickname"); // For debugging button clicks
     setIsLoading(true);
 
     try {
@@ -63,7 +64,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
 
       const { error: updateError } = await supabase
         .from("profiles")
-        .upsert([{ id: user.id, username: nickname }]); // Use upsert for both update and insert
+        .upsert([{ id: user.id, username: nickname }]); // Use upsert to insert or update
 
       if (updateError) {
         console.error("Error updating profile:", updateError);
@@ -93,8 +94,9 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-lg font-semibold mb-4">Account Settings v2</h2>
+      <h2 className="text-lg font-semibold mb-4">Account Settings</h2>
       <div className="space-y-4">
+        {/* Email Display */}
         {userEmail && (
           <div>
             <Label htmlFor="email" className="text-sm font-medium text-gray-700">
@@ -110,6 +112,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
           </div>
         )}
 
+        {/* Nickname Input */}
         <div>
           <Label htmlFor="nickname" className="text-sm font-medium text-gray-700">
             Nickname
@@ -124,8 +127,9 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
           />
         </div>
 
-        <Button 
-          onClick={handleUpdateNickname} // Ensure function is called on button click
+        {/* Update Button */}
+        <Button
+          onClick={handleUpdateNickname}
           disabled={isLoading}
           className="w-full bg-sage hover:bg-mint text-cream"
         >

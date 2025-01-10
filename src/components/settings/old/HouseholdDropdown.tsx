@@ -23,15 +23,6 @@ export const HouseholdDropdown = ({
   currentHousehold,
   onHouseholdSelect,
 }: HouseholdDropdownProps) => {
-  const handleSelect = async (household: Household) => {
-    try {
-      console.log("Switching to household:", household); // Debugging
-      await onHouseholdSelect(household);
-    } catch (error) {
-      console.error("Error selecting household:", error);
-    }
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -44,7 +35,7 @@ export const HouseholdDropdown = ({
         {households.map((household) => (
           <DropdownMenuItem
             key={household.id}
-            onClick={() => handleSelect(household)}
+            onClick={() => onHouseholdSelect(household)}
           >
             {household.name}
           </DropdownMenuItem>

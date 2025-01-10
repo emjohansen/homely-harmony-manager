@@ -14,39 +14,24 @@ import {
 } from "@/components/ui/dialog";
 
 interface CreateHouseholdDialogProps {
-  onHouseholdsChange: () => void;
+  onHouseholdCreated: () => void;
 }
 
-export const CreateHouseholdDialog = ({ onHouseholdsChange }: CreateHouseholdDialogProps) => {
+export const CreateHouseholdDialog = ({ onHouseholdCreated }: CreateHouseholdDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [newHouseholdName, setNewHouseholdName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleCreate = async () => {
-    if (!newHouseholdName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a household name",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
-      setIsLoading(true);
-      console.log('Creating new household with name:', newHouseholdName);
-
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      // Create the household
+      console.log('Creating new household with name:', newHouseholdName);
+
       const { data: household, error: createError } = await supabase
         .from('households')
-        .insert([{ 
-          name: newHouseholdName.trim(), 
-          created_by: user.id 
-        }])
+        .insert([{ name: newHouseholdName, created_by: user.id }])
         .select()
         .single();
 
@@ -54,21 +39,23 @@ export const CreateHouseholdDialog = ({ onHouseholdsChange }: CreateHouseholdDia
 
       console.log('Created household:', household);
 
-      // Update user's profile to set this as their current household
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ current_household: household.id })
-        .eq('id', user.id);
+      const { error: memberError } = await supabase
+        .from('household_members')
+        .insert([{
+          household_id: household.id,
+          user_id: user.id,
+          role: 'admin'
+        }]);
 
-      if (profileError) throw profileError;
+      if (memberError) throw memberError;
 
       setNewHouseholdName("");
       setIsOpen(false);
-      onHouseholdsChange();
+      onHouseholdCreated();
       
       toast({
         title: "Success",
-        description: "Household created successfully",
+        description: "Household created successfully.",
       });
     } catch (error) {
       console.error('Error creating household:', error);
@@ -77,8 +64,6 @@ export const CreateHouseholdDialog = ({ onHouseholdsChange }: CreateHouseholdDia
         description: "Failed to create household. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -102,15 +87,10 @@ export const CreateHouseholdDialog = ({ onHouseholdsChange }: CreateHouseholdDia
               value={newHouseholdName}
               onChange={(e) => setNewHouseholdName(e.target.value)}
               placeholder="Enter household name"
-              disabled={isLoading}
             />
           </div>
-          <Button 
-            onClick={handleCreate} 
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? "Creating..." : "Create Household"}
+          <Button onClick={handleCreate} className="w-full">
+            Create Household
           </Button>
         </div>
       </DialogContent>
