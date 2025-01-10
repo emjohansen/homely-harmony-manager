@@ -93,7 +93,7 @@ export const AccountSettings = ({ userEmail, initialNickname }: AccountSettingsP
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-lg font-semibold mb-4">Account Settings v2</h2>
+      <h2 className="text-lg font-semibold mb-4">Account Settings v3</h2>
       <div className="space-y-4">
         {userEmail && (
           <div>
