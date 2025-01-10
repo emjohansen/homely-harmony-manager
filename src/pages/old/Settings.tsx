@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import { useNavigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
+import { HouseholdInvites } from "@/components/settings/HouseholdInvites";
 
 interface Household {
   id: string;
@@ -31,12 +32,17 @@ export default function Settings() {
     }
     setUserEmail(session.user.email);
     
-    const { data: profile } = await supabase
+    const { data: profile, error } = await supabase
       .from('profiles')
-      .select('username, current_household')
+      .select('username')
       .eq('id', session.user.id)
       .single();
     
+    if (error) {
+      console.error('Error fetching profile:', error);
+      return;
+    }
+
     if (profile?.username) {
       setNickname(profile.username);
     }
@@ -46,14 +52,17 @@ export default function Settings() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Fetch households where user is the creator
-    const { data: userHouseholds } = await supabase
-      .from('households')
-      .select('id, name')
-      .eq('created_by', user.id);
+    const { data: memberHouseholds } = await supabase
+      .from('household_members')
+      .select('household_id, households:household_id(id, name)')
+      .eq('user_id', user.id);
 
-    if (userHouseholds) {
-      setHouseholds(userHouseholds);
+    if (memberHouseholds) {
+      const households = memberHouseholds.map(mh => ({
+        id: mh.households.id,
+        name: mh.households.name
+      }));
+      setHouseholds(households);
 
       const { data: profile } = await supabase
         .from('profiles')
@@ -62,7 +71,7 @@ export default function Settings() {
         .single();
 
       if (profile?.current_household) {
-        const current = userHouseholds.find(h => h.id === profile.current_household);
+        const current = households.find(h => h.id === profile.current_household);
         setCurrentHousehold(current || null);
       }
     }
@@ -107,8 +116,11 @@ export default function Settings() {
           <HouseholdManagement
             households={households}
             currentHousehold={currentHousehold}
+            onHouseholdSelect={handleSelectHousehold}
             onHouseholdsChange={fetchHouseholds}
           />
+
+          <HouseholdInvites />
 
           <Button 
             variant="destructive" 
