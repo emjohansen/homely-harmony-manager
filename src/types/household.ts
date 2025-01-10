@@ -4,6 +4,7 @@ export interface Member {
   user_id: string;
   role: 'admin' | 'member';
   created_at: string;
+  username?: string; // Added to support the UI requirements
 }
 
 export interface Invite {
@@ -22,4 +23,11 @@ export interface Household {
   created_at: string;
   members: string[];
   admins: string[];
+}
+
+export type HouseholdRole = 'admin' | 'member';
+
+export interface HouseholdMembersListProps {
+  householdId: string;
+  isAdmin: boolean;
 }

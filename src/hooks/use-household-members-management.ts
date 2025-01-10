@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Member, HouseholdRole } from "@/types/household";
+import { Member } from "@/types/household";
 
 export const useHouseholdMembersManagement = (householdId: string) => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -29,10 +29,13 @@ export const useHouseholdMembersManagement = (householdId: string) => {
 
         if (profilesError) throw profilesError;
 
-        const membersList = profiles?.map(profile => ({
+        const membersList: Member[] = profiles?.map(profile => ({
           id: profile.id,
-          username: profile.username,
-          role: household.admins?.includes(profile.id) ? ('admin' as const) : ('member' as const)
+          household_id: householdId,
+          user_id: profile.id,
+          username: profile.username || 'Unknown User',
+          role: household.admins?.includes(profile.id) ? 'admin' : 'member',
+          created_at: new Date().toISOString() // Fallback since we don't have the actual creation date
         })) || [];
 
         console.log('Fetched members:', membersList);
