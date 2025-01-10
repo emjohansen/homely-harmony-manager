@@ -1,5 +1,5 @@
 import { recipes } from '@/services/localStorage';
-import type { Recipe } from '@/services/localStorage';
+import type { Recipe } from '@/types/recipe';
 
 export const useRecipeOperations = () => {
   const insertRecipeTags = async (recipeId: string, tags: string[]) => {
@@ -23,7 +23,7 @@ export const useRecipeOperations = () => {
         .map(i => ({
           id: Math.random().toString(36).substr(2, 9),
           ingredient: i.ingredient,
-          amount: i.amount ? parseFloat(i.amount) : null,
+          amount: i.amount || null,
           unit: i.unit || null
         }));
 
