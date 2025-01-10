@@ -8,7 +8,7 @@ export interface Recipe {
   preparation_time: number | null;
   is_public: boolean;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
   image_url: string | null;
   recipe_tags?: RecipeTag[];
   recipe_ingredients?: RecipeIngredient[];
