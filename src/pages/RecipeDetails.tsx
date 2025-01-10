@@ -30,7 +30,14 @@ const RecipeDetails = () => {
           .single();
 
         if (error) throw error;
-        setRecipe(data);
+        
+        const recipeData: Recipe = {
+          ...data,
+          updated_at: data.created_at, // Fallback if updated_at is not available
+          image_url: null // Fallback if image_url is not available
+        };
+        
+        setRecipe(recipeData);
       } catch (error) {
         console.error('Error fetching recipe:', error);
         toast({

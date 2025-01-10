@@ -23,7 +23,7 @@ export const useRecipeOperations = () => {
         .map(i => ({
           id: Math.random().toString(36).substr(2, 9),
           ingredient: i.ingredient,
-          amount: i.amount || null,
+          amount: i.amount ? parseFloat(i.amount) : null,
           unit: i.unit || null
         }));
 
