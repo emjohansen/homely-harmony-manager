@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { members } from '@/services/storage/members';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './use-auth';
 
 export const useHouseholdRole = (householdId: string | null) => {
@@ -16,9 +16,15 @@ export const useHouseholdRole = (householdId: string | null) => {
       }
 
       try {
-        const householdMembers = await members.getByHousehold(householdId);
-        const userMember = householdMembers.find(m => m.user_id === user.id);
-        setIsAdmin(userMember?.role === 'admin');
+        const { data: household, error } = await supabase
+          .from('households')
+          .select('admins')
+          .eq('id', householdId)
+          .single();
+
+        if (error) throw error;
+
+        setIsAdmin(household?.admins?.includes(user.id) || false);
       } catch (error) {
         console.error('Error checking role:', error);
         setIsAdmin(false);

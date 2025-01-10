@@ -44,38 +44,6 @@ export type Database = {
           },
         ]
       }
-      household_members: {
-        Row: {
-          created_at: string
-          household_id: string | null
-          id: string
-          role: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          household_id?: string | null
-          id?: string
-          role?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          household_id?: string | null
-          id?: string
-          role?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "household_members_household_id_fkey"
-            columns: ["household_id"]
-            isOneToOne: false
-            referencedRelation: "households"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       households: {
         Row: {
           admins: string[] | null
