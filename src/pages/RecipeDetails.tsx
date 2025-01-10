@@ -37,15 +37,24 @@ export default function RecipeDetails() {
 
       if (error) throw error;
       
-      // Convert the recipe data to match our Recipe type
       const recipeData: Recipe = {
-        ...data,
-        updated_at: data.updated_at || data.created_at, // Provide fallback for updated_at
-        image_url: data.image_url || null, // Provide default null for image_url
+        id: data.id,
+        household_id: data.household_id,
+        created_by: data.created_by,
+        title: data.title,
+        description: data.description,
+        servings: data.servings,
+        preparation_time: data.preparation_time,
+        is_public: data.is_public,
+        created_at: data.created_at,
+        updated_at: data.updated_at || data.created_at,
+        image_url: data.image_url || null,
+        recipe_tags: data.recipe_tags,
         recipe_ingredients: data.recipe_ingredients?.map((ingredient: any) => ({
           ...ingredient,
           amount: ingredient.amount ? parseFloat(ingredient.amount) : null
-        }))
+        })),
+        recipe_steps: data.recipe_steps
       };
       
       setRecipe(recipeData);
@@ -123,8 +132,8 @@ export default function RecipeDetails() {
     <div className="min-h-screen bg-gray-50 pb-16">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <RecipeHeader 
-          canEdit={canEdit}
           recipeId={recipe.id}
+          canEdit={canEdit}
           handleDelete={handleDelete}
         />
         <RecipeContent 

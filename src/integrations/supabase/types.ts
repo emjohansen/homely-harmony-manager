@@ -218,10 +218,12 @@ export type Database = {
           description: string | null
           household_id: string | null
           id: string
+          image_url: string | null
           is_public: boolean | null
           preparation_time: number | null
           servings: number | null
           title: string
+          updated_at: string | null
         }
         Insert: {
           created_at?: string
@@ -229,10 +231,12 @@ export type Database = {
           description?: string | null
           household_id?: string | null
           id?: string
+          image_url?: string | null
           is_public?: boolean | null
           preparation_time?: number | null
           servings?: number | null
           title: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string
@@ -240,10 +244,12 @@ export type Database = {
           description?: string | null
           household_id?: string | null
           id?: string
+          image_url?: string | null
           is_public?: boolean | null
           preparation_time?: number | null
           servings?: number | null
           title?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
