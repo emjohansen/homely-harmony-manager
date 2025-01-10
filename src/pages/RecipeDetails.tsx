@@ -40,8 +40,8 @@ export default function RecipeDetails() {
       // Convert the recipe data to match our Recipe type
       const recipeData: Recipe = {
         ...data,
-        updated_at: data.updated_at || data.created_at,
-        image_url: data.image_url || null,
+        updated_at: data.updated_at || data.created_at, // Provide fallback for updated_at
+        image_url: data.image_url || null, // Provide default null for image_url
         recipe_ingredients: data.recipe_ingredients?.map((ingredient: any) => ({
           ...ingredient,
           amount: ingredient.amount ? parseFloat(ingredient.amount) : null
