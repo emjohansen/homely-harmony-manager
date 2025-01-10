@@ -26,12 +26,17 @@ const Recipes = () => {
           .eq('id', session.user.id)
           .single();
 
-        const { data: householdMemberships } = await supabase
-          .from('household_members')
-          .select('household_id')
-          .eq('user_id', session.user.id);
+        if (profile?.current_household) {
+          const { data: household } = await supabase
+            .from('households')
+            .select('members')
+            .eq('id', profile.current_household)
+            .single();
 
-        setHasHousehold(householdMemberships && householdMemberships.length > 0);
+          setHasHousehold(household?.members?.includes(session.user.id) || false);
+        } else {
+          setHasHousehold(false);
+        }
       }
     };
 
