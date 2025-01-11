@@ -15,16 +15,22 @@ export const useRecipes = () => {
       
       if (user?.id) {
         // First get the user's current household
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('current_household')
           .eq('id', user.id)
           .single();
 
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          return;
+        }
+
         console.log('User profile:', profile);
+        console.log('Current household:', profile?.current_household);
 
         // Fetch recipes based on household_id and public status
-        const { data: allRecipes, error } = await supabase
+        const { data: allRecipes, error: recipesError } = await supabase
           .from('recipes')
           .select(`
             *,
@@ -33,10 +39,12 @@ export const useRecipes = () => {
             recipe_steps (*)
           `);
 
-        if (error) {
-          console.error('Error fetching recipes:', error);
-          throw error;
+        if (recipesError) {
+          console.error('Error fetching recipes:', recipesError);
+          return;
         }
+
+        console.log('All fetched recipes:', allRecipes);
 
         if (allRecipes) {
           // Filter private recipes (household recipes)
@@ -47,16 +55,35 @@ export const useRecipes = () => {
           // Filter public recipes
           const publicRecipesList = allRecipes.filter(recipe => recipe.is_public);
 
-          console.log('Current household:', profile?.current_household);
-          console.log('Household recipes:', householdRecipes);
-          console.log('Public recipes:', publicRecipesList);
+          console.log('Filtered household recipes:', householdRecipes);
+          console.log('Filtered public recipes:', publicRecipesList);
 
           setPrivateRecipes(householdRecipes as Recipe[]);
           setPublicRecipes(publicRecipesList as Recipe[]);
         }
+      } else {
+        // If no user is logged in, only fetch public recipes
+        const { data: publicRecipesData, error: publicError } = await supabase
+          .from('recipes')
+          .select(`
+            *,
+            recipe_tags (*),
+            recipe_ingredients (*),
+            recipe_steps (*)
+          `)
+          .eq('is_public', true);
+
+        if (publicError) {
+          console.error('Error fetching public recipes:', publicError);
+          return;
+        }
+
+        console.log('Public recipes (no user):', publicRecipesData);
+        setPublicRecipes(publicRecipesData as Recipe[] || []);
+        setPrivateRecipes([]);
       }
     } catch (error) {
-      console.error('Error fetching recipes:', error);
+      console.error('Error in fetchRecipes:', error);
     } finally {
       setLoading(false);
     }
