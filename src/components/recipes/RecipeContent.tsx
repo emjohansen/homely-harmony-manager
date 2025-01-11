@@ -4,7 +4,7 @@ import { useState } from "react";
 import { convertUnits, getAlternativeUnit, isMetricUnit, isImperialUnit } from "@/utils/unitConversion";
 import { RecipeMetrics } from "./recipe-details/RecipeMetrics";
 import { RecipeTagsDisplay } from "./recipe-details/RecipeTags";
-import { RecipeIngredientsList } from "./recipe-details/RecipeIngredients";
+import { RecipeIngredients } from "./recipe-details/RecipeIngredients";
 import { RecipeStepsList } from "./recipe-details/RecipeSteps";
 
 interface RecipeContentProps {
@@ -20,7 +20,7 @@ export const RecipeContent = ({
   isEditing,
   onVisibilityChange 
 }: RecipeContentProps) => {
-  const [currentServings, setCurrentServings] = useState(recipe.servings);
+  const [currentServings, setCurrentServings] = useState(recipe.servings || 1);
   const [showAlternativeUnits, setShowAlternativeUnits] = useState(false);
 
   const handleServingsChange = (delta: number) => {
@@ -28,11 +28,18 @@ export const RecipeContent = ({
     setCurrentServings(newServings);
   };
 
-  const calculateAdjustedAmount = (amount: number | string | null) => {
+  const parseAmount = (amount: string | number | null): number | null => {
+    if (amount === null) return null;
+    const parsed = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return isNaN(parsed) ? null : parsed;
+  };
+
+  const calculateAdjustedAmount = (amount: string | number | null) => {
     if (!amount || !recipe.servings) return amount;
-    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    if (isNaN(numericAmount)) return amount;
-    const adjustedAmount = (numericAmount * currentServings) / recipe.servings;
+    const parsedAmount = parseAmount(amount);
+    if (parsedAmount === null) return amount;
+    
+    const adjustedAmount = (parsedAmount * currentServings) / recipe.servings;
     return adjustedAmount % 1 === 0 ? adjustedAmount : Number(adjustedAmount.toFixed(1));
   };
 
@@ -40,22 +47,25 @@ export const RecipeContent = ({
     return num % 1 === 0 ? num.toString() : num.toFixed(1);
   };
 
-  const renderAmount = (amount: number | string | null, unit: string | null) => {
+  const renderAmount = (amount: string | number | null, unit: string | null) => {
     if (!amount || !unit) return `${amount || ''} ${unit || ''}`;
     
     const adjustedAmount = calculateAdjustedAmount(amount);
     if (!adjustedAmount) return `${amount} ${unit}`;
 
+    const parsedAmount = parseAmount(adjustedAmount);
+    if (parsedAmount === null) return `${amount} ${unit}`;
+
     const shouldConvert = (showAlternativeUnits && isMetricUnit(unit)) || 
                          (!showAlternativeUnits && isImperialUnit(unit));
 
-    if (!shouldConvert) return `${formatNumber(adjustedAmount)} ${unit}`;
+    if (!shouldConvert) return `${formatNumber(parsedAmount)} ${unit}`;
 
     const alternativeUnit = getAlternativeUnit(unit);
-    if (!alternativeUnit) return `${formatNumber(adjustedAmount)} ${unit}`;
+    if (!alternativeUnit) return `${formatNumber(parsedAmount)} ${unit}`;
 
-    const convertedAmount = convertUnits(adjustedAmount, unit as any, alternativeUnit as any);
-    if (convertedAmount === null) return `${formatNumber(adjustedAmount)} ${unit}`;
+    const convertedAmount = convertUnits(parsedAmount, unit as any, alternativeUnit as any);
+    if (convertedAmount === null) return `${formatNumber(parsedAmount)} ${unit}`;
 
     return `${formatNumber(convertedAmount)} ${alternativeUnit}`;
   };
@@ -99,7 +109,7 @@ export const RecipeContent = ({
         onToggleUnits={() => setShowAlternativeUnits(!showAlternativeUnits)}
       />
 
-      <RecipeIngredientsList
+      <RecipeIngredients
         ingredients={recipe.recipe_ingredients || []}
         renderAmount={renderAmount}
       />
