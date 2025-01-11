@@ -33,7 +33,10 @@ export const useRecipes = () => {
             recipe_steps (*)
           `);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching recipes:', error);
+          throw error;
+        }
 
         if (allRecipes) {
           // Filter private recipes (household recipes)
@@ -44,6 +47,7 @@ export const useRecipes = () => {
           // Filter public recipes
           const publicRecipesList = allRecipes.filter(recipe => recipe.is_public);
 
+          console.log('Current household:', profile?.current_household);
           console.log('Household recipes:', householdRecipes);
           console.log('Public recipes:', publicRecipesList);
 
