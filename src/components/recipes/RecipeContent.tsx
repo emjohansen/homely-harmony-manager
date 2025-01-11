@@ -28,9 +28,11 @@ export const RecipeContent = ({
     setCurrentServings(newServings);
   };
 
-  const calculateAdjustedAmount = (amount: number | null) => {
+  const calculateAdjustedAmount = (amount: number | string | null) => {
     if (!amount || !recipe.servings) return amount;
-    const adjustedAmount = (amount * currentServings) / recipe.servings;
+    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    if (isNaN(numericAmount)) return amount;
+    const adjustedAmount = (numericAmount * currentServings) / recipe.servings;
     return adjustedAmount % 1 === 0 ? adjustedAmount : Number(adjustedAmount.toFixed(1));
   };
 
@@ -38,7 +40,7 @@ export const RecipeContent = ({
     return num % 1 === 0 ? num.toString() : num.toFixed(1);
   };
 
-  const renderAmount = (amount: number | null, unit: string | null) => {
+  const renderAmount = (amount: number | string | null, unit: string | null) => {
     if (!amount || !unit) return `${amount || ''} ${unit || ''}`;
     
     const adjustedAmount = calculateAdjustedAmount(amount);
