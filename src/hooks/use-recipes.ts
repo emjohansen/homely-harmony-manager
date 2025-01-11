@@ -47,8 +47,8 @@ export const useRecipes = () => {
           console.log('Household recipes:', householdRecipes);
           console.log('Public recipes:', publicRecipesList);
 
-          setPrivateRecipes(householdRecipes);
-          setPublicRecipes(publicRecipesList);
+          setPrivateRecipes(householdRecipes as Recipe[]);
+          setPublicRecipes(publicRecipesList as Recipe[]);
         }
       }
     } catch (error) {

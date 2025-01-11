@@ -22,7 +22,7 @@ export interface RecipeTag {
 export interface RecipeIngredient {
   id: string;
   ingredient: string;
-  amount: number | null;
+  amount: string | null;
   unit: string | null;
 }
 
