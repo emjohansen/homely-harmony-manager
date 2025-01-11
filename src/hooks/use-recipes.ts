@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { recipes } from '@/services/localStorage';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './use-auth';
-import type { Recipe } from '@/services/localStorage';
+import type { Recipe } from '@/types/recipe';
 
 export const useRecipes = () => {
   const [privateRecipes, setPrivateRecipes] = useState<Recipe[]>([]);
@@ -11,19 +11,46 @@ export const useRecipes = () => {
 
   const fetchRecipes = async () => {
     try {
-      const allRecipes = await recipes.getAll();
+      console.log('Fetching recipes for user:', user?.id);
       
-      if (user?.current_household) {
-        const householdRecipes = allRecipes.filter(
-          recipe => recipe.household_id === user.current_household
-        );
-        setPrivateRecipes(householdRecipes);
-      } else {
-        setPrivateRecipes([]);
-      }
+      if (user?.id) {
+        // First get the user's current household
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single();
 
-      const publicRecipesList = allRecipes.filter(recipe => recipe.is_public);
-      setPublicRecipes(publicRecipesList);
+        console.log('User profile:', profile);
+
+        // Fetch recipes based on household_id and public status
+        const { data: allRecipes, error } = await supabase
+          .from('recipes')
+          .select(`
+            *,
+            recipe_tags (*),
+            recipe_ingredients (*),
+            recipe_steps (*)
+          `);
+
+        if (error) throw error;
+
+        if (allRecipes) {
+          // Filter private recipes (household recipes)
+          const householdRecipes = profile?.current_household 
+            ? allRecipes.filter(recipe => recipe.household_id === profile.current_household)
+            : [];
+          
+          // Filter public recipes
+          const publicRecipesList = allRecipes.filter(recipe => recipe.is_public);
+
+          console.log('Household recipes:', householdRecipes);
+          console.log('Public recipes:', publicRecipesList);
+
+          setPrivateRecipes(householdRecipes);
+          setPublicRecipes(publicRecipesList);
+        }
+      }
     } catch (error) {
       console.error('Error fetching recipes:', error);
     } finally {
@@ -33,7 +60,7 @@ export const useRecipes = () => {
 
   useEffect(() => {
     fetchRecipes();
-  }, [user?.current_household]);
+  }, [user?.id]);
 
   return {
     privateRecipes,
