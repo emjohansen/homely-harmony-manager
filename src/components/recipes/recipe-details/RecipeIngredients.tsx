@@ -7,12 +7,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-interface RecipeIngredientsListProps {
+interface RecipeIngredientsProps {
   ingredients: RecipeIngredient[];
   renderAmount: (amount: number | string | null, unit: string | null) => string;
 }
 
-export const RecipeIngredientsList = ({ ingredients, renderAmount }: RecipeIngredientsListProps) => {
+export const RecipeIngredients = ({ ingredients, renderAmount }: RecipeIngredientsProps) => {
   if (!ingredients || ingredients.length === 0) return null;
 
   return (
