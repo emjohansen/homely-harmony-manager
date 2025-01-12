@@ -90,17 +90,15 @@ export const ShoppingListItem = ({
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 text-xs text-gray-500">
-                <User className="h-3 w-3" />
-                <span>{item.added_by}</span>
-              </div>
-              <div className="text-[10px] text-gray-400">
-                {formatDate(new Date(item.added_at))}
-              </div>
+          <div className="flex flex-col mt-2">
+            <div className="flex items-center gap-1 text-xs text-gray-500">
+              <User className="h-3 w-3" />
+              <span>{item.added_by}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="text-[10px] text-gray-400 mt-1">
+              {formatDate(new Date(item.added_at))}
+            </div>
+            <div className="flex items-center gap-2 mt-2">
               {showPriceInput ? (
                 <div className="flex items-center gap-2">
                   <Input
