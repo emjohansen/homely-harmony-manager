@@ -62,19 +62,21 @@ export const ShoppingListItems = ({
           <h3 className="text-sm font-medium text-forest/80 pl-2">
             {store}
           </h3>
-          {storeItems.map((item) => (
-            <ShoppingListItem
-              key={item.id}
-              item={{
-                ...item,
-                added_by: item.adder?.username || 'Unknown',
-              }}
-              onToggle={onToggle}
-              onDelete={onDelete}
-              onUpdateStore={onUpdateStore}
-              onUpdatePrice={onUpdatePrice}
-            />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {storeItems.map((item) => (
+              <ShoppingListItem
+                key={item.id}
+                item={{
+                  ...item,
+                  added_by: item.adder?.username || 'Unknown',
+                }}
+                onToggle={onToggle}
+                onDelete={onDelete}
+                onUpdateStore={onUpdateStore}
+                onUpdatePrice={onUpdatePrice}
+              />
+            ))}
+          </div>
         </div>
       ))}
 
@@ -84,19 +86,21 @@ export const ShoppingListItems = ({
           <h3 className="text-sm font-medium text-forest/80 pl-2">
             Completed Items
           </h3>
-          {checkedItems.map((item) => (
-            <ShoppingListItem
-              key={item.id}
-              item={{
-                ...item,
-                added_by: item.adder?.username || 'Unknown',
-              }}
-              onToggle={onToggle}
-              onDelete={onDelete}
-              onUpdateStore={onUpdateStore}
-              onUpdatePrice={onUpdatePrice}
-            />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {checkedItems.map((item) => (
+              <ShoppingListItem
+                key={item.id}
+                item={{
+                  ...item,
+                  added_by: item.adder?.username || 'Unknown',
+                }}
+                onToggle={onToggle}
+                onDelete={onDelete}
+                onUpdateStore={onUpdateStore}
+                onUpdatePrice={onUpdatePrice}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
