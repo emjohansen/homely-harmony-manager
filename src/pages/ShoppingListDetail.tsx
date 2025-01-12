@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ShoppingListItem } from "@/components/shopping/ShoppingListItem";
 import { ShoppingListHeader } from "@/components/shopping/ShoppingListHeader";
 import { AddShoppingListItem } from "@/components/shopping/AddShoppingListItem";
 import { ShoppingListItems } from "@/components/shopping/ShoppingListItems";
@@ -48,7 +47,7 @@ const ShoppingListDetail = () => {
       .from('shopping_list_items')
       .select(`
         *,
-        adder:profiles!shopping_list_items_added_by_fkey (username)
+        adder:profiles (username)
       `)
       .eq('shopping_list_id', id)
       .order('added_at', { ascending: true });
