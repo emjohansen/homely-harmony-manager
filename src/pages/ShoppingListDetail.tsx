@@ -14,11 +14,13 @@ const ShoppingListDetail = () => {
   const [list, setList] = useState<any>(null);
 
   useEffect(() => {
+    console.log('ShoppingListDetail mounted with ID:', id);
     fetchList();
     fetchItems();
   }, [id]);
 
   const fetchList = async () => {
+    console.log('Fetching list details for ID:', id);
     const { data, error } = await supabase
       .from('shopping_lists')
       .select(`
@@ -38,22 +40,22 @@ const ShoppingListDetail = () => {
       return;
     }
 
+    console.log('Successfully fetched list:', data);
     setList(data);
   };
 
   const fetchItems = async () => {
-    console.log('Fetching items for list:', id);
-    const { data, error } = await supabase
+    console.log('Starting fetchItems for list ID:', id);
+    
+    // First get all items for this shopping list
+    const { data: itemsData, error: itemsError } = await supabase
       .from('shopping_list_items')
-      .select(`
-        *,
-        adder:profiles (username)
-      `)
+      .select('*')
       .eq('shopping_list_id', id)
       .order('added_at', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching items:', error);
+    if (itemsError) {
+      console.error('Error fetching items:', itemsError);
       toast({
         title: "Error",
         description: "Failed to fetch shopping list items",
@@ -62,13 +64,53 @@ const ShoppingListDetail = () => {
       return;
     }
 
-    console.log('Fetched items:', data);
-    setItems(data);
+    console.log('Successfully fetched items:', itemsData);
+
+    // Then get usernames for all added_by users
+    if (itemsData && itemsData.length > 0) {
+      const userIds = itemsData.map(item => item.added_by).filter(Boolean);
+      console.log('Fetching usernames for user IDs:', userIds);
+
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, username')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        return;
+      }
+
+      console.log('Successfully fetched profiles:', profilesData);
+
+      // Create a map of user IDs to usernames
+      const usernameMap = Object.fromEntries(
+        profilesData?.map(profile => [profile.id, profile.username]) || []
+      );
+
+      // Combine items with usernames
+      const itemsWithUsernames = itemsData.map(item => ({
+        ...item,
+        adder: {
+          username: usernameMap[item.added_by] || 'Unknown'
+        }
+      }));
+
+      console.log('Final items with usernames:', itemsWithUsernames);
+      setItems(itemsWithUsernames);
+    } else {
+      console.log('No items found for this shopping list');
+      setItems([]);
+    }
   };
 
   const handleAddItem = async (item: string, quantity: string, store: string) => {
+    console.log('Adding new item:', { item, quantity, store });
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      console.error('No user found when trying to add item');
+      return;
+    }
 
     const { error } = await supabase
       .from('shopping_list_items')
@@ -90,6 +132,7 @@ const ShoppingListDetail = () => {
       return;
     }
 
+    console.log('Successfully added item, refreshing items list');
     fetchItems();
   };
 
