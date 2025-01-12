@@ -36,7 +36,7 @@ export const useRecipes = () => {
         console.log('Current household:', profile?.current_household);
 
         if (profile?.current_household) {
-          // Fetch all recipes for the current household
+          // Fetch private recipes for the current household
           const { data: householdRecipes, error: householdRecipesError } = await supabase
             .from('recipes')
             .select(`
@@ -45,18 +45,19 @@ export const useRecipes = () => {
               recipe_ingredients (*),
               recipe_steps (*)
             `)
-            .eq('household_id', profile.current_household);
+            .eq('household_id', profile.current_household)
+            .eq('is_public', false);
 
           if (householdRecipesError) {
             console.error('Error fetching household recipes:', householdRecipesError);
             return;
           }
 
-          console.log('Household recipes:', householdRecipes);
+          console.log('Private household recipes:', householdRecipes);
           setPrivateRecipes(householdRecipes as Recipe[] || []);
         }
 
-        // Fetch public recipes from other households
+        // Fetch ALL public recipes, including from the user's household
         const { data: publicRecipesData, error: publicError } = await supabase
           .from('recipes')
           .select(`
@@ -65,8 +66,7 @@ export const useRecipes = () => {
             recipe_ingredients (*),
             recipe_steps (*)
           `)
-          .eq('is_public', true)
-          .neq('household_id', profile?.current_household || '');
+          .eq('is_public', true);
 
         if (publicError) {
           console.error('Error fetching public recipes:', publicError);
