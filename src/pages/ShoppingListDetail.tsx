@@ -43,13 +43,12 @@ const ShoppingListDetail = () => {
   };
 
   const fetchItems = async () => {
+    console.log('Fetching items for list:', id);
     const { data, error } = await supabase
       .from('shopping_list_items')
       .select(`
         *,
-        adder:added_by (
-          profiles (username)
-        )
+        adder:profiles!shopping_list_items_added_by_fkey (username)
       `)
       .eq('shopping_list_id', id)
       .order('added_at', { ascending: true });
