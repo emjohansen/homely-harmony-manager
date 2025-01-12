@@ -14,8 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, DollarSign } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Trash2, DollarSign, User } from "lucide-react";
 
 interface ShoppingListItemProps {
   item: {
@@ -90,8 +89,9 @@ export const ShoppingListItem = ({
             )}
           </div>
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <div>
-              Added by {item.added_by} {formatDistanceToNow(new Date(item.added_at))} ago
+            <div className="flex items-center gap-1">
+              <User className="h-3 w-3" />
+              <span>{item.added_by}</span>
               <div className="text-[10px] text-gray-400">
                 {formatDate(new Date(item.added_at))}
               </div>
