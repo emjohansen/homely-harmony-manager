@@ -47,7 +47,9 @@ const ShoppingListDetail = () => {
       .from('shopping_list_items')
       .select(`
         *,
-        adder:profiles(username)
+        adder:added_by (
+          profiles (username)
+        )
       `)
       .eq('shopping_list_id', id)
       .order('added_at', { ascending: true });
