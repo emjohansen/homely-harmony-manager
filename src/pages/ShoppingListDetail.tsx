@@ -216,7 +216,7 @@ const ShoppingListDetail = () => {
   const totalPrice = items.reduce((sum, item) => sum + (item.price || 0), 0);
 
   return (
-    <div className="relative min-h-screen bg-cream pb-20">
+    <div className="relative min-h-screen bg-transparent pb-20">
       <PageLogo />
       <div className="relative z-0 max-w-4xl mx-auto px-4 py-4">
         <ShoppingListHeader list={list} totalPrice={totalPrice} />
