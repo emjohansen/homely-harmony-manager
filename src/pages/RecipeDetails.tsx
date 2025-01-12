@@ -77,9 +77,8 @@ export default function RecipeDetails() {
       
       setRecipe(recipeData);
 
-      // User can edit if they created the recipe or if they're in the same household
-      const userCanEdit = user.id === data.created_by || 
-                         (profile?.current_household === data.household_id);
+      // User can edit if they're in the same household that created the recipe
+      const userCanEdit = profile?.current_household === data.household_id;
       setCanEdit(userCanEdit);
 
     } catch (error) {
