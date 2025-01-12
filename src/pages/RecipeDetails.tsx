@@ -6,14 +6,13 @@ import { useToast } from "@/hooks/use-toast";
 import { RecipeContent } from "@/components/recipes/RecipeContent";
 import { RecipeHeader } from "@/components/recipes/RecipeHeader";
 import Navigation from "@/components/Navigation";
-import { useAuth } from "@/hooks/use-auth";
 
 export default function RecipeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -24,6 +23,25 @@ export default function RecipeDetails() {
     if (!id) return;
 
     try {
+      // Get current user and their profile
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to view recipes",
+          variant: "destructive",
+        });
+        navigate("/login");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', user.id)
+        .single();
+
+      // Fetch recipe data
       const { data, error } = await supabase
         .from('recipes')
         .select(`
@@ -58,6 +76,12 @@ export default function RecipeDetails() {
       };
       
       setRecipe(recipeData);
+
+      // User can edit if they created the recipe or if they're in the same household
+      const userCanEdit = user.id === data.created_by || 
+                         (profile?.current_household === data.household_id);
+      setCanEdit(userCanEdit);
+
     } catch (error) {
       console.error('Error fetching recipe:', error);
       toast({
@@ -124,9 +148,6 @@ export default function RecipeDetails() {
   if (!recipe) {
     return <div>Loading...</div>;
   }
-
-  const canEdit = user?.id === recipe.created_by || 
-                 (recipe.household_id && user?.current_household === recipe.household_id);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
