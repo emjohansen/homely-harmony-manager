@@ -63,6 +63,14 @@ export const ShoppingListItem = ({
 
   return (
     <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
+      {item.store && item.store !== 'unspecified' && (
+        <Badge 
+          variant="secondary" 
+          className="absolute top-2 right-2 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+        >
+          {item.store}
+        </Badge>
+      )}
       <div className="flex items-start gap-3">
         <Checkbox
           checked={item.is_checked}
@@ -70,99 +78,89 @@ export const ShoppingListItem = ({
           className="mt-1 bg-mint border border-sage data-[state=checked]:bg-sage data-[state=unchecked]:bg-mint"
         />
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex-1">
-              <span className={`${item.is_checked ? "line-through text-gray-500" : ""} break-words`}>
-                {item.item}
+          <div className="flex items-baseline gap-2">
+            <span className={`${item.is_checked ? "line-through text-gray-500" : ""} break-words`}>
+              {item.item}
+            </span>
+            {item.quantity && (
+              <span className="text-sm text-gray-500 shrink-0">
+                ({item.quantity})
               </span>
-              {item.quantity && (
-                <span className="text-sm text-gray-500 ml-2">
-                  ({item.quantity})
-                </span>
-              )}
-            </div>
-            {item.store && item.store !== 'unspecified' && (
-              <Badge 
-                variant="secondary" 
-                className="bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
-              >
-                {item.store}
-              </Badge>
             )}
           </div>
-          <div className="flex flex-col mt-2">
+          <div className="flex flex-col gap-1">
             <div className="flex items-center gap-1 text-xs text-gray-500">
               <User className="h-3 w-3" />
               <span>{item.added_by}</span>
             </div>
-            <div className="text-[10px] text-gray-400 mt-1">
+            <div className="text-[10px] text-gray-400">
               {formatDate(new Date(item.added_at))}
             </div>
-            <div className="flex items-center gap-2 mt-2">
-              {showPriceInput ? (
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-24 h-8"
-                    placeholder="Price"
-                    autoFocus
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handlePriceSubmit();
-                      }
-                    }}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handlePriceSubmit}
-                    className="h-8 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90 shrink-0"
-                  >
-                    Save
-                  </Button>
-                </div>
-              ) : (
+          </div>
+          <div className="flex items-center justify-end gap-2 mt-2">
+            {showPriceInput ? (
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-24 h-8"
+                  placeholder="Price"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handlePriceSubmit();
+                    }
+                  }}
+                />
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setShowPriceInput(true)}
-                  className="shrink-0 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+                  onClick={handlePriceSubmit}
+                  className="h-8 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90 shrink-0"
                 >
-                  {item.price ? (
-                    <span className="text-sm">{item.price} kr</span>
-                  ) : (
-                    <DollarSign className="h-4 w-4" />
-                  )}
+                  Save
                 </Button>
-              )}
+              </div>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowPriceInput(true)}
+                className="shrink-0 bg-[#9dbc98] text-white hover:bg-[#9dbc98]/90"
+              >
+                {item.price ? (
+                  <span className="text-sm">{item.price} kr</span>
+                ) : (
+                  <DollarSign className="h-4 w-4" />
+                )}
+              </Button>
+            )}
 
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-destructive shrink-0">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="max-w-[90vw] bg-[#efffed]">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete item?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete this item? This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-[#efffed]">Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => onDelete(item.id)}
-                      className="bg-destructive text-destructive-foreground"
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-destructive shrink-0">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="max-w-[90vw] bg-[#efffed]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete item?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete this item? This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="bg-[#efffed]">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => onDelete(item.id)}
+                    className="bg-destructive text-destructive-foreground"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </div>
