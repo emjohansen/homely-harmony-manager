@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from './use-auth';
 import type { Recipe } from '@/types/recipe';
 
 export const useRecipes = () => {
   const [privateRecipes, setPrivateRecipes] = useState<Recipe[]>([]);
   const [publicRecipes, setPublicRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
 
   const fetchRecipes = async () => {
     try {
+      // First get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('Error fetching user:', userError);
+        return;
+      }
+
       console.log('Fetching recipes for user:', user?.id);
       
       if (user?.id) {
-        // First get the user's current household
+        // Get the user's current household
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('current_household')
@@ -30,7 +36,7 @@ export const useRecipes = () => {
         console.log('Current household:', profile?.current_household);
 
         if (profile?.current_household) {
-          // Fetch household recipes
+          // Fetch all recipes for the current household
           const { data: householdRecipes, error: householdRecipesError } = await supabase
             .from('recipes')
             .select(`
@@ -50,7 +56,7 @@ export const useRecipes = () => {
           setPrivateRecipes(householdRecipes as Recipe[] || []);
         }
 
-        // Fetch public recipes (excluding household recipes)
+        // Fetch public recipes from other households
         const { data: publicRecipesData, error: publicError } = await supabase
           .from('recipes')
           .select(`
@@ -99,7 +105,7 @@ export const useRecipes = () => {
 
   useEffect(() => {
     fetchRecipes();
-  }, [user?.id]);
+  }, []);
 
   return {
     privateRecipes,
