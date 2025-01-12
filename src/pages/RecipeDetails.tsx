@@ -5,6 +5,7 @@ import { Recipe } from "@/types/recipe";
 import { useToast } from "@/hooks/use-toast";
 import { RecipeContent } from "@/components/recipes/RecipeContent";
 import { RecipeHeader } from "@/components/recipes/RecipeHeader";
+import { PageLogo } from "@/components/common/PageLogo";
 import Navigation from "@/components/Navigation";
 
 export default function RecipeDetails() {
@@ -150,6 +151,7 @@ export default function RecipeDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">
+      <PageLogo />
       <div className="max-w-4xl mx-auto px-4 py-8">
         <RecipeHeader 
           recipeId={recipe.id}

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ShoppingListHeader } from "@/components/shopping/ShoppingListHeader";
 import { AddShoppingListItem } from "@/components/shopping/AddShoppingListItem";
 import { ShoppingListItems } from "@/components/shopping/ShoppingListItems";
+import { PageLogo } from "@/components/common/PageLogo";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 
@@ -216,6 +217,7 @@ const ShoppingListDetail = () => {
 
   return (
     <div className="min-h-screen bg-cream pb-20">
+      <PageLogo />
       <div className="max-w-4xl mx-auto px-4 py-4">
         <ShoppingListHeader list={list} totalPrice={totalPrice} />
         
