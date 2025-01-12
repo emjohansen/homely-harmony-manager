@@ -61,6 +61,11 @@ export const ShoppingListItem = ({
     });
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
+  };
+
   return (
     <div className="flex flex-col gap-2 p-3 bg-background rounded-lg border relative">
       <div className="flex items-start gap-3">
@@ -73,7 +78,7 @@ export const ShoppingListItem = ({
           <div className="flex items-center justify-between gap-2">
             <div className="flex-1">
               <span className={`${item.is_checked ? "line-through text-gray-500" : ""} break-words`}>
-                {item.item}
+                {truncateText(item.item, 15)}
               </span>
               {item.quantity && (
                 <span className="text-sm text-gray-500 ml-2">
@@ -91,12 +96,12 @@ export const ShoppingListItem = ({
             )}
           </div>
           <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col">
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <User className="h-3 w-3" />
                 <span>{item.added_by}</span>
               </div>
-              <div className="text-[10px] text-gray-400">
+              <div className="text-[10px] text-gray-400 mt-0.5">
                 {formatDate(new Date(item.added_at))}
               </div>
             </div>
