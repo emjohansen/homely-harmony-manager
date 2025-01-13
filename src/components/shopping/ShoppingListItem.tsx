@@ -95,10 +95,10 @@ export const ShoppingListItem = ({
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-between mt-2 -ml-[25px]">
+          <div className="flex items-center justify-between mt-0 -ml-[25px]">
             <div className="flex flex-col">
               <div className="flex items-center gap-1 text-xs text-gray-500">
-                <User className="h-10 w-10" />
+                <User className="h-[15px] w-[15px]" />
                 <span>{item.added_by}</span>
               </div>
               <div className="text-[10px] text-gray-400 mt-0.5 pl-[22px]">
