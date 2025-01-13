@@ -13,7 +13,7 @@ interface PendingInvite {
   household: {
     name: string;
   };
-  inviter_email?: string;
+  inviter_username?: string;
 }
 
 interface PendingInvitesListProps {
@@ -48,27 +48,26 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
       if (error) throw error;
 
-      // Then fetch the inviter information from household_invites table
-      const invitesWithInviterEmails = await Promise.all(
+      // Then fetch the inviter's username from profiles table
+      const invitesWithInviterUsernames = await Promise.all(
         (invites || []).map(async (invite) => {
-          if (!invite.invited_by) return { ...invite, inviter_email: 'Unknown' };
+          if (!invite.invited_by) return { ...invite, inviter_username: 'Unknown' };
 
-          // Get the inviter's email directly from the household_invites table
-          const { data: inviterInvite } = await supabase
-            .from('household_invites')
-            .select('email')
+          const { data: inviterProfile } = await supabase
+            .from('profiles')
+            .select('username')
             .eq('id', invite.invited_by)
-            .maybeSingle();
+            .single();
 
           return {
             ...invite,
-            inviter_email: inviterInvite?.email || 'Unknown'
+            inviter_username: inviterProfile?.username || 'Unknown'
           };
         })
       );
 
-      console.log('Fetched invites:', invitesWithInviterEmails);
-      setPendingInvites(invitesWithInviterEmails);
+      console.log('Fetched invites:', invitesWithInviterUsernames);
+      setPendingInvites(invitesWithInviterUsernames);
     } catch (error) {
       console.error('Error fetching pending invites:', error);
       toast({
@@ -167,7 +166,7 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
           className="flex items-center justify-between p-2 bg-[#e0f0dd] rounded"
         >
           <span>
-            You have been invited to join "{invite.household.name}" by {invite.inviter_email}
+            You have been invited to join "{invite.household.name}" by {invite.inviter_username}
           </span>
           <div className="flex gap-2">
             <Button
