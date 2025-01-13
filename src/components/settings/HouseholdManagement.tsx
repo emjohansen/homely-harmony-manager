@@ -13,6 +13,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
 
 interface Household {
   id: string;
@@ -33,6 +35,7 @@ export const HouseholdManagement = ({
   const { toast } = useToast();
   const { isAdmin } = useHouseholdRole(currentHousehold?.id || null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -84,7 +87,7 @@ export const HouseholdManagement = ({
   };
 
   return (
-    <div className="p-6 bg-white rounded shadow">
+    <div className="p-6 bg-[#efffed] rounded shadow">
       <h2 className="text-lg font-bold mb-4">Household Management</h2>
       <div className="space-y-6">
         <div>
@@ -98,10 +101,13 @@ export const HouseholdManagement = ({
               onHouseholdSelect={handleHouseholdSelect}
             />
             {currentHousehold && isAdmin && (
-              <InviteMemberDialog 
-                householdId={currentHousehold.id}
-                onMemberInvited={onHouseholdsChange}
-              />
+              <Button 
+                onClick={() => setIsInviteDialogOpen(true)}
+                className="w-full bg-[#9dbc98] hover:bg-[#9dbc98]/90 text-white"
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Invite Member
+              </Button>
             )}
           </div>
         </div>
@@ -121,6 +127,15 @@ export const HouseholdManagement = ({
         )}
 
         <CreateHouseholdDialog onHouseholdsChange={onHouseholdsChange} />
+
+        {currentHousehold && isAdmin && (
+          <InviteMemberDialog
+            householdId={currentHousehold.id}
+            open={isInviteDialogOpen}
+            onOpenChange={setIsInviteDialogOpen}
+            onMemberInvited={onHouseholdsChange}
+          />
+        )}
       </div>
     </div>
   );

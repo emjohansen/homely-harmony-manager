@@ -3,92 +3,66 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface InviteMemberDialogProps {
   householdId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onMemberInvited: () => void;
 }
 
-export const InviteMemberDialog = ({ householdId, onMemberInvited }: InviteMemberDialogProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const InviteMemberDialog = ({ 
+  householdId, 
+  open, 
+  onOpenChange,
+  onMemberInvited 
+}: InviteMemberDialogProps) => {
   const [inviteEmail, setInviteEmail] = useState("");
   const { toast } = useToast();
 
   const handleInviteMember = async () => {
     try {
-      // First get the user's profile ID
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', inviteEmail)
-        .single();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No authenticated user");
 
-      if (profileError) {
-        toast({
-          title: "Error",
-          description: "User not found with this email",
-          variant: "destructive",
+      const { error: inviteError } = await supabase
+        .from('household_invites')
+        .insert({
+          household_id: householdId,
+          email: inviteEmail,
+          invited_by: user.id,
+          status: 'pending'
         });
-        return;
-      }
 
-      // Get current members array
-      const { data: household, error: fetchError } = await supabase
-        .from('households')
-        .select('members')
-        .eq('id', householdId)
-        .single();
-
-      if (fetchError) throw fetchError;
-
-      // Add new member to array if not already present
-      const currentMembers = household.members || [];
-      if (!currentMembers.includes(profile.id)) {
-        const { error: updateError } = await supabase
-          .from('households')
-          .update({
-            members: [...currentMembers, profile.id]
-          })
-          .eq('id', householdId);
-
-        if (updateError) throw updateError;
-      }
+      if (inviteError) throw inviteError;
 
       toast({
         title: "Success",
-        description: "Member invited successfully",
+        description: "Invitation sent successfully",
       });
       
-      setIsOpen(false);
       setInviteEmail("");
+      onOpenChange(false);
       onMemberInvited();
     } catch (error) {
       console.error('Error inviting member:', error);
       toast({
         title: "Error",
-        description: "Failed to invite member",
+        description: "Failed to send invitation",
         variant: "destructive",
       });
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full">
-          <UserPlus className="mr-2 h-4 w-4" />
-          Invite Member
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-[#efffed]">
         <DialogHeader>
           <DialogTitle>Invite New Member</DialogTitle>
         </DialogHeader>
@@ -99,9 +73,13 @@ export const InviteMemberDialog = ({ householdId, onMemberInvited }: InviteMembe
               placeholder="Enter email address"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
+              className="flex-1"
             />
-            <Button onClick={handleInviteMember}>
-              <UserPlus className="h-4 w-4" />
+            <Button 
+              onClick={handleInviteMember}
+              className="bg-[#9dbc98] hover:bg-[#9dbc98]/90 text-white"
+            >
+              Invite
             </Button>
           </div>
         </div>
