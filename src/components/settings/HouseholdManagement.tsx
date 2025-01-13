@@ -78,6 +78,7 @@ export const HouseholdManagement = ({
   }, [currentHousehold, currentUserId]);
 
   const handleHouseholdSelect = async (household: Household) => {
+    console.log("Selecting household:", household);
     if (!currentUserId) {
       toast({
         title: "Error",
@@ -102,7 +103,9 @@ export const HouseholdManagement = ({
         description: "Current household updated successfully.",
       });
       
-      onHouseholdsChange();
+      // Force a page reload to refresh all data
+      window.location.reload();
+      
     } catch (error) {
       console.error("Error updating current household:", error);
       toast({

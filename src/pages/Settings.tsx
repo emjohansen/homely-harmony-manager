@@ -40,53 +40,51 @@ export default function Settings() {
     if (profile?.username) {
       setNickname(profile.username);
     }
+
+    // If there's a current_household in the profile, fetch its details
+    if (profile?.current_household) {
+      const { data: household } = await supabase
+        .from('households')
+        .select('id, name')
+        .eq('id', profile.current_household)
+        .single();
+
+      if (household) {
+        setCurrentHousehold(household);
+      }
+    }
   };
 
   const fetchHouseholds = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Fetch households where user is the creator
+    // Fetch all households where the user is either a member or admin
     const { data: userHouseholds } = await supabase
       .from('households')
       .select('id, name')
-      .eq('created_by', user.id);
+      .or(`members.cs.{${user.id}},admins.cs.{${user.id}}`);
 
     if (userHouseholds) {
+      console.log("Fetched households:", userHouseholds);
       setHouseholds(userHouseholds);
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .single();
+      // If no current household is set, get it from the profile
+      if (!currentHousehold) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', user.id)
+          .single();
 
-      if (profile?.current_household) {
-        const current = userHouseholds.find(h => h.id === profile.current_household);
-        setCurrentHousehold(current || null);
+        if (profile?.current_household) {
+          const current = userHouseholds.find(h => h.id === profile.current_household);
+          if (current) {
+            console.log("Setting current household:", current);
+            setCurrentHousehold(current);
+          }
+        }
       }
-    }
-  };
-
-  const handleSelectHousehold = async (household: Household) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ current_household: household.id })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      setCurrentHousehold(household);
-      
-      // Force reload the page to refresh all data
-      window.location.reload();
-      
-    } catch (error) {
-      console.error('Error updating active household:', error);
     }
   };
 
