@@ -13,9 +13,7 @@ interface PendingInvite {
   household: {
     name: string;
   };
-  inviter: {
-    email: string;
-  };
+  inviter_email?: string;
 }
 
 interface PendingInvitesListProps {
@@ -34,6 +32,7 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
       console.log('Fetching invites for email:', user.email);
 
+      // First fetch the invites with household information
       const { data: invites, error } = await supabase
         .from('household_invites')
         .select(`
@@ -42,15 +41,33 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
           email,
           created_at,
           invited_by,
-          household:households(name),
-          inviter:profiles!household_invites_invited_by_fkey(email)
+          household:households(name)
         `)
         .eq('email', user.email)
         .eq('status', 'pending');
 
       if (error) throw error;
-      console.log('Fetched invites:', invites);
-      setPendingInvites(invites || []);
+
+      // Then fetch the inviter emails separately
+      const invitesWithInviterEmails = await Promise.all(
+        (invites || []).map(async (invite) => {
+          if (!invite.invited_by) return { ...invite, inviter_email: 'Unknown' };
+
+          const { data: inviterData } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', invite.invited_by)
+            .single();
+
+          return {
+            ...invite,
+            inviter_email: inviterData?.email || 'Unknown'
+          };
+        })
+      );
+
+      console.log('Fetched invites:', invitesWithInviterEmails);
+      setPendingInvites(invitesWithInviterEmails);
     } catch (error) {
       console.error('Error fetching pending invites:', error);
       toast({
@@ -149,7 +166,7 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
           className="flex items-center justify-between p-2 bg-[#e0f0dd] rounded"
         >
           <span>
-            You have been invited to join "{invite.household.name}" by {invite.inviter?.email || 'Unknown'}
+            You have been invited to join "{invite.household.name}" by {invite.inviter_email}
           </span>
           <div className="flex gap-2">
             <Button
