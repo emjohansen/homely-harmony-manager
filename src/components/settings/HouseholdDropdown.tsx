@@ -6,6 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Household {
   id: string;
@@ -23,9 +25,21 @@ export const HouseholdDropdown = ({
   currentHousehold,
   onHouseholdSelect,
 }: HouseholdDropdownProps) => {
+  useEffect(() => {
+    const fetchUserHouseholds = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // This will be handled by the parent component's fetchHouseholds function
+      console.log("Current user ID for household fetch:", user.id);
+    };
+
+    fetchUserHouseholds();
+  }, []);
+
   const handleSelect = async (household: Household) => {
     try {
-      console.log("Switching to household:", household); // Debugging
+      console.log("Switching to household:", household);
       await onHouseholdSelect(household);
     } catch (error) {
       console.error("Error selecting household:", error);

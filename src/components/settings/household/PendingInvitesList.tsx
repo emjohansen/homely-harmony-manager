@@ -9,6 +9,13 @@ interface PendingInvite {
   household_id: string;
   email: string;
   created_at: string;
+  invited_by: string;
+  household: {
+    name: string;
+  };
+  inviter: {
+    email: string;
+  };
 }
 
 interface PendingInvitesListProps {
@@ -21,7 +28,6 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
   const fetchPendingInvites = async () => {
     try {
-      // Get current user's email
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user?.email) return;
@@ -30,7 +36,15 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
       const { data: invites, error } = await supabase
         .from('household_invites')
-        .select('id, household_id, email, created_at')
+        .select(`
+          id,
+          household_id,
+          email,
+          created_at,
+          invited_by,
+          household:households(name),
+          inviter:profiles!household_invites_invited_by_fkey(email)
+        `)
         .eq('email', user.email)
         .eq('status', 'pending');
 
@@ -58,7 +72,6 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
       if (!user) throw new Error('No authenticated user');
 
       if (status === 'rejected') {
-        // Simply delete the invite if rejected
         const { error } = await supabase
           .from('household_invites')
           .delete()
@@ -66,7 +79,6 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
         if (error) throw error;
       } else {
-        // Get current members array
         const { data: household, error: householdError } = await supabase
           .from('households')
           .select('members')
@@ -75,21 +87,26 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
         if (householdError) throw householdError;
 
-        // Add new member to array if not already present
         const updatedMembers = [...(household.members || [])];
         if (!updatedMembers.includes(user.id)) {
           updatedMembers.push(user.id);
 
-          // Update the household with new members array
           const { error: updateError } = await supabase
             .from('households')
             .update({ members: updatedMembers })
             .eq('id', householdId);
 
           if (updateError) throw updateError;
+
+          // Update user's current_household
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({ current_household: householdId })
+            .eq('id', user.id);
+
+          if (profileError) throw profileError;
         }
 
-        // Delete the invite after successful acceptance
         const { error: deleteError } = await supabase
           .from('household_invites')
           .delete()
@@ -105,6 +122,11 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
       fetchPendingInvites();
       onInviteStatusChange();
+
+      if (status === 'accepted') {
+        // Refresh the page after successful acceptance
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Error handling invite response:', error);
       toast({
@@ -126,7 +148,9 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
           key={invite.id} 
           className="flex items-center justify-between p-2 bg-[#e0f0dd] rounded"
         >
-          <span>You have been invited to join a household</span>
+          <span>
+            You have been invited to join "{invite.household.name}" by {invite.inviter?.email || 'Unknown'}
+          </span>
           <div className="flex gap-2">
             <Button
               size="sm"
