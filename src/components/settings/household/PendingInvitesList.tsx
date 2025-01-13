@@ -6,28 +6,36 @@ import { Check, X } from "lucide-react";
 
 interface PendingInvite {
   id: string;
+  household_id: string;
   email: string;
   created_at: string;
 }
 
 interface PendingInvitesListProps {
-  householdId: string;
   onInviteStatusChange: () => void;
 }
 
-export const PendingInvitesList = ({ householdId, onInviteStatusChange }: PendingInvitesListProps) => {
+export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListProps) => {
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([]);
   const { toast } = useToast();
 
   const fetchPendingInvites = async () => {
     try {
+      // Get current user's email
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user?.email) return;
+
+      console.log('Fetching invites for email:', user.email);
+
       const { data: invites, error } = await supabase
         .from('household_invites')
-        .select('id, email, created_at')
-        .eq('household_id', householdId)
+        .select('id, household_id, email, created_at')
+        .eq('email', user.email)
         .eq('status', 'pending');
 
       if (error) throw error;
+      console.log('Fetched invites:', invites);
       setPendingInvites(invites || []);
     } catch (error) {
       console.error('Error fetching pending invites:', error);
@@ -40,14 +48,17 @@ export const PendingInvitesList = ({ householdId, onInviteStatusChange }: Pendin
   };
 
   useEffect(() => {
-    if (householdId) {
-      fetchPendingInvites();
-    }
-  }, [householdId]);
+    fetchPendingInvites();
+  }, []);
 
-  const handleInviteResponse = async (inviteId: string, status: 'accepted' | 'rejected') => {
+  const handleInviteResponse = async (inviteId: string, householdId: string, status: 'accepted' | 'rejected') => {
     try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) throw new Error('No authenticated user');
+
       if (status === 'rejected') {
+        // Simply delete the invite if rejected
         const { error } = await supabase
           .from('household_invites')
           .delete()
@@ -55,24 +66,6 @@ export const PendingInvitesList = ({ householdId, onInviteStatusChange }: Pendin
 
         if (error) throw error;
       } else {
-        // Get the invite details first
-        const { data: invite, error: inviteError } = await supabase
-          .from('household_invites')
-          .select('email')
-          .eq('id', inviteId)
-          .single();
-
-        if (inviteError) throw inviteError;
-
-        // Get the user's profile ID from their email
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', invite.email)
-          .single();
-
-        if (profileError) throw profileError;
-
         // Get current members array
         const { data: household, error: householdError } = await supabase
           .from('households')
@@ -84,8 +77,8 @@ export const PendingInvitesList = ({ householdId, onInviteStatusChange }: Pendin
 
         // Add new member to array if not already present
         const updatedMembers = [...(household.members || [])];
-        if (!updatedMembers.includes(profile.id)) {
-          updatedMembers.push(profile.id);
+        if (!updatedMembers.includes(user.id)) {
+          updatedMembers.push(user.id);
 
           // Update the household with new members array
           const { error: updateError } = await supabase
@@ -133,13 +126,13 @@ export const PendingInvitesList = ({ householdId, onInviteStatusChange }: Pendin
           key={invite.id} 
           className="flex items-center justify-between p-2 bg-[#e0f0dd] rounded"
         >
-          <span>{invite.email}</span>
+          <span>You have been invited to join a household</span>
           <div className="flex gap-2">
             <Button
               size="sm"
               variant="ghost"
               className="bg-[#9dbc98] hover:bg-[#9dbc98]/90 text-white"
-              onClick={() => handleInviteResponse(invite.id, 'accepted')}
+              onClick={() => handleInviteResponse(invite.id, invite.household_id, 'accepted')}
             >
               <Check className="h-4 w-4" />
             </Button>
@@ -147,7 +140,7 @@ export const PendingInvitesList = ({ householdId, onInviteStatusChange }: Pendin
               size="sm"
               variant="ghost"
               className="bg-red-500 hover:bg-red-600 text-white"
-              onClick={() => handleInviteResponse(invite.id, 'rejected')}
+              onClick={() => handleInviteResponse(invite.id, invite.household_id, 'rejected')}
             >
               <X className="h-4 w-4" />
             </Button>

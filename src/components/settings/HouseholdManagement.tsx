@@ -139,31 +139,24 @@ export const HouseholdManagement = ({
           </div>
         </div>
 
-        {currentHousehold && (
-          <Accordion type="single" collapsible className="w-full space-y-2">
-            <AccordionItem value="members">
-              <AccordionTrigger>Members</AccordionTrigger>
-              <AccordionContent>
-                <MembersList
-                  householdId={currentHousehold.id}
-                  isAdmin={isAdmin}
-                />
-              </AccordionContent>
-            </AccordionItem>
+        <Accordion type="single" collapsible className="w-full space-y-2">
+          <AccordionItem value="members">
+            <AccordionTrigger>Members</AccordionTrigger>
+            <AccordionContent>
+              <MembersList
+                householdId={currentHousehold?.id || ''}
+                isAdmin={isAdmin}
+              />
+            </AccordionContent>
+          </AccordionItem>
 
-            {isAdmin && (
-              <AccordionItem value="invites">
-                <AccordionTrigger>Pending Invites</AccordionTrigger>
-                <AccordionContent>
-                  <PendingInvitesList
-                    householdId={currentHousehold.id}
-                    onInviteStatusChange={onHouseholdsChange}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            )}
-          </Accordion>
-        )}
+          <AccordionItem value="invites">
+            <AccordionTrigger>Pending Invites</AccordionTrigger>
+            <AccordionContent>
+              <PendingInvitesList onInviteStatusChange={onHouseholdsChange} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         <CreateHouseholdDialog onHouseholdsChange={onHouseholdsChange} />
 
