@@ -6,7 +6,6 @@ import { MembersList } from "./household/MembersList";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useHouseholdRole } from "@/hooks/use-household-role";
 import {
   Accordion,
   AccordionContent,
@@ -19,6 +18,7 @@ import { UserPlus } from "lucide-react";
 interface Household {
   id: string;
   name: string;
+  admins?: string[];
 }
 
 interface HouseholdManagementProps {
@@ -33,9 +33,9 @@ export const HouseholdManagement = ({
   onHouseholdsChange,
 }: HouseholdManagementProps) => {
   const { toast } = useToast();
-  const { isAdmin } = useHouseholdRole(currentHousehold?.id || null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -49,6 +49,32 @@ export const HouseholdManagement = ({
 
     getCurrentUser();
   }, []);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!currentHousehold || !currentUserId) {
+        setIsAdmin(false);
+        return;
+      }
+
+      try {
+        const { data: household, error } = await supabase
+          .from('households')
+          .select('admins')
+          .eq('id', currentHousehold.id)
+          .single();
+
+        if (error) throw error;
+
+        setIsAdmin(household?.admins?.includes(currentUserId) || false);
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [currentHousehold, currentUserId]);
 
   const handleHouseholdSelect = async (household: Household) => {
     if (!currentUserId) {
