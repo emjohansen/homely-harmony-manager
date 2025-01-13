@@ -48,20 +48,21 @@ export const PendingInvitesList = ({ onInviteStatusChange }: PendingInvitesListP
 
       if (error) throw error;
 
-      // Then fetch the inviter emails separately
+      // Then fetch the inviter information from household_invites table
       const invitesWithInviterEmails = await Promise.all(
         (invites || []).map(async (invite) => {
           if (!invite.invited_by) return { ...invite, inviter_email: 'Unknown' };
 
-          const { data: inviterData } = await supabase
-            .from('profiles')
+          // Get the inviter's email directly from the household_invites table
+          const { data: inviterInvite } = await supabase
+            .from('household_invites')
             .select('email')
             .eq('id', invite.invited_by)
-            .single();
+            .maybeSingle();
 
           return {
             ...invite,
-            inviter_email: inviterData?.email || 'Unknown'
+            inviter_email: inviterInvite?.email || 'Unknown'
           };
         })
       );
