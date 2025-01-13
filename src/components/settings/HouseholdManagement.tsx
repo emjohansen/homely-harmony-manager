@@ -3,6 +3,7 @@ import { HouseholdDropdown } from "./HouseholdDropdown";
 import { CreateHouseholdDialog } from "./household/CreateHouseholdDialog";
 import { InviteMemberDialog } from "./household/InviteMemberDialog";
 import { MembersList } from "./household/MembersList";
+import { PendingInvitesList } from "./household/PendingInvitesList";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -139,7 +140,7 @@ export const HouseholdManagement = ({
         </div>
 
         {currentHousehold && (
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="w-full space-y-2">
             <AccordionItem value="members">
               <AccordionTrigger>Members</AccordionTrigger>
               <AccordionContent>
@@ -149,6 +150,18 @@ export const HouseholdManagement = ({
                 />
               </AccordionContent>
             </AccordionItem>
+
+            {isAdmin && (
+              <AccordionItem value="invites">
+                <AccordionTrigger>Pending Invites</AccordionTrigger>
+                <AccordionContent>
+                  <PendingInvitesList
+                    householdId={currentHousehold.id}
+                    onInviteStatusChange={onHouseholdsChange}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            )}
           </Accordion>
         )}
 
