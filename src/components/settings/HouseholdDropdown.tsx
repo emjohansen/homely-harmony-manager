@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Household {
   id: string;
@@ -17,7 +18,7 @@ interface Household {
 interface HouseholdDropdownProps {
   households: Household[];
   currentHousehold: Household | null;
-  onHouseholdSelect: (household: Household) => Promise<void>;
+  onHouseholdSelect: (household: Household) => void;
 }
 
 export const HouseholdDropdown = ({
@@ -26,6 +27,7 @@ export const HouseholdDropdown = ({
   onHouseholdSelect,
 }: HouseholdDropdownProps) => {
   const [userHouseholds, setUserHouseholds] = useState<Household[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchUserHouseholds = async () => {
@@ -37,7 +39,6 @@ export const HouseholdDropdown = ({
 
       console.log("Fetching households for user:", user.id);
       
-      // Fetch all households where the user is either in members or admins array
       const { data: householdsData, error } = await supabase
         .from('households')
         .select('id, name')
@@ -45,6 +46,11 @@ export const HouseholdDropdown = ({
 
       if (error) {
         console.error("Error fetching households:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch households",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -53,19 +59,12 @@ export const HouseholdDropdown = ({
     };
 
     fetchUserHouseholds();
-  }, []);
+  }, [toast]);
 
-  const handleSelect = async (household: Household) => {
-    try {
-      console.log("Switching to household:", household);
-      await onHouseholdSelect(household);
-    } catch (error) {
-      console.error("Error selecting household:", error);
-    }
+  const handleSelect = (household: Household) => {
+    console.log("Selected household:", household);
+    onHouseholdSelect(household);
   };
-
-  // Use userHouseholds instead of the passed households prop
-  const displayHouseholds = userHouseholds.length > 0 ? userHouseholds : households;
 
   return (
     <DropdownMenu>
@@ -76,7 +75,7 @@ export const HouseholdDropdown = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-full min-w-[240px] bg-cream">
-        {displayHouseholds.map((household) => (
+        {userHouseholds.map((household) => (
           <DropdownMenuItem
             key={household.id}
             onClick={() => handleSelect(household)}

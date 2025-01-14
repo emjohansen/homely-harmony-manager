@@ -40,12 +40,10 @@ export const HouseholdManagement = ({
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error) {
-        console.error("Error fetching user:", error);
-        return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
       }
-      setCurrentUserId(user?.id || null);
     };
 
     getCurrentUser();
@@ -58,62 +56,53 @@ export const HouseholdManagement = ({
         return;
       }
 
-      try {
-        const { data: household, error } = await supabase
-          .from('households')
-          .select('admins')
-          .eq('id', currentHousehold.id)
-          .single();
+      const { data: household, error } = await supabase
+        .from('households')
+        .select('admins')
+        .eq('id', currentHousehold.id)
+        .single();
 
-        if (error) throw error;
-
-        setIsAdmin(household?.admins?.includes(currentUserId) || false);
-      } catch (error) {
+      if (error) {
         console.error('Error checking admin status:', error);
         setIsAdmin(false);
+        return;
       }
+
+      setIsAdmin(household?.admins?.includes(currentUserId) || false);
     };
 
     checkAdminStatus();
   }, [currentHousehold, currentUserId]);
 
   const handleHouseholdSelect = async (household: Household) => {
-    console.log("Selecting household:", household);
     if (!currentUserId) {
       toast({
         title: "Error",
-        description: "User not logged in.",
+        description: "You must be logged in to switch households",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      // Update the current household in the user's profile
-      const { error: updateError } = await supabase
-        .from("profiles")
+      const { error } = await supabase
+        .from('profiles')
         .update({ current_household: household.id })
-        .eq("id", currentUserId);
+        .eq('id', currentUserId);
 
-      if (updateError) {
-        throw updateError;
-      }
+      if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Current household updated successfully.",
+        description: "Successfully switched household",
       });
 
-      // Call onHouseholdsChange to refresh the households list
       onHouseholdsChange();
-      
-      // Force a page reload to refresh all data
-      window.location.reload();
     } catch (error) {
-      console.error("Error updating current household:", error);
+      console.error('Error switching household:', error);
       toast({
         title: "Error",
-        description: "Failed to update current household.",
+        description: "Failed to switch household",
         variant: "destructive",
       });
     }
