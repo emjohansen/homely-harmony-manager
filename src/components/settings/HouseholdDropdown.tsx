@@ -61,9 +61,42 @@ export const HouseholdDropdown = ({
     fetchUserHouseholds();
   }, [toast]);
 
-  const handleSelect = (household: Household) => {
+  const handleSelect = async (household: Household) => {
     console.log("Selected household:", household);
-    onHouseholdSelect(household);
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to switch households",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ current_household: household.id })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      console.log("Successfully updated current household");
+      toast({
+        title: "Success",
+        description: "Successfully switched household",
+      });
+
+      onHouseholdSelect(household);
+    } catch (error) {
+      console.error('Error switching household:', error);
+      toast({
+        title: "Error",
+        description: "Failed to switch household",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
