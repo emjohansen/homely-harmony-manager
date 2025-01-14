@@ -89,23 +89,26 @@ export const HouseholdManagement = ({
     }
 
     try {
-      const { error } = await supabase
+      // Update the current household in the user's profile
+      const { error: updateError } = await supabase
         .from("profiles")
         .update({ current_household: household.id })
         .eq("id", currentUserId);
 
-      if (error) {
-        throw error;
+      if (updateError) {
+        throw updateError;
       }
 
       toast({
         title: "Success",
         description: "Current household updated successfully.",
       });
+
+      // Call onHouseholdsChange to refresh the households list
+      onHouseholdsChange();
       
       // Force a page reload to refresh all data
       window.location.reload();
-      
     } catch (error) {
       console.error("Error updating current household:", error);
       toast({
