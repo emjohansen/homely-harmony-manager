@@ -75,12 +75,26 @@ export const HouseholdDropdown = ({
     }
 
     try {
-      const { error } = await supabase
+      // First try to get the current profile to ensure it exists
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      // Then update the current_household
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ current_household: household.id })
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       console.log("Successfully updated current household");
       toast({
