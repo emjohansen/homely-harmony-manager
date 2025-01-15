@@ -6,7 +6,6 @@ import { MembersList } from "./household/MembersList";
 import { PendingInvitesList } from "./household/PendingInvitesList";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import {
   Accordion,
   AccordionContent,
@@ -33,7 +32,6 @@ export const HouseholdManagement = ({
   currentHousehold,
   onHouseholdsChange,
 }: HouseholdManagementProps) => {
-  const { toast } = useToast();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -74,53 +72,18 @@ export const HouseholdManagement = ({
     checkAdminStatus();
   }, [currentHousehold, currentUserId]);
 
-  const handleHouseholdSelect = async (household: Household) => {
-    if (!currentUserId) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to switch households",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ current_household: household.id })
-        .eq('id', currentUserId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Successfully switched household",
-      });
-
-      onHouseholdsChange();
-    } catch (error) {
-      console.error('Error switching household:', error);
-      toast({
-        title: "Error",
-        description: "Failed to switch household",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="p-6 bg-[#efffed] rounded shadow">
       <h2 className="text-lg font-bold mb-4">Household Management</h2>
       <div className="space-y-6">
         <div>
           <Label className="text-sm font-medium text-gray-700 mb-2 block">
-            Current Household
+            Your Households
           </Label>
           <div className="space-y-4">
             <HouseholdDropdown
               households={households}
               currentHousehold={currentHousehold}
-              onHouseholdSelect={handleHouseholdSelect}
             />
             {currentHousehold && isAdmin && (
               <Button 
