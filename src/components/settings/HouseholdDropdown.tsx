@@ -42,11 +42,33 @@ export const HouseholdDropdown = ({
       
       console.log('Current user ID:', user.id);
 
-      // Convert householdId to UUID format for PostgreSQL
+      // First get the current households array
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('households')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        return;
+      }
+
+      console.log('Current households array:', profileData?.households);
+
+      // Create new array with the new household ID
+      const updatedHouseholds = profileData?.households || [];
+      if (!updatedHouseholds.includes(householdId)) {
+        updatedHouseholds.push(householdId);
+      }
+
+      console.log('Updated households array:', updatedHouseholds);
+
+      // Update the profile with the new households array
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ 
-          current_household: householdId ? householdId : null 
+          households: updatedHouseholds
         })
         .eq('id', user.id);
 
@@ -55,7 +77,7 @@ export const HouseholdDropdown = ({
         return;
       }
 
-      console.log('Profile updated successfully with new household ID');
+      console.log('Profile updated successfully with new households array');
       
       // Reload the page
       console.log('Reloading page...');
