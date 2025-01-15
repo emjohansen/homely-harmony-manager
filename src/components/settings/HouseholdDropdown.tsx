@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +22,48 @@ export const HouseholdDropdown = ({
   households,
   currentHousehold,
 }: HouseholdDropdownProps) => {
+  const handleHouseholdSwitch = async (householdId: string) => {
+    try {
+      console.log('Starting household switch process...');
+      console.log('New household ID:', householdId);
+
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('Error getting user:', userError);
+        return;
+      }
+      
+      if (!user) {
+        console.error('No user found');
+        return;
+      }
+      
+      console.log('Current user ID:', user.id);
+
+      // Update the profile
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ current_household: householdId })
+        .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error updating profile:', updateError);
+        return;
+      }
+
+      console.log('Profile updated successfully with new household ID');
+      
+      // Reload the page
+      console.log('Reloading page...');
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Unexpected error during household switch:', error);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,6 +77,7 @@ export const HouseholdDropdown = ({
           <DropdownMenuItem
             key={household.id}
             className={currentHousehold?.id === household.id ? "bg-[#e0f0dd]" : ""}
+            onClick={() => handleHouseholdSwitch(household.id)}
           >
             {household.name}
           </DropdownMenuItem>
