@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 interface Household {
   id: string;
@@ -32,59 +33,41 @@ export const HouseholdDropdown = ({
       
       if (userError) {
         console.error('Error getting user:', userError);
+        toast.error("Failed to get user information");
         return;
       }
       
       if (!user) {
         console.error('No user found');
+        toast.error("No user found");
         return;
       }
       
       console.log('Current user ID:', user.id);
 
-      // First get the current households array
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('households')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError) {
-        console.error('Error fetching profile:', profileError);
-        return;
-      }
-
-      console.log('Current households array:', profileData?.households);
-
-      // Create new array with the new household ID
-      const updatedHouseholds = profileData?.households || [];
-      if (!updatedHouseholds.includes(householdId)) {
-        updatedHouseholds.push(householdId);
-      }
-
-      console.log('Updated households array:', updatedHouseholds);
-
-      // Update the profile with the new households array
+      // Update the profile with new current_household
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ 
-          households: updatedHouseholds
+          current_household: householdId 
         })
         .eq('id', user.id);
 
       if (updateError) {
         console.error('Error updating profile:', updateError);
+        toast.error("Failed to update household");
         return;
       }
 
-      console.log('Profile updated successfully with new households array');
+      console.log('Profile updated successfully');
+      toast.success("Household updated successfully");
       
       // Reload the page
-      console.log('Reloading page...');
       window.location.reload();
       
     } catch (error) {
       console.error('Unexpected error during household switch:', error);
+      toast.error("An unexpected error occurred");
     }
   };
 
