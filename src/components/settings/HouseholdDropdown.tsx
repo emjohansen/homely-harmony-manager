@@ -42,10 +42,12 @@ export const HouseholdDropdown = ({
       
       console.log('Current user ID:', user.id);
 
-      // Update the profile
+      // Convert householdId to UUID format for PostgreSQL
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ current_household: householdId })
+        .update({ 
+          current_household: householdId ? householdId : null 
+        })
         .eq('id', user.id);
 
       if (updateError) {
