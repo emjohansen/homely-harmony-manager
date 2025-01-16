@@ -20,14 +20,16 @@ const Shopping = () => {
     const initialize = async () => {
       try {
         console.log('Initializing Shopping component');
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        // Get session once and reuse it
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error('Session error:', sessionError);
           throw sessionError;
         }
 
-        if (!session) {
+        if (!sessionData.session) {
           console.log('No session found, redirecting to login');
           navigate('/');
           return;
@@ -35,11 +37,11 @@ const Shopping = () => {
 
         if (!isMounted) return;
 
-        console.log('Fetching profile data for user:', session.user.id);
+        // Use the session we already have
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('current_household')
-          .eq('id', session.user.id)
+          .eq('id', sessionData.session.user.id)
           .maybeSingle();
 
         if (profileError) {
@@ -52,17 +54,17 @@ const Shopping = () => {
         if (profile?.current_household) {
           console.log('Current household found:', profile.current_household);
           setCurrentHouseholdId(profile.current_household);
-          await fetchShoppingLists(profile.current_household, session);
+          await fetchShoppingLists(profile.current_household, sessionData.session);
         } else {
           console.log('No current household found');
           setLoading(false);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error in initialize:', error);
         if (isMounted) {
           toast({
             title: "Error",
-            description: "Failed to load shopping lists. Please try logging in again.",
+            description: "Please try logging in again",
             variant: "destructive",
           });
           navigate('/');
@@ -78,6 +80,11 @@ const Shopping = () => {
   }, [navigate, toast]);
 
   const fetchShoppingLists = async (householdId: string, session: any) => {
+    if (!session?.user?.id) {
+      console.error('No valid session for fetching shopping lists');
+      return;
+    }
+
     try {
       console.log('Fetching shopping lists for household:', householdId);
       const { data, error } = await supabase
