@@ -15,74 +15,69 @@ const Shopping = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkSession();
-    fetchCurrentHousehold();
-  }, []);
+    let isMounted = true;
+    
+    const initialize = async () => {
+      try {
+        console.log('Initializing Shopping component');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          throw sessionError;
+        }
 
-  const checkSession = async () => {
-    try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        throw sessionError;
+        if (!session) {
+          console.log('No session found, redirecting to login');
+          navigate('/');
+          return;
+        }
+
+        if (!isMounted) return;
+
+        console.log('Fetching profile data for user:', session.user.id);
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('current_household')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          throw profileError;
+        }
+
+        if (!isMounted) return;
+
+        if (profile?.current_household) {
+          console.log('Current household found:', profile.current_household);
+          setCurrentHouseholdId(profile.current_household);
+          await fetchShoppingLists(profile.current_household, session);
+        } else {
+          console.log('No current household found');
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error in initialize:', error);
+        if (isMounted) {
+          toast({
+            title: "Error",
+            description: "Failed to load shopping lists. Please try logging in again.",
+            variant: "destructive",
+          });
+          navigate('/');
+        }
       }
+    };
 
-      if (!session) {
-        navigate('/');
-        return;
-      }
-    } catch (error) {
-      console.error('Error checking session:', error);
-      navigate('/');
-    }
-  };
+    initialize();
 
-  const fetchCurrentHousehold = async () => {
-    try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) {
-        throw userError;
-      }
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, toast]);
 
-      if (!user) {
-        console.log('No user found');
-        setLoading(false);
-        return;
-      }
-
-      console.log('Fetching household member data for user:', user.id);
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('current_household')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error('Error fetching current household:', profileError);
-        throw profileError;
-      }
-
-      console.log('Fetched household member data:', profile);
-      if (profile?.current_household) {
-        setCurrentHouseholdId(profile.current_household);
-        fetchShoppingLists(profile.current_household);
-      } else {
-        console.log('No current household found for user');
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error('Error in fetchCurrentHousehold:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch household information",
-        variant: "destructive",
-      });
-      setLoading(false);
-    }
-  };
-
-  const fetchShoppingLists = async (householdId: string) => {
+  const fetchShoppingLists = async (householdId: string, session: any) => {
     try {
       console.log('Fetching shopping lists for household:', householdId);
       const { data, error } = await supabase
@@ -95,14 +90,14 @@ const Shopping = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error details:', error);
+        console.error('Error fetching shopping lists:', error);
         throw error;
       }
-      
-      console.log('Fetched shopping lists:', data);
+
+      console.log('Successfully fetched shopping lists:', data);
       setLists(data || []);
     } catch (error) {
-      console.error('Error fetching shopping lists:', error);
+      console.error('Error in fetchShoppingLists:', error);
       toast({
         title: "Error",
         description: "Failed to fetch shopping lists",
@@ -124,23 +119,30 @@ const Shopping = () => {
     }
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        console.error('Session error:', sessionError);
+        toast({
+          title: "Error",
+          description: "Please login again to continue",
+          variant: "destructive",
+        });
+        navigate('/');
+        return;
+      }
 
       const { error } = await supabase
         .from('shopping_lists')
         .insert({
           name,
           household_id: currentHouseholdId,
-          created_by: user.id,
+          created_by: session.user.id,
           status: 'active'
         });
 
       if (error) throw error;
       
-      if (currentHouseholdId) {
-        fetchShoppingLists(currentHouseholdId);
-      }
+      await fetchShoppingLists(currentHouseholdId, session);
     } catch (error) {
       console.error('Error creating shopping list:', error);
       toast({
@@ -172,7 +174,7 @@ const Shopping = () => {
           <ShoppingTabs 
             currentHouseholdId={currentHouseholdId}
             lists={lists}
-            onListsChange={() => currentHouseholdId && fetchShoppingLists(currentHouseholdId)}
+            onListsChange={() => currentHouseholdId && fetchShoppingLists(currentHouseholdId, null)}
           />
         )}
       </div>
