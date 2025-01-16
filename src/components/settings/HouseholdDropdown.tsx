@@ -45,13 +45,13 @@ export const HouseholdDropdown = ({
       
       console.log('Current user ID:', user.id);
 
-      // Update the profile with new current_household
+      // Update the profile with new current_household using upsert
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ 
-          current_household: householdId 
-        })
-        .eq('id', user.id);
+        .upsert({
+          id: user.id,
+          current_household: householdId
+        });
 
       if (updateError) {
         console.error('Error updating profile:', updateError);
