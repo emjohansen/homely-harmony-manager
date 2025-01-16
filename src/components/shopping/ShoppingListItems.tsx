@@ -1,4 +1,7 @@
 import { ShoppingListItem } from "./ShoppingListItem";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface GroupedItems {
   [key: string]: any[];
@@ -19,6 +22,8 @@ export const ShoppingListItems = ({
   onUpdateStore,
   onUpdatePrice,
 }: ShoppingListItemsProps) => {
+  const navigate = useNavigate();
+
   // Group items by store and checked status
   const groupAndSortItems = () => {
     // First, separate checked and unchecked items
@@ -52,6 +57,48 @@ export const ShoppingListItems = ({
     return { sortedGroups, checkedItems };
   };
 
+  const handleToggle = async (id: string, checked: boolean) => {
+    try {
+      // First check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        toast.error("Session expired. Please login again.");
+        navigate("/");
+        return;
+      }
+      
+      if (!session) {
+        console.error('No active session');
+        toast.error("Please login to continue");
+        navigate("/");
+        return;
+      }
+
+      const { error: updateError } = await supabase
+        .from('shopping_list_items')
+        .update({ is_checked: checked })
+        .eq('id', id);
+
+      if (updateError) {
+        console.error('Error updating item:', updateError);
+        if (updateError.message.includes('JWT')) {
+          toast.error("Session expired. Please login again");
+          navigate("/");
+          return;
+        }
+        toast.error("Failed to update item");
+        return;
+      }
+
+      onToggle(id, checked);
+    } catch (error) {
+      console.error('Error updating item:', error);
+      toast.error("Failed to update item");
+    }
+  };
+
   const { sortedGroups, checkedItems } = groupAndSortItems();
 
   return (
@@ -70,7 +117,7 @@ export const ShoppingListItems = ({
                   ...item,
                   added_by: item.adder?.username || 'Unknown',
                 }}
-                onToggle={onToggle}
+                onToggle={handleToggle}
                 onDelete={onDelete}
                 onUpdateStore={onUpdateStore}
                 onUpdatePrice={onUpdatePrice}
@@ -94,7 +141,7 @@ export const ShoppingListItems = ({
                   ...item,
                   added_by: item.adder?.username || 'Unknown',
                 }}
-                onToggle={onToggle}
+                onToggle={handleToggle}
                 onDelete={onDelete}
                 onUpdateStore={onUpdateStore}
                 onUpdatePrice={onUpdatePrice}
