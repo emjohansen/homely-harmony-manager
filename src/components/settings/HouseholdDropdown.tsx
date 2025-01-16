@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface Household {
   id: string;
@@ -23,38 +24,47 @@ export const HouseholdDropdown = ({
   households,
   currentHousehold,
 }: HouseholdDropdownProps) => {
+  const navigate = useNavigate();
+
   const handleHouseholdSwitch = async (householdId: string) => {
     try {
       console.log('Starting household switch process...');
       console.log('New household ID:', householdId);
 
-      // Get current user
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      // First check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (userError) {
-        console.error('Error getting user:', userError);
-        toast.error("Failed to get user information");
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        toast.error("Session expired. Please login again.");
+        navigate("/");
         return;
       }
       
-      if (!user) {
-        console.error('No user found');
-        toast.error("No user found");
+      if (!session) {
+        console.error('No active session');
+        toast.error("Please login to continue");
+        navigate("/");
         return;
       }
-      
-      console.log('Current user ID:', user.id);
+
+      console.log('Current user ID:', session.user.id);
 
       // Update the profile with new current_household using upsert
       const { error: updateError } = await supabase
         .from('profiles')
         .upsert({
-          id: user.id,
+          id: session.user.id,
           current_household: householdId
         });
 
       if (updateError) {
         console.error('Error updating profile:', updateError);
+        if (updateError.message.includes('JWT')) {
+          toast.error("Session expired. Please login again");
+          navigate("/");
+          return;
+        }
         toast.error("Failed to update household");
         return;
       }
