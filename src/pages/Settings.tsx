@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import { useNavigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
+import { toast } from "sonner";
 
 interface Household {
   id: string;
@@ -19,77 +20,152 @@ export default function Settings() {
   const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
 
   useEffect(() => {
-    checkUser();
-    fetchHouseholds();
-  }, []);
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          toast.error("Session expired. Please login again.");
+          navigate("/");
+          return;
+        }
+
+        if (!session) {
+          console.log('No active session found');
+          toast.error("Please login to continue");
+          navigate("/");
+          return;
+        }
+
+        setUserEmail(session.user.email);
+        await checkUser();
+        await fetchHouseholds();
+      } catch (error) {
+        console.error('Error checking session:', error);
+        toast.error("An error occurred. Please try again.");
+        navigate("/");
+      }
+    };
+
+    checkSession();
+  }, [navigate]);
 
   const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate("/");
-      return;
-    }
-    setUserEmail(session.user.email);
-    
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('username, current_household')
-      .eq('id', session.user.id)
-      .single();
-    
-    if (profile?.username) {
-      setNickname(profile.username);
-    }
-
-    // If there's a current_household in the profile, fetch its details
-    if (profile?.current_household) {
-      const { data: household } = await supabase
-        .from('households')
-        .select('id, name')
-        .eq('id', profile.current_household)
-        .single();
-
-      if (household) {
-        setCurrentHousehold(household);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/");
+        return;
       }
+      
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('username, current_household')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        if (profileError.message.includes('JWT')) {
+          toast.error("Session expired. Please login again");
+          navigate("/");
+          return;
+        }
+        return;
+      }
+
+      if (profile?.username) {
+        setNickname(profile.username);
+      }
+
+      if (profile?.current_household) {
+        const { data: household, error: householdError } = await supabase
+          .from('households')
+          .select('id, name')
+          .eq('id', profile.current_household)
+          .single();
+
+        if (householdError) {
+          console.error('Error fetching household:', householdError);
+          return;
+        }
+
+        if (household) {
+          setCurrentHousehold(household);
+        }
+      }
+    } catch (error) {
+      console.error('Error in checkUser:', error);
+      toast.error("An error occurred while fetching user data");
     }
   };
 
   const fetchHouseholds = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        console.error('Session error:', sessionError);
+        toast.error("Session expired. Please login again");
+        navigate("/");
+        return;
+      }
 
-    // Fetch all households where the user is either a member or admin
-    const { data: userHouseholds } = await supabase
-      .from('households')
-      .select('id, name')
-      .or(`members.cs.{${user.id}},admins.cs.{${user.id}}`);
+      const { data: userHouseholds, error: householdsError } = await supabase
+        .from('households')
+        .select('id, name')
+        .or(`members.cs.{${session.user.id}},admins.cs.{${session.user.id}}`);
 
-    if (userHouseholds) {
-      console.log("Fetched households:", userHouseholds);
-      setHouseholds(userHouseholds);
+      if (householdsError) {
+        console.error("Error fetching households:", householdsError);
+        if (householdsError.message.includes('JWT')) {
+          toast.error("Session expired. Please login again");
+          navigate("/");
+          return;
+        }
+        toast.error("Failed to fetch households");
+        return;
+      }
 
-      // If no current household is set, get it from the profile
-      if (!currentHousehold) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('current_household')
-          .eq('id', user.id)
-          .single();
+      if (userHouseholds) {
+        console.log("Fetched households:", userHouseholds);
+        setHouseholds(userHouseholds);
 
-        if (profile?.current_household) {
-          const current = userHouseholds.find(h => h.id === profile.current_household);
-          if (current) {
-            console.log("Setting current household:", current);
-            setCurrentHousehold(current);
+        if (!currentHousehold) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('current_household')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError) {
+            console.error("Error fetching profile:", profileError);
+            return;
+          }
+
+          if (profile?.current_household) {
+            const current = userHouseholds.find(h => h.id === profile.current_household);
+            if (current) {
+              console.log("Setting current household:", current);
+              setCurrentHousehold(current);
+            }
           }
         }
       }
+    } catch (error) {
+      console.error('Error in fetchHouseholds:', error);
+      toast.error("An error occurred while fetching households");
     }
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error);
+      toast.error("Failed to sign out");
+      return;
+    }
     navigate("/");
   };
 
