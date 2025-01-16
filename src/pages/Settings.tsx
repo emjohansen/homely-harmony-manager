@@ -18,9 +18,10 @@ export default function Settings() {
   const [nickname, setNickname] = useState<string>("");
   const [households, setHouseholds] = useState<Household[]>([]);
   const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkSession = async () => {
+    const initializeSettings = async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
@@ -39,22 +40,22 @@ export default function Settings() {
         }
 
         setUserEmail(session.user.email);
-        await checkUser();
-        await fetchHouseholds();
+        await Promise.all([checkUser(), fetchHouseholds()]);
+        setIsLoading(false);
       } catch (error) {
-        console.error('Error checking session:', error);
+        console.error('Error initializing settings:', error);
         toast.error("An error occurred. Please try again.");
         navigate("/");
       }
     };
 
-    checkSession();
+    initializeSettings();
   }, [navigate]);
 
   const checkUser = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (!session?.user) {
         navigate("/");
         return;
       }
@@ -160,14 +161,27 @@ export default function Settings() {
   };
 
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error);
-      toast.error("Failed to sign out");
-      return;
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Error signing out:', error);
+        toast.error("Failed to sign out");
+        return;
+      }
+      navigate("/");
+    } catch (error) {
+      console.error('Error in handleSignOut:', error);
+      toast.error("An error occurred while signing out");
     }
-    navigate("/");
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-sage">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cream pb-16">
