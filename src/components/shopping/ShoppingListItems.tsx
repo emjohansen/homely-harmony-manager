@@ -81,11 +81,7 @@ export const ShoppingListItems = ({
       // Attempt to update with fresh session
       const { error: updateError } = await supabase
         .from('shopping_list_items')
-        .update({ 
-          is_checked: checked,
-          // Add a timestamp to force a refresh
-          updated_at: new Date().toISOString()
-        })
+        .update({ is_checked: checked })
         .eq('id', id);
 
       if (updateError) {
