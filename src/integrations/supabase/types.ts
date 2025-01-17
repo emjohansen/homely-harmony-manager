@@ -64,6 +64,7 @@ export type Database = {
           admins: string[] | null
           created_at: string
           created_by: string
+          custom_stores: string[] | null
           id: string
           members: string[] | null
           name: string
@@ -72,6 +73,7 @@ export type Database = {
           admins?: string[] | null
           created_at?: string
           created_by: string
+          custom_stores?: string[] | null
           id?: string
           members?: string[] | null
           name: string
@@ -80,6 +82,7 @@ export type Database = {
           admins?: string[] | null
           created_at?: string
           created_by?: string
+          custom_stores?: string[] | null
           id?: string
           members?: string[] | null
           name?: string

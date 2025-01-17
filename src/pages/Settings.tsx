@@ -5,11 +5,13 @@ import Navigation from "@/components/Navigation";
 import { useNavigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { HouseholdManagement } from "@/components/settings/HouseholdManagement";
+import { CustomStoresManagement } from "@/components/settings/CustomStoresManagement";
 import { toast } from "sonner";
 
 interface Household {
   id: string;
   name: string;
+  custom_stores?: string[];
 }
 
 export default function Settings() {
@@ -196,6 +198,13 @@ export default function Settings() {
             currentHousehold={currentHousehold}
             onHouseholdsChange={() => fetchHouseholds(supabase.auth.getSession())}
           />
+
+          {currentHousehold && (
+            <CustomStoresManagement
+              currentHousehold={currentHousehold}
+              onHouseholdsChange={() => fetchHouseholds(supabase.auth.getSession())}
+            />
+          )}
 
           <Button 
             variant="destructive" 

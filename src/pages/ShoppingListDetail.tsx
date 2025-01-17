@@ -221,7 +221,10 @@ const ShoppingListDetail = () => {
       <div className="relative z-0 max-w-4xl mx-auto px-4 py-4">
         <ShoppingListHeader list={list} totalPrice={totalPrice} />
         
-        <AddShoppingListItem onAddItem={handleAddItem} />
+        <AddShoppingListItem 
+          onAddItem={handleAddItem} 
+          householdId={list?.household_id}
+        />
 
         <ShoppingListItems
           items={items}
