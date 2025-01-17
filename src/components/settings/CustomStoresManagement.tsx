@@ -29,11 +29,12 @@ export const CustomStoresManagement = ({
         return;
       }
 
+      const updatedStores = [...currentStores, newStore];
+      console.log('Updated stores array:', updatedStores);
+
       const { error } = await supabase
         .from('households')
-        .update({ 
-          custom_stores: [...currentStores, newStore] 
-        })
+        .update({ custom_stores: updatedStores })
         .eq('id', currentHousehold.id);
 
       if (error) {
