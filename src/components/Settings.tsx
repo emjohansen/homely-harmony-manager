@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,9 +17,56 @@ import {
 import { Settings as SettingsIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CustomStoresManagement } from "./settings/CustomStoresManagement";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface Household {
+  id: string;
+  name: string;
+  custom_stores?: string[];
+}
 
 const Settings = () => {
   const { t, i18n } = useTranslation();
+  const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
+
+  useEffect(() => {
+    fetchCurrentHousehold();
+  }, []);
+
+  const fetchCurrentHousehold = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('current_household')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.current_household) {
+        const { data: household } = await supabase
+          .from('households')
+          .select('*')
+          .eq('id', profile.current_household)
+          .single();
+
+        if (household) {
+          console.log('Current household fetched:', household);
+          setCurrentHousehold(household);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching current household:', error);
+      toast.error("Failed to fetch household data");
+    }
+  };
+
+  const onHouseholdsChange = async () => {
+    console.log('Refreshing household data...');
+    await fetchCurrentHousehold();
+  };
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
