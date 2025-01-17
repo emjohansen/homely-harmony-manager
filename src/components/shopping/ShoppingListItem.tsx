@@ -3,6 +3,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +44,28 @@ export const ShoppingListItem = ({
   const [showPriceInput, setShowPriceInput] = useState(false);
   const [price, setPrice] = useState(item.price?.toString() || "");
 
+  const handleCheckboxChange = async (checked: boolean) => {
+    try {
+      console.log('Updating item check state:', { itemId: item.id, checked });
+      
+      const { error } = await supabase
+        .from('shopping_list_items')
+        .update({ is_checked: checked })
+        .eq('id', item.id);
+
+      if (error) {
+        console.error('Error updating item:', error);
+        toast.error("Failed to update item");
+        return;
+      }
+
+      onToggle(item.id, checked);
+    } catch (error) {
+      console.error('Unexpected error updating item:', error);
+      toast.error("An unexpected error occurred");
+    }
+  };
+
   const handlePriceSubmit = () => {
     const numericPrice = parseFloat(price);
     if (!isNaN(numericPrice)) {
@@ -71,7 +95,7 @@ export const ShoppingListItem = ({
       <div className="flex items-start gap-3">
         <Checkbox
           checked={item.is_checked}
-          onCheckedChange={(checked) => onToggle(item.id, checked as boolean)}
+          onCheckedChange={handleCheckboxChange}
           className="mt-1 bg-mint border border-sage data-[state=checked]:bg-sage data-[state=unchecked]:bg-mint"
         />
         <div className="flex-1 min-w-0">
