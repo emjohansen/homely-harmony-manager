@@ -29,7 +29,11 @@ export const CustomStoresManagement = ({
         return;
       }
 
-      const updatedStores = [...currentStores, newStore];
+      // Ensure we're creating a new array that includes all existing stores plus the new one
+      const updatedStores = Array.isArray(currentStores) 
+        ? [...currentStores, newStore]
+        : [newStore];
+        
       console.log('Updated stores array:', updatedStores);
 
       const { error } = await supabase
