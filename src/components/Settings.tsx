@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Settings as SettingsIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { CustomStoresManagement } from "./settings/CustomStoresManagement";
 
 const Settings = () => {
   const { t, i18n } = useTranslation();
@@ -53,6 +54,10 @@ const Settings = () => {
               </SelectContent>
             </Select>
           </div>
+          <CustomStoresManagement 
+            currentHousehold={currentHousehold}
+            onHouseholdsChange={onHouseholdsChange}
+          />
         </div>
       </DialogContent>
     </Dialog>
