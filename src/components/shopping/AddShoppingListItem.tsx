@@ -10,26 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
 
 interface AddShoppingListItemProps {
   onAddItem: (item: string, quantity: string, store: string) => void;
   householdId?: string;
 }
 
-const DEFAULT_STORES = [
-  "REMA 1000",
-  "COOP",
-  "KIWI",
-  "SPAR",
-  "EUROPRIS",
-  "Any Store"
-];
-
 export const AddShoppingListItem = ({ onAddItem, householdId }: AddShoppingListItemProps) => {
   const [newItem, setNewItem] = useState("");
   const [newQuantity, setNewQuantity] = useState("1");
   const [newStore, setNewStore] = useState("Any Store");
   const [customStores, setCustomStores] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCustomStores = async () => {
@@ -68,7 +61,11 @@ export const AddShoppingListItem = ({ onAddItem, householdId }: AddShoppingListI
     setNewStore("Any Store");
   };
 
-  const allStores = [...DEFAULT_STORES, ...customStores];
+  const handleAddStore = () => {
+    navigate('/settings');
+  };
+
+  const allStores = ["Any Store", ...customStores];
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2 mb-6 bg-[#efffed]">
@@ -96,10 +93,17 @@ export const AddShoppingListItem = ({ onAddItem, householdId }: AddShoppingListI
                 {store}
               </SelectItem>
             ))}
+            <Button
+              type="button"
+              onClick={handleAddStore}
+              className="w-full mt-2 bg-[#9dbc98] hover:bg-[#9dbc98]/90 text-white"
+            >
+              Add Store
+            </Button>
           </SelectContent>
         </Select>
       </div>
-      <Button type="submit" className="w-full bg-sage hover:bg-sage/90">
+      <Button type="submit" className="w-full bg-[#9dbc98] hover:bg-[#9dbc98]/90">
         <Plus className="h-4 w-4" />
       </Button>
     </form>
