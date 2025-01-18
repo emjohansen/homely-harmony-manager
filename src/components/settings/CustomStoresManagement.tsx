@@ -119,26 +119,22 @@ export const CustomStoresManagement = ({
           </AccordionTrigger>
           <AccordionContent>
             <div className="space-y-2">
-              {currentHousehold?.custom_stores && currentHousehold.custom_stores.length > 0 ? (
-                currentHousehold.custom_stores.map((store) => (
-                  <div 
-                    key={store} 
-                    className="flex items-center justify-between p-2 bg-mint rounded"
+              {(currentHousehold?.custom_stores || []).map((store) => (
+                <div 
+                  key={store} 
+                  className="flex items-center justify-between p-2 bg-mint rounded"
+                >
+                  <span className="text-forest">{store}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveStore(store)}
+                    className="text-forest hover:text-forest/90"
                   >
-                    <span className="text-forest">{store}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveStore(store)}
-                      className="text-forest hover:text-forest/90"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))
-              ) : (
-                <p className="text-forest/70 text-sm italic">No stores added yet</p>
-              )}
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
             </div>
           </AccordionContent>
         </AccordionItem>
