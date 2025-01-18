@@ -89,6 +89,9 @@ export const CustomStoresManagement = ({
     }
   };
 
+  // Debug log to check what stores we have
+  console.log('Current household stores:', currentHousehold?.custom_stores);
+
   return (
     <div className="p-6 bg-[#efffed] rounded shadow">
       <h2 className="text-lg font-bold mb-4">Custom Stores Management</h2>
@@ -116,23 +119,24 @@ export const CustomStoresManagement = ({
           </AccordionTrigger>
           <AccordionContent>
             <div className="space-y-2">
-              {currentHousehold?.custom_stores?.map((store) => (
-                <div 
-                  key={store} 
-                  className="flex items-center justify-between p-2 bg-mint rounded"
-                >
-                  <span className="text-forest">{store}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveStore(store)}
-                    className="text-forest hover:text-forest/90"
+              {currentHousehold?.custom_stores && currentHousehold.custom_stores.length > 0 ? (
+                currentHousehold.custom_stores.map((store) => (
+                  <div 
+                    key={store} 
+                    className="flex items-center justify-between p-2 bg-mint rounded"
                   >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              {(!currentHousehold?.custom_stores || currentHousehold.custom_stores.length === 0) && (
+                    <span className="text-forest">{store}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveStore(store)}
+                      className="text-forest hover:text-forest/90"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))
+              ) : (
                 <p className="text-forest/70 text-sm italic">No stores added yet</p>
               )}
             </div>
