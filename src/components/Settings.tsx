@@ -46,9 +46,10 @@ const Settings = () => {
         .single();
 
       if (profile?.current_household) {
+        console.log('Fetching household with ID:', profile.current_household);
         const { data: household } = await supabase
           .from('households')
-          .select('*')
+          .select('id, name, custom_stores')
           .eq('id', profile.current_household)
           .single();
 
