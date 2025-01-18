@@ -21,38 +21,32 @@ export const CustomStoresManagement = ({
     if (!currentHousehold || !newStore.trim()) return;
 
     try {
-      console.log('Adding new store:', newStore);
+      // Get current stores array or initialize empty array if none exists
       const currentStores = currentHousehold.custom_stores || [];
       
+      // Check if store already exists
       if (currentStores.includes(newStore)) {
         toast.error("This store already exists");
         return;
       }
 
-      // Ensure we're creating a new array that includes all existing stores plus the new one
-      const updatedStores = Array.isArray(currentStores) 
-        ? [...currentStores, newStore]
-        : [newStore];
-        
-      console.log('Updated stores array:', updatedStores);
+      // Create new array with all existing stores plus the new one
+      const updatedStores = [...currentStores, newStore];
+      console.log('Adding store to array:', updatedStores);
 
       const { error } = await supabase
         .from('households')
         .update({ custom_stores: updatedStores })
         .eq('id', currentHousehold.id);
 
-      if (error) {
-        console.error('Error adding store:', error);
-        toast.error("Failed to add store");
-        return;
-      }
+      if (error) throw error;
 
       toast.success("Store added successfully");
       setNewStore("");
       onHouseholdsChange();
     } catch (error) {
-      console.error('Error in handleAddStore:', error);
-      toast.error("An error occurred");
+      console.error('Error adding store:', error);
+      toast.error("Failed to add store");
     }
   };
 
@@ -60,26 +54,24 @@ export const CustomStoresManagement = ({
     if (!currentHousehold) return;
 
     try {
-      console.log('Removing store:', storeToRemove);
+      // Get current stores and filter out the one to remove
       const currentStores = currentHousehold.custom_stores || [];
       const updatedStores = currentStores.filter(store => store !== storeToRemove);
+      
+      console.log('Removing store, updated array:', updatedStores);
 
       const { error } = await supabase
         .from('households')
         .update({ custom_stores: updatedStores })
         .eq('id', currentHousehold.id);
 
-      if (error) {
-        console.error('Error removing store:', error);
-        toast.error("Failed to remove store");
-        return;
-      }
+      if (error) throw error;
 
       toast.success("Store removed successfully");
       onHouseholdsChange();
     } catch (error) {
-      console.error('Error in handleRemoveStore:', error);
-      toast.error("An error occurred");
+      console.error('Error removing store:', error);
+      toast.error("Failed to remove store");
     }
   };
 
@@ -87,6 +79,7 @@ export const CustomStoresManagement = ({
     <div className="p-6 bg-[#efffed] rounded shadow">
       <h2 className="text-lg font-bold mb-4">Custom Stores Management</h2>
       
+      {/* Add store form */}
       <form onSubmit={handleAddStore} className="space-y-4">
         <div className="flex gap-2">
           <Input
@@ -101,6 +94,7 @@ export const CustomStoresManagement = ({
         </div>
       </form>
 
+      {/* List of stores */}
       <div className="mt-4 space-y-2">
         {currentHousehold?.custom_stores?.map((store) => (
           <div key={store} className="flex items-center justify-between p-2 bg-white rounded">
