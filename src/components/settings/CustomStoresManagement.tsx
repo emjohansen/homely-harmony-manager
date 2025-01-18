@@ -21,18 +21,19 @@ export const CustomStoresManagement = ({
     if (!currentHousehold || !newStore.trim()) return;
 
     try {
-      // Get current stores array or initialize empty array if none exists
-      const currentStores = currentHousehold.custom_stores || [];
-      
-      // Check if store already exists
-      if (currentStores.includes(newStore)) {
-        toast.error("This store already exists");
-        return;
-      }
+      // Get existing stores or initialize empty array
+      const { data: household } = await supabase
+        .from('households')
+        .select('custom_stores')
+        .eq('id', currentHousehold.id)
+        .single();
 
       // Create new array with all existing stores plus the new one
-      const updatedStores = [...currentStores, newStore];
-      console.log('Adding store to array:', updatedStores);
+      const existingStores = household?.custom_stores || [];
+      const updatedStores = [...existingStores, newStore.trim()];
+      
+      console.log('Current stores:', existingStores);
+      console.log('Adding new store. Updated array:', updatedStores);
 
       const { error } = await supabase
         .from('households')
@@ -54,11 +55,18 @@ export const CustomStoresManagement = ({
     if (!currentHousehold) return;
 
     try {
-      // Get current stores and filter out the one to remove
-      const currentStores = currentHousehold.custom_stores || [];
+      // Get current stores
+      const { data: household } = await supabase
+        .from('households')
+        .select('custom_stores')
+        .eq('id', currentHousehold.id)
+        .single();
+
+      const currentStores = household?.custom_stores || [];
       const updatedStores = currentStores.filter(store => store !== storeToRemove);
       
-      console.log('Removing store, updated array:', updatedStores);
+      console.log('Current stores:', currentStores);
+      console.log('Removing store. Updated array:', updatedStores);
 
       const { error } = await supabase
         .from('households')
