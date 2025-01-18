@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, X } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface CustomStoresManagementProps {
   currentHousehold: { id: string; name: string; custom_stores?: string[] } | null;
@@ -88,7 +94,7 @@ export const CustomStoresManagement = ({
       <h2 className="text-lg font-bold mb-4">Custom Stores Management</h2>
       
       {/* Add store form */}
-      <form onSubmit={handleAddStore} className="space-y-4">
+      <form onSubmit={handleAddStore} className="space-y-4 mb-4">
         <div className="flex gap-2">
           <Input
             value={newStore}
@@ -96,28 +102,43 @@ export const CustomStoresManagement = ({
             placeholder="Add new store..."
             className="flex-1"
           />
-          <Button type="submit" className="bg-[#9dbc98] hover:bg-[#9dbc98]/90 text-white">
+          <Button type="submit" className="bg-sage hover:bg-sage/90 text-white">
             <Plus className="h-4 w-4" />
           </Button>
         </div>
       </form>
 
-      {/* List of stores */}
-      <div className="mt-4 space-y-2">
-        {currentHousehold?.custom_stores?.map((store) => (
-          <div key={store} className="flex items-center justify-between p-2 bg-white rounded">
-            <span>{store}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleRemoveStore(store)}
-              className="text-red-500 hover:text-red-700"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
-      </div>
+      {/* List of stores in accordion */}
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="stores">
+          <AccordionTrigger className="text-forest">
+            Stored Stores ({currentHousehold?.custom_stores?.length || 0})
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-2">
+              {currentHousehold?.custom_stores?.map((store) => (
+                <div 
+                  key={store} 
+                  className="flex items-center justify-between p-2 bg-mint rounded"
+                >
+                  <span className="text-forest">{store}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveStore(store)}
+                    className="text-forest hover:text-forest/90"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              {(!currentHousehold?.custom_stores || currentHousehold.custom_stores.length === 0) && (
+                <p className="text-forest/70 text-sm italic">No stores added yet</p>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };
