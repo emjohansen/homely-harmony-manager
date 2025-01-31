@@ -22,8 +22,9 @@ export interface RecipeTag {
 export interface RecipeIngredient {
   id: string;
   ingredient: string;
-  amount: string | null;
+  amount: number | null;  // Changed from string to number | null to match database
   unit: string | null;
+  recipe_id?: string | null; // Added to match database structure
 }
 
 export interface RecipeStep {
